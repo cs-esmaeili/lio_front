@@ -1,0 +1,38 @@
+/* productListBorder Vertical Cards */
+
+/* 2 cols */
+@media (max-width: 767px) {
+  .productListBorder > :nth-child(2n) {
+    border-left: 0;
+  }
+}
+
+/* 3 cols */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .productListBorder > :nth-child(3n) {
+    border-left: 0;
+  }
+}
+
+/* 4 cols */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .productListBorder > :nth-child(4n) {
+    border-left: 0;
+  }
+}
+
+/* 5 cols */
+@media (min-width: 1280px) {
+  .productListBorder > :nth-child(5n) {
+    border-left: 0;
+  }
+}
+
+/* productListBorder Horizontal Cards */
+
+/* 1 col */
+@media (max-width: 640px) {
+  .productListBorder > :last-child {
+    border-bottom: 0;
+  }
+}

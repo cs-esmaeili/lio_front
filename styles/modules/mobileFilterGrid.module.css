@@ -1,0 +1,14 @@
+.gridList [data-slot="field-group"] {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.gridList [data-slot="radio-group"] {
+  grid-template-columns: repeat(2, 1fr);
+  width: 100%;
+}
+
+.gridList :global(.max-w-sm) {
+  max-width: 100%;
+}

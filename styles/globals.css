@@ -1,0 +1,526 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ============================================================
+   1. DESIGN TOKENS — CSS Custom Properties
+   ============================================================ */
+
+:root {
+
+  /* --- Brand: Primary (Golden / Warm Brown) --- */
+  --primary-black-2: #5A472F;
+  --primary-black-1: #8A6940;
+  --primary-1: #BB8B50;
+  --primary-2: #CFAE84;
+  --primary-3: #E4D1B9;
+  --primary-4: #F8F3ED;
+  --primary-0: #02C39A;
+  --c-primary-1: #051F40;
+  --secondary-black: red;
+  --secondary-black-3: #060607;
+  --secondary-black-2: #1A1A1A;
+  --secondary-black-1: #2D2D2E;
+  --secondary-1: #414042;
+  --secondary-2: #7A797B;
+  --secondary-3: #B3B3B3;
+  --wordpress-black-3: #5E5E5E;
+  /* --- Neutral Grays --- */
+  --gray-3: #D0D1D3;
+  --gray-2: #E4E5E6;
+  --gray-1: #F5F5F5;
+
+  --custom-purple: #4D3884;
+  --custom-yellow: #EFB80B;
+  --custom-white: #ffff;
+
+  /* --- Layout --- */
+  --globalPadding: 0.5rem 1rem;
+  --radius: 0.625rem;
+
+  /* ============================================================
+     2. SEMANTIC TOKENS — Mapped to Tailwind / shadcn Variables
+     ============================================================ */
+
+  /* Backgrounds */
+  --background: #FFFFFF;
+  --card: var(--primary-4);
+  --popover: var(--primary-4);
+
+  /* Foregrounds */
+  --foreground: var(--secondary-black-3);
+  --card-foreground: var(--secondary-black-3);
+  --popover-foreground: var(--secondary-black-3);
+
+  /* Brand */
+  --primary: var(--primary-1);
+  --primary-foreground: var(--primary-4);
+
+  /* Neutral */
+  --secondary: var(--gray-1);
+  --secondary-foreground: var(--secondary-black-3);
+  --muted: var(--gray-1);
+  --muted-foreground: var(--secondary-2);
+
+  /* Accent */
+  --accent: var(--primary-2);
+  --accent-foreground: var(--secondary-black-3);
+
+  /* States */
+  --destructive: oklch(0.577 0.245 27.325);
+
+  /* Borders & Inputs */
+  --border: var(--gray-2);
+  --input: var(--gray-2);
+  --ring: var(--primary-1);
+
+  /* Charts */
+  --chart-1: var(--primary-1);
+  --chart-2: var(--primary-black-1);
+  --chart-3: var(--primary-2);
+  --chart-4: var(--gray-2);
+  --chart-5: var(--gray-3);
+
+  /* Sidebar */
+  --sidebar: var(--primary-4);
+  --sidebar-foreground: var(--secondary-black-3);
+  --sidebar-primary: var(--primary-1);
+  --sidebar-primary-foreground: var(--primary-4);
+  --sidebar-accent: var(--gray-1);
+  --sidebar-accent-foreground: var(--secondary-black-3);
+  --sidebar-border: var(--gray-2);
+  --sidebar-ring: var(--primary-1);
+
+  /* Border Radius Scale */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ============================================================
+   3. TAILWIND THEME — Expose Tokens to Utility Classes
+   ============================================================ */
+
+@theme inline {
+
+  /* Brand Colors */
+  --color-primary-black-2: var(--primary-black-2);
+  --color-primary-black-1: var(--primary-black-1);
+  --color-primary-1: var(--primary-1);
+  --color-primary-2: var(--primary-2);
+  --color-primary-3: var(--primary-3);
+  --color-primary-4: var(--primary-4);
+  --color-primary-0: var(--primary-0);
+  --color-c-primary-1: var(--c-primary-1);
+  --color-secondary-black-3: var(--secondary-black-3);
+  --color-secondary-black-2: var(--secondary-black-2);
+  --color-secondary-black-1: var(--secondary-black-1);
+  --color-secondary-1: var(--secondary-1);
+  --color-secondary-2: var(--secondary-2);
+  --color-secondary-3: var(--secondary-3);
+  --color-custom-white: var(--custom-white);
+  --color-custom-yellow: var(--custom-yellow);
+  --color-wordpress-black-3: var(--wordpress-black-3);
+  /* Neutral Grays */
+  --color-gray-1: var(--gray-1);
+  --color-gray-2: var(--gray-2);
+  --color-gray-3: var(--gray-3);
+  --color-custom-purple: var(--custom-purple);
+
+  /* Semantic (shadcn/ui) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Border Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-4xl: var(--radius-4xl);
+
+  /* Spacing */
+  --spacing-global: var(--globalPadding);
+
+  /* special font !  */
+  --font-rajdhani: var(--font-rajdhani);
+  --font-dastnevis: var(--font-dastnevis);
+
+}
+
+/* ============================================================
+   4. BASE STYLES
+   ============================================================ */
+
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+
+  body {
+    @apply bg-background text-foreground;
+    direction: rtl;
+  }
+
+  b, strong{font-weight:500;}
+
+  /* --- Typography Scale --- */
+
+  h1 {
+    @apply text-[22px] leading-[40px] font-[500] md:text-[32px] md:leading-[60px];
+  }
+
+  h2 {
+    @apply text-[20px] leading-[32px] font-[500] md:text-[28px] md:leading-[52px];
+  }
+
+  h3 {
+    @apply text-[18px] leading-[32px] font-[500] md:text-[24px] md:leading-[44px];
+  }
+
+  h4 {
+    @apply text-[16px] leading-[28px] font-[500] md:text-[20px] md:leading-[40px];
+  }
+
+  h5 {
+    @apply text-[14px] leading-[24px] font-[500] md:text-[16px] md:leading-[32px];
+  }
+
+  h6 {
+    @apply text-[12px] leading-[18px] font-[400] md:text-[12px] md:leading-[24px];
+  }
+}
+
+/* ============================================================
+   5. CUSTOM UTILITIES
+   ============================================================ */
+
+/* --- Container Variants --- */
+
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+
+  @media (width <=96rem) {
+    padding: var(--globalPadding);
+  }
+
+  @media (width >=40rem) {
+    max-width: 40rem;
+  }
+
+  @media (width >=48rem) {
+    max-width: 48rem;
+  }
+
+  @media (width >=64rem) {
+    max-width: 64rem;
+  }
+
+  @media (width >=80rem) {
+    max-width: 80rem;
+  }
+
+  @media (width >=85rem) {
+    max-width: 85rem;
+  }
+}
+
+@utility container-shop {
+  width: 100%;
+  margin-inline: auto;
+
+  @media (width <=103rem) {
+    padding: var(--globalPadding);
+  }
+
+  @media (width >=85rem) {
+    max-width: 100%;
+  }
+
+  @media (width >=102rem) {
+    max-width: 102rem;
+  }
+}
+
+@utility container-wide {
+  width: 100%;
+  margin-inline: auto;
+
+  @media (width >=120rem) {
+    max-width: 120rem;
+  }
+}
+
+/* Custom utilities for larger-gap dashed borders */
+
+
+@utility border-dashed-xl {
+  border: 2px solid transparent;
+  border-image: repeating-linear-gradient(90deg, currentColor, currentColor 30px, transparent 30px, transparent 55px) 1;
+}
+
+@utility border-dashed-lg {
+  border: 2px solid transparent;
+  border-image: repeating-linear-gradient(90deg, currentColor, currentColor 20px, transparent 20px, transparent 35px) 1;
+}
+
+@utility border-dashed-sm {
+  border: 2px solid transparent;
+  border-image: repeating-linear-gradient(90deg, currentColor, currentColor 10px, transparent 10px, transparent 20px) 1;
+}
+
+@utility border-dashed-custom {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    /* border thickness */
+    background: repeating-linear-gradient(45deg,
+        var(--primary-1),
+        var(--primary-1) 10px,
+        /* dash length reduced to 10px */
+        transparent 10px,
+        transparent 20px
+        /* gap = 10px */
+      );
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* FIGMA PIXELPERFECT HAHA */
+/* Thin	100
+Extra Light / Ultra Light	200
+Light	300
+Regular / Normal	400
+Medium	500
+SemiBold / DemiBold	600
+Bold	700
+Extra Bold / UltraBold	800
+Black / Heavy	900 */
+
+/* --- Text Utilities --- */
+
+@utility text-default {
+  @apply text-[14px] leading-[20px] font-[500];
+}
+
+@utility text-body {
+  @apply text-[14px] leading-[28px] font-[300] md:text-[16px] md:leading-[32px];
+}
+
+@utility text-regular {
+  @apply text-[13px] leading-[20px] font-[400] md:text-[14px] md:leading-[28px];
+}
+
+@utility text-caption {
+  @apply text-[10px] leading-[16px] font-[300] md:text-[10px] md:leading-[24px];
+}
+
+@utility text-help {
+  @apply text-[15px] leading-[24px] font-[500] md:text-[28px] md:leading-[56px];
+}
+
+@utility font-rajdhani {
+  font-family: var(--font-rajdhani);
+}
+
+@utility font-dastnevis {
+  font-family: var(--font-dastnevis);
+}
+
+
+
+/* ============================================================
+   6. THIRD-PARTY COMPONENT OVERRIDES — Swiper
+   ============================================================ */
+
+.swiper-custom-bullet {
+  background: var(--primary-3);
+  width: 18px;
+  height: 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+.swiper-custom-bullet-active {
+  background: var(--primary-1);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s ease forwards;
+}
+
+/* FIX SHADCN GLOBAL LAYOUT SHIFT */
+html body[data-scroll-locked] {
+  overflow: visible !important;
+  overscroll-behavior: contain;
+  position: relative !important;
+  padding-left: 0px;
+  padding-top: 0px;
+  padding-right: 0px;
+  margin-left: 0;
+  margin-right: 0 !important;
+  margin-top: 0;
+}
+
+.cn-toast,.cn-toast > *{font-family: 'yekanBakh';}
+@media(max-width:767px){
+  .shop-box .box-list a:nth-child(even) .border-l{border:none!important; border-image: unset!important;}
+}
+
+
+/*table*/
+.box-description table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--primary-3);
+  margin: 10px auto;
+}
+
+.box-description thead th {
+  background-color: var(--primary-2);
+  color: var(--custom-white);
+  font-weight: 600;
+  text-align: right;
+  padding: 14px 5px;
+  border-bottom: 2px solid var(--primary-3);
+}
+
+.box-description tbody td {
+  padding: 12px 5px;
+  border-bottom: 1px solid var(--primary-3);
+  text-align: right;
+  vertical-align: middle;
+  color: var(--secondary-black-1);
+}
+
+.box-description tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.box-description tbody tr:nth-child(even) {
+  background-color: var(--primary-4);
+}
+
+.box-description tbody tr:nth-child(odd) {
+  background-color: var(--custom-white);
+}
+
+.box-description tbody tr:hover {
+  background-color: var(--primary-3);
+  transition: background-color 0.2s ease;
+}
+
+.box-description tbody td:first-child {
+  font-weight: 500;
+  color: var(--secondary-1);
+}
+
+.box-description .aligncenter {
+  margin: 0 auto;
+}
+
+.box-description h1,.box-description h2,.box-description h3,.box-description h4,.box-description h5,.box-description h6{color:var(--primary-1);}
+.customScrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.customScrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.customScrollbar::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 9999px;
+}
+
+.customScrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+@media(max-width: 570px) {
+  .box-description tbody td {
+    border-left: 1px solid var(--primary-3);
+    max-width: 50px;
+    word-wrap: break-word;
+  }
+  .box-description tbody td:last-child {
+    border-left: none;
+  }
+}

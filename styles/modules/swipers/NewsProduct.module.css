@@ -1,0 +1,47 @@
+/* تنظیمات wrapper قبل از لود جاوا اسکریپت فقط برای همین کامپوننت */
+.swiper:not(:global(.swiper-initialized)) :global(.swiper-wrapper) {
+  display: flex;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* موبایل (0px به بالا) - 1.4 اسلاید */
+.swiper:not(:global(.swiper-initialized)) :global(.swiper-slide) {
+  width: calc((100% - (0.4 * 16px)) / 1.4) !important;
+  flex-shrink: 0;
+}
+
+/* صفحه نمایش 390px به بالا - 2.2 اسلاید */
+@media (min-width: 390px) {
+  .swiper:not(:global(.swiper-initialized)) :global(.swiper-slide) {
+    width: calc((100% - (1.2 * 16px)) / 2.2) !important;
+  }
+}
+
+/* صفحه نمایش 510px به بالا - 3 اسلاید */
+@media (min-width: 510px) {
+  .swiper:not(:global(.swiper-initialized)) :global(.swiper-slide) {
+    width: calc((100% - (2 * 16px)) / 3) !important;
+  }
+}
+
+/* صفحه نمایش 768px به بالا - 4 اسلاید */
+@media (min-width: 768px) {
+  .swiper:not(:global(.swiper-initialized)) :global(.swiper-slide) {
+    width: calc((100% - (3 * 16px)) / 4) !important;
+  }
+}
+
+/* صفحه نمایش 1024px به بالا - 5 اسلاید */
+@media (min-width: 1024px) {
+  .swiper:not(:global(.swiper-initialized)) :global(.swiper-slide) {
+    width: calc((100% - (4 * 16px)) / 5) !important;
+  }
+}
+
+/* صفحه نمایش 1280px به بالا - 6 اسلاید */
+@media (min-width: 1280px) {
+  .swiper:not(:global(.swiper-initialized)) :global(.swiper-slide) {
+    width: calc((100% - (5 * 16px)) / 6) !important;
+  }
+}

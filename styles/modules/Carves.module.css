@@ -1,0 +1,25 @@
+@reference "../globals.css";
+
+
+
+.rightCarve::after {
+    content: url(../../public/craves/Right.svg);
+    @apply absolute -right-[2px] top-1/2 -translate-y-1/2 z-[1];
+}
+
+.leftCarve::before {
+    content: url(../../public/craves/Left.svg);
+    @apply absolute -left-[2px] top-1/2 -translate-y-1/2 z-[2];
+}
+
+.pagination::before {
+    content: url(../../public/craves/Bottom.svg);
+    @apply absolute left-1/2 -bottom-[2px] -translate-x-1/2 block leading-[0] -z-[1];
+}
+
+.footer::after {
+    content: url(../../public/craves/Footer.svg);
+    @apply absolute left-1/2 top-0 origin-top z-[1] 
+           -translate-x-1/2 
+           max-md:-translate-x-1/2 max-md:scale-[0.7];
+}

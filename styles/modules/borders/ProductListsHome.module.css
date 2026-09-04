@@ -1,0 +1,6 @@
+/* productListBorder Horizontal Cards */
+
+/* 1 col */
+.productListBorder :global(.swiper-wrapper) :global(.swiper-slide:last-child) > div {
+  border-left: 0 !important;
+}

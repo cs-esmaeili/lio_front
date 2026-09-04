@@ -1,0 +1,35 @@
+.productCardImage::before {
+content: "";
+  position: absolute;
+  width: 96%;
+  height: 30%;
+  background-color: var(--gray-1);
+  bottom: -4px;
+  left: 5px;
+  transform: rotate(-2.7deg);
+  z-index: -5;
+  border-radius: 10px;
+  transition: opacity 300ms ease-in-out;
+}
+
+.productCardImage::after {
+content: "";
+  position: absolute;
+  width: 90%;
+  height: 30%;
+  background-color: var(--gray-1);
+  bottom: -9px;
+  left: 11px;
+  transform: rotate(-5deg);
+  z-index: -10;
+  opacity: 0.5;
+  border-radius: 10px;
+  transition: opacity 300ms ease-in-out;
+}
+
+.productCardImage:hover::before,
+.productCardImage:hover::after {
+  opacity: 0;
+}
+
+
