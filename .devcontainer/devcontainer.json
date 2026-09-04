@@ -1,0 +1,21 @@
+{
+  "name": "dudigram",
+  "build": {
+    "dockerfile": "../docker/dev/dockerfile",
+    "context": ".."
+  },
+  "forwardPorts": [3000],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  },
+  "postCreateCommand": "pnpm install",
+  "remoteEnv": {
+    "NODE_ENV": "development"
+  }
+}
