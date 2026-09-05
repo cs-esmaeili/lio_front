@@ -11,7 +11,7 @@ export default function HeroSection({ section }: { section?: any }) {
           <Slider data={slider} />
         </div>
         <div className='col-span-12 md:col-span-4 lg:col-span-3'>
-          <LeftCard  data={sideCards} />
+          {/* <LeftCard  data={sideCards} /> */}
         </div>
       </div>
     </section>

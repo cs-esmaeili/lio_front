@@ -11,15 +11,15 @@ import DodiyMagSection from '@/components/Home/DodyMagSection';
 
 // template name → component
 const sectionComponents: Record<string, React.ComponentType<{ section?: any }>> = {
-  'main-slider': HeroSection,
-   brand: ProductCategorySection,
-  'logo-slider': OfferSection,
-  'category-banner': FourBannerSection,
-  'list-products': NewProductSection,
-  'image-contact': ThreeBannerSection,
-  'base-slider': FavoriteProductSection,
-  introduction: InterduceSection,
-  article: DodiyMagSection,
+  'slider': HeroSection,
+  //  brand: ProductCategorySection,
+  // 'logo-slider': OfferSection,
+  // 'category-banner': FourBannerSection,
+  // 'list-products': NewProductSection,
+  // 'image-contact': ThreeBannerSection,
+  // 'base-slider': FavoriteProductSection,
+  // introduction: InterduceSection,
+  // article: DodiyMagSection,
 };
 
 export default function SectionsRenderer({ sections }: { sections: any[] }) {
@@ -42,7 +42,7 @@ export default function SectionsRenderer({ sections }: { sections: any[] }) {
   return (
     <>
       {processed.map((section: any, index: number) => {
-        const Component = sectionComponents[section.template];
+        const Component = sectionComponents[section.type];
         if (!Component) {
           return null;
         }

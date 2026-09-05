@@ -7,7 +7,7 @@ const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
 
 // SSR — server-side requests (Next.js server components)
 export const homeSections = async (): Promise<any> => {
-  const url = `${ssrPrefixUrl}/sections/index`;
+  const url = `${ssrPrefixUrl}/home`;
   return fetcher(url, {
     next: {
       revalidate: 60,
@@ -15,14 +15,6 @@ export const homeSections = async (): Promise<any> => {
   });
 };
 
-export const sectionData = async (sectionId: number): Promise<any> => {
-  const url = `${ssrPrefixUrl}/sections/index/view/${sectionId}`;
-  return fetcher(url, {
-    next: {
-      revalidate: 60,
-    },
-  });
-};
 
 export const favoriteProductSectionTab = (sectionId: number, slug: string): Promise<AxiosResponse> => {
   const url = `${csrPrefixUrl}/sections/index/view/${sectionId}/${slug}`;
