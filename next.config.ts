@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     qualities: [100],
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       ...siteRemotePatterns,
       

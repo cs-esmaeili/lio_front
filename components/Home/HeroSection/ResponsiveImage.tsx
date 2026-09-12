@@ -3,11 +3,11 @@ import Link from 'next/link';
 
 type SlideItem = {
   id: number;
-  src: string;
-  tablet_src: string;
-  mobile_src: string;
-  alt: string;
-  link: string;
+  desktopFileUrl: string;
+  tabletFileUrl: string;
+  mobileFileUrl: string;
+  alt?: string;
+  url?: string;
 };
 
 type ResponsiveImageProps = {
@@ -15,11 +15,6 @@ type ResponsiveImageProps = {
   use?: 'slider' | 'leftCart';
 };
 
-// TODO: remove after test — rewrites local dev URLs to production
-const normalizeUrl = (url: string) =>
-  url.startsWith('http://127.0.0.1:8001/')
-    ? url.replace('http://127.0.0.1:8001/', 'https://dudigram.behidopro.ir/')
-    : url;
 
 const ResponsiveImage = ({
   item,
@@ -30,17 +25,13 @@ const ResponsiveImage = ({
     sizes: '100vw',
   };
 
-  const src = normalizeUrl(item.src);
-  const tabletSrc = normalizeUrl(item.tablet_src);
-  const mobileSrc = normalizeUrl(item.mobile_src);
-
   const desktopHeight = use === 'slider' ? 400 : 250;
 
   const {
     props: { srcSet: desktop },
   } = getImageProps({
     ...commonProps,
-    src,
+    src: item.desktopFileUrl,
     width: 1014,
     height: desktopHeight,
   });
@@ -49,7 +40,7 @@ const ResponsiveImage = ({
     props: { srcSet: tablet },
   } = getImageProps({
     ...commonProps,
-    src: tabletSrc,
+    src: item.tabletFileUrl,
     width: 768,
     height: 300,
   });
@@ -58,25 +49,33 @@ const ResponsiveImage = ({
     props: { srcSet: mobile, ...rest },
   } = getImageProps({
     ...commonProps,
-    src: mobileSrc,
+    src: item.mobileFileUrl,
     width: 361,
     height: 447,
   });
 
-  return (
-    <Link href={item.link} prefetch={false}>
-      <picture>
-        <source media="(max-width:768px)" srcSet={mobile} />
-        <source media="(min-width:769px) and (max-width:1024px)" srcSet={tablet} />
-        <source media="(min-width:1025px)" srcSet={desktop} />
-        <img
-          {...rest}
-          className="w-full h-full object-cover object-center"
-          alt={item.alt || 'slider'}
-        />
-      </picture>
-    </Link>
+  const picture = (
+    <picture>
+      <source media="(max-width:768px)" srcSet={mobile} />
+      <source media="(min-width:769px) and (max-width:1024px)" srcSet={tablet} />
+      <source media="(min-width:1025px)" srcSet={desktop} />
+      <img
+        {...rest}
+        className="w-full h-full object-cover object-center"
+        alt={item.alt || 'slider'}
+      />
+    </picture>
   );
+
+  if (item.url) {
+    return (
+      <Link href={item.url} prefetch={false}>
+        {picture}
+      </Link>
+    );
+  }
+
+  return picture;
 };
 
 export default ResponsiveImage;

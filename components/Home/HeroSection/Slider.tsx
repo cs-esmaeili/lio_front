@@ -12,9 +12,9 @@ import Icon from "@/components/global/Icon";
 import styles from "@/styles/modules/Carves.module.css";
 import { useRef } from "react";
 
-export default function Slider({ data }: { data?: any }) {
+export default function Slider({ slides }: { slides?: any[] }) {
   const swiperRef = useRef<SwiperType | null>(null);
-  const items = data?.items || [];
+  const items = slides ?? [];
 
   if (items.length === 0) return null;
 

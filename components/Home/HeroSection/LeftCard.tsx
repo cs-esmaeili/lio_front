@@ -14,7 +14,7 @@ import ResponsiveImage from "./ResponsiveImage";
 
 export default function LeftCard({ data }: { data?: any }) {
   const swiperRef = useRef<SwiperType | null>(null);
-  const items = data?.items || [];
+  const items = data?.slides ?? [];
 
   if (items.length === 0) return null;
 
