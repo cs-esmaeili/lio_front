@@ -40,7 +40,7 @@ export default function NewProductSection({ section }: { section?: any }) {
       <div className='flex justify-between items-center mb-6'>
         <div className='flex gap-1 pr-4.25 md:pr-0'>
           <Icon IconComponent={TickSquare} size={32} variant='Bold' className='filter-[drop-shadow(0_4px_4px_rgba(187,139,80,0.25))]' />
-          <h2 className='text-secondary-black-1 lg:text-[22px]'>جدیدترین محصولات</h2>
+          <h2 className='text-secondary-black-1 lg:text-[22px]'>{section?.title}</h2>
         </div>
 
         <div className='flex gap-4 pl-4.25 md:pl-0'>
