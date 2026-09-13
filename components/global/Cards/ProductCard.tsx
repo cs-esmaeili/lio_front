@@ -21,7 +21,10 @@ type ProductCardProps = {
 export default function ProductCard({ data, onBlackBackGround = false }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
 
-  const { id, image, title, slug, default_variant, variants = [] } = data;
+  const { id, productName, productSlug, images, default_variant, variants = [] } = data;
+  const title = productName ?? data.title;
+  const slug = productSlug ?? data.slug;
+  const image = images?.find((img: any) => img.isPrimary)?.url ?? images?.[0]?.url ?? data.image;
   const productImage = image?.trim() ? image : productPlaceholder;
 
   const roundedDiscount = Math.round(default_variant?.discount_percent || 0);
@@ -32,9 +35,9 @@ export default function ProductCard({ data, onBlackBackGround = false }: Product
   // قیمت‌های نهایی (بعد از تخفیف)
   const finalPrices = availableVariants.map((v: any) => v.final_amount);
 
-  const minPrice = finalPrices.length ? Math.min(...finalPrices) : default_variant.final_amount;
+  const minPrice = finalPrices.length ? Math.min(...finalPrices) : default_variant?.final_amount;
 
-  const maxPrice = finalPrices.length ? Math.max(...finalPrices) : default_variant.final_amount;
+  const maxPrice = finalPrices.length ? Math.max(...finalPrices) : default_variant?.final_amount;
 
   const isPriceRange = minPrice !== maxPrice;
 
@@ -123,11 +126,11 @@ export default function ProductCard({ data, onBlackBackGround = false }: Product
           </div>
         )}
 
-        {productStatus(default_variant) === 'call' && (
+        {default_variant && productStatus(default_variant) === 'call' && (
           <div className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>تماس بگیرید</div>
         )}
 
-        {productStatus(default_variant) === 'notify' && (
+        {default_variant && productStatus(default_variant) === 'notify' && (
           <div className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>خبرم کن!</div>
         )}
       </div>

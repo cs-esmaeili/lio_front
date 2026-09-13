@@ -1,9 +1,12 @@
 import HeroSection from '@/components/Home/HeroSection/HeroSection';
+import NewProductSection from '@/components/Home/NewProductSection';
+import OfferSection from '@/components/Home/OfferSection/OfferSection';
 
 // section type → component
 const sectionComponents: Record<string, React.ComponentType<{ section?: any }>> = {
   SLIDER: HeroSection,
-  // PRODUCT_LIST: NewProductSection,
+  AMAZING_PRODUCTS: OfferSection,
+  PRODUCT_LIST: NewProductSection,
   // BANNER: ThreeBannerSection,
   // INTRODUCTION: InterduceSection,
 };

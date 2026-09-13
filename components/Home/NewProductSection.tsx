@@ -17,7 +17,7 @@ import MoreButton from '@/components/Home/MoreButton';
 
 export default function NewProductSection({ section }: { section?: any }) {
   const products = section?.data?.products ?? [];
-  const button_link = section?.button_link ?? '/shop';
+  const link = section?.link ?? '/shop';
 
   const swiperRef = useRef<SwiperType | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);
@@ -71,7 +71,7 @@ export default function NewProductSection({ section }: { section?: any }) {
             </button>
           </div>
 
-          <MoreButton link={button_link} />
+          <MoreButton link={link} />
         </div>
       </div>
       <Swiper

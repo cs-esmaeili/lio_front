@@ -10,11 +10,6 @@ const OfferSection = ({ section }: { section?: any }) => {
 
   const swiperRef = useRef<SwiperType | null>(null);
 
-  const offerData = {
-    link: '/products/special-offer', // لینک دلخواه
-    expiryTime: 7200, // 2 ساعت به ثانیه
-  };
-  
   const products = section?.data?.products ?? [];
 
 
@@ -25,13 +20,13 @@ const OfferSection = ({ section }: { section?: any }) => {
           <OfferCard
             onPrev={() => swiperRef.current?.slidePrev()}
             onNext={() => swiperRef.current?.slideNext()}
-            link={section.button_link}
-            expiryTime={offerData.expiryTime}
+            link={section?.link ?? '/shop'}
+            expiryTime={7200}
           />
         </div>
 
         <div className='lg:col-span-9  lg:max-[1280px]:col-span-8'>
-          <Products ref={swiperRef} data={products}/>
+          <Products ref={swiperRef} products={products}/>
         </div>
       </div>
     </section>

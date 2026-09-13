@@ -10,20 +10,8 @@ import type { Swiper as SwiperType } from 'swiper';
 import { FreeMode, Navigation } from 'swiper/modules';
 
 import ProductCard from '@/components/global/Cards/ProductCard';
-import { da } from 'zod/v4/locales';
 
-type Product = {
-  id: number;
-  name: string;
-  image: string;
-};
-
-let products: Product[] = [];
-
-const Products = ({ ref, data }: { ref: Ref<SwiperType>; data: [] }) => {
-  
-  products = data;
-
+const Products = ({ ref, products }: { ref: Ref<SwiperType>; products: any[] }) => {
   return (
     <div className={`${bordersStyle.productListBorder}`}>
       {products.length > 0 && (
@@ -45,10 +33,9 @@ const Products = ({ ref, data }: { ref: Ref<SwiperType>; data: [] }) => {
             1024: { slidesPerView: 3.3 },
             1280: { slidesPerView: 4.5 },
           }}>
-          {products.map((pro, index) => (
-            <SwiperSlide key={pro.id}>
-              {/* <div>salam</div> */}
-              <ProductCard data={pro} />
+          {products.map((product) => (
+            <SwiperSlide key={product.id}>
+              <ProductCard data={product} />
             </SwiperSlide>
           ))}
         </Swiper>
