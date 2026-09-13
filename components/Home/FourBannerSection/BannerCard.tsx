@@ -9,6 +9,7 @@ export interface BannerItem {
   tablet_src: string;
   titleEn: string;
   titleFa: string;
+  buttonTitle?: string;
   link: string;
   active?: boolean;
   onHover?: () => void;
@@ -19,7 +20,7 @@ export interface BannerItem {
 const normalizeUrl = (url: string) =>
   url.startsWith('http://127.0.0.1:8001/') ? url.replace('http://127.0.0.1:8001/', 'https://dudigram.behidopro.ir/') : url;
 
-export default function BannerCard({ src, mobile_src, tablet_src, titleEn, titleFa, link, active = false, onHover, isMobile = false }: BannerItem) {
+export default function BannerCard({ src, mobile_src, tablet_src, titleEn, titleFa, buttonTitle, link, active = false, onHover, isMobile = false }: BannerItem) {
   const commonProps = { alt: titleFa, sizes: '(max-width: 768px) 50vw, 25vw' };
 
   const desktopSrc = normalizeUrl(src);
@@ -95,7 +96,7 @@ export default function BannerCard({ src, mobile_src, tablet_src, titleEn, title
           className={`h-12.5 absolute bottom-5 lg:bottom-10 left-1/2 -translate-x-1/2 z-20 transition-all duration-700 ease-in-out flex gap-2 justify-center items-center py-2 px-2 lg:px-4 rounded-[8px] select-none cursor-pointer bg-primary-4 text-primary-1 hover:rounded-[50px] hover:text-secondary-black-3 text-sm lg:text-base whitespace-nowrap ${
             active ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
-          <span>مشاهده محصولات</span>
+          <span>{buttonTitle || 'مشاهده محصولات'}</span>
           <Icon IconComponent={ArrowLeft} size={24} variant='TwoTone' />
         </Link>
       )}

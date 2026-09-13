@@ -2,11 +2,13 @@ import { getImageProps } from 'next/image';
 import Link from 'next/link';
 
 type BannerItem = {
-  src: string;
-  tablet_src: string;
-  mobile_src: string;
-  alt: string;
-  link: string;
+  title: string;
+  subtitle: string;
+  buttonTitle: string;
+  buttonUrl: string;
+  desktopFileUrl: string;
+  tabletFileUrl: string;
+  mobileFileUrl: string;
 };
 
 const normalizeUrl = (url: string) =>
@@ -29,32 +31,32 @@ function BannerImage({
   mobileW: number;
   mobileH: number;
 }) {
-  const common = { alt: item.alt || '', sizes: '100vw' };
+  const common = { alt: item.title || '', sizes: '100vw' };
 
   const {
     props: { srcSet: desktop },
-  } = getImageProps({ ...common, src: normalizeUrl(item.src), width: desktopW, height: desktopH });
+  } = getImageProps({ ...common, src: normalizeUrl(item.desktopFileUrl), width: desktopW, height: desktopH });
 
   const {
     props: { srcSet: tablet },
-  } = getImageProps({ ...common, src: normalizeUrl(item.tablet_src), width: tabletW, height: tabletH });
+  } = getImageProps({ ...common, src: normalizeUrl(item.tabletFileUrl), width: tabletW, height: tabletH });
 
   const {
     props: { srcSet: mobile, ...rest },
-  } = getImageProps({ ...common, src: normalizeUrl(item.mobile_src), width: mobileW, height: mobileH });
+  } = getImageProps({ ...common, src: normalizeUrl(item.mobileFileUrl), width: mobileW, height: mobileH });
 
   const picture = (
     <picture>
       <source media='(max-width:768px)' srcSet={mobile} />
       <source media='(min-width:769px) and (max-width:1024px)' srcSet={tablet} />
       <source media='(min-width:1025px)' srcSet={desktop} />
-      <img {...rest} className='w-full h-full object-cover' alt={item.alt || ''} />
+      <img {...rest} className='w-full h-full object-cover' alt={item.title || ''} />
     </picture>
   );
 
-  if (item.link) {
+  if (item.buttonUrl) {
     return (
-      <Link href={item.link} className='block w-full h-full'>
+      <Link href={item.buttonUrl} className='block w-full h-full'>
         {picture}
       </Link>
     );
@@ -64,8 +66,7 @@ function BannerImage({
 }
 
 export default function ThreeBannerSection({ section }: { section?: any }) {
-  const items: BannerItem[] = section.items.vertical;
-
+  const banners: BannerItem[] = section?.data?.banners ?? [];
 
   // img1: 50vw desktop (~960px), 100vw mobile (~360px), height 280/180
   // img2: 30vw desktop (~576px), 60vw mobile (~216px), height 280/183
@@ -80,14 +81,14 @@ export default function ThreeBannerSection({ section }: { section?: any }) {
     <section className='container'>
       <div className='grid grid-cols-1 md:grid-cols-12 gap-[8px] md:gap-[24px]'>
         <div className='relative h-[180px] sm:h-[300px] md:h-[140px] lg:h-[200px] xl:h-[280px] rounded-xl overflow-hidden col-span-1 md:col-span-7'>
-          {items?.[0] && <BannerImage item={items[0]} {...dims[0]} />}
+          {banners?.[0] && <BannerImage item={banners[0]} {...dims[0]} />}
         </div>
         <div className='grid grid-cols-2 md:grid-cols-5 gap-[8px] md:gap-[24px] col-span-1 md:col-span-5'>
           <div className='relative h-[180px] sm:h-[300px] md:h-[140px] lg:h-[200px] xl:h-[280px] rounded-xl overflow-hidden col-span-1 md:col-span-3'>
-            {items?.[1] && <BannerImage item={items[1]} {...dims[1]} />}
+            {banners?.[1] && <BannerImage item={banners[1]} {...dims[1]} />}
           </div>
           <div className='relative h-[180px] sm:h-[300px] md:h-[140px] lg:h-[200px] xl:h-[280px] rounded-xl overflow-hidden col-span-1 md:col-span-2'>
-            {items?.[2] && <BannerImage item={items[2]} {...dims[2]} />}
+            {banners?.[2] && <BannerImage item={banners[2]} {...dims[2]} />}
           </div>
         </div>
       </div>

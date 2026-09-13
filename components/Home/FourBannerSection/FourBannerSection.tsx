@@ -9,7 +9,7 @@ export default function FourBannerSection({ section }: { section?: any }) {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
 
-  const products = section.items['statuses.orientation_key.'];
+  const banners = section?.data?.banners ?? [];
 
 
   useEffect(() => {
@@ -32,15 +32,16 @@ export default function FourBannerSection({ section }: { section?: any }) {
   return (
     <section className='container-wide hidden md:block'>
       <div className='grid grid-cols-2 md:grid-cols-4'>
-        {products.map((item: any, index: number) => (
+        {banners.map((item: any, index: number) => (
           <BannerCard
-            key={index}
-            src={item.src}
-            mobile_src={item.mobile_src}
-            tablet_src={item.tablet_src}
-            titleEn={"titleEN"}
-            titleFa={item.alt}
-            link={item.link}
+            key={item.id ?? index}
+            src={item.desktopFileUrl}
+            mobile_src={item.mobileFileUrl}
+            tablet_src={item.tabletFileUrl}
+            titleEn={item.subtitle}
+            titleFa={item.title}
+            buttonTitle={item.buttonTitle}
+            link={item.buttonUrl}
             active={!isMobile && activeIndex === index}
             onHover={() => handleHover(index)}
             isMobile={isMobile}

@@ -10,21 +10,20 @@ import styles from '@/styles/modules/home.module.css';
 const normalizeUrl = (url: string) =>
   url.startsWith('http://127.0.0.1:8001/') ? url.replace('http://127.0.0.1:8001/', 'https://dudigram.behidopro.ir/') : url;
 
-type InterduceItem = {
-  id: number;
-  src: string;
-  tablet_src: string;
-  mobile_src: string;
-  alt: string;
-  link: string;
+type InterduceImageProps = {
+  desktopFileUrl: string;
+  tabletFileUrl: string;
+  mobileFileUrl: string;
+  alt?: string;
+  link?: string;
 };
 
-function InterduceImage({ item }: { item: InterduceItem }) {
-  const commonProps = { alt: item.alt || '', sizes: '100vw' };
+function InterduceImage({ desktopFileUrl, tabletFileUrl, mobileFileUrl, alt = '', link }: InterduceImageProps) {
+  const commonProps = { alt: alt || '', sizes: '100vw' };
 
-  const src = normalizeUrl(item.src);
-  const tabletSrc = normalizeUrl(item.tablet_src);
-  const mobileSrc = normalizeUrl(item.mobile_src);
+  const src = normalizeUrl(desktopFileUrl);
+  const tabletSrc = normalizeUrl(tabletFileUrl);
+  const mobileSrc = normalizeUrl(mobileFileUrl);
 
   const {
     props: { srcSet: desktop },
@@ -58,13 +57,13 @@ function InterduceImage({ item }: { item: InterduceItem }) {
       <source media='(max-width:768px)' srcSet={mobile} />
       <source media='(min-width:769px) and (max-width:1024px)' srcSet={tablet} />
       <source media='(min-width:1025px)' srcSet={desktop} />
-      <img {...rest} className='w-full h-full object-cover object-bottom' alt={item.alt || ''} />
+      <img {...rest} className='w-full h-full object-cover object-bottom' alt={alt || ''} />
     </picture>
   );
 
-  if (item.link) {
+  if (link) {
     return (
-      <Link href={item.link} className='block w-full h-full'>
+      <Link href={link} className='block w-full h-full'>
         {picture}
       </Link>
     );
@@ -74,7 +73,8 @@ function InterduceImage({ item }: { item: InterduceItem }) {
 }
 
 export default function InterduceSection({ section }: { section?: any }) {
-  const { title, button_link, description, items } = section;
+  const titles = section?.data?.titles ?? {};
+  const { title, subtitle, description } = titles;
   const [amount, setAmount] = useState(0.35);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function InterduceSection({ section }: { section?: any }) {
           className='headerpart grid grid-cols-5 gap-6'>
           <div className='flex flex-col gap-y-6 xl:items-start items-center justify-center h-full  col-span-5 xl:col-span-2'>
             <h2 className='text-3xl text-primary-1'>{title}</h2>
-            <span className='text-1xl sm:text-2xl font-medium xl:text-start text-center text-secondary-black-3'>{button_link}</span>
+            <span className='text-1xl sm:text-2xl font-medium xl:text-start text-center text-secondary-black-3'>{subtitle}</span>
           </div>
           <div className='CenterPart col-span-5 xl:col-span-1'>
             <div className='m-auto h-40.75 w-40.75 xl:h-58 xl:w-58 lining-nums bg-linear-to-l from-primary-3 to-primary-2 rounded-full flex items-center justify-center'>
@@ -197,7 +197,13 @@ export default function InterduceSection({ section }: { section?: any }) {
           </div>
 
           <div className='h-[12rem] sm:h-[20rem] lg:h-[30rem] w-full shrink-0 rounded-t-2xl lg:rounded-none overflow-hidden'>
-            {items?.[0] && <InterduceImage item={items[0]} />}
+            <InterduceImage
+              desktopFileUrl={section?.data?.desktopFileUrl}
+              tabletFileUrl={section?.data?.tabletFileUrl}
+              mobileFileUrl={section?.data?.mobileFileUrl}
+              alt={title}
+              link={section?.link}
+            />
           </div>
         </div>
       </motion.div>
@@ -213,7 +219,13 @@ export default function InterduceSection({ section }: { section?: any }) {
         }}
         className='relative container mt-6 group block'>
           <div className='w-full shrink-0 rounded-2xl overflow-hidden'>
-            {items?.[0] && <InterduceImage item={items[0]} />}
+            <InterduceImage
+              desktopFileUrl={section?.data?.desktopFileUrl}
+              tabletFileUrl={section?.data?.tabletFileUrl}
+              mobileFileUrl={section?.data?.mobileFileUrl}
+              alt={title}
+              link={section?.link}
+            />
           </div>
       </motion.div>
       
