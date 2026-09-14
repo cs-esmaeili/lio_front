@@ -1,15 +1,12 @@
 import Icon from '@/components/global/Icon';
-import { Star, Timer1 } from 'iconsax-reactjs';
+import { Star } from 'iconsax-reactjs';
 import HeaderClient from './Header.Client';
-import {HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import type { Communication, FooterData, HeaderData } from '@/typescript/types/header/header.types';
 
 
-export default async function Header({ wideContainer, headerData, footerData }: { wideContainer: boolean; headerData: any; footerData?: any }) {
+export default function Header({ wideContainer, headerData, footerData }: { wideContainer: boolean; headerData: HeaderData; footerData?: FooterData }) {
 
-
-  const footer = await  HeaderFooterInfo("footer");
-  
-  const socialToAction = footer.data.communications || footer.data.communications || [];
+  const socialToAction: Communication[] = footerData?.communications ?? [];
 
   return (
     <>
@@ -26,6 +23,7 @@ export default async function Header({ wideContainer, headerData, footerData }: 
             />
             <span className='text-secondary-2 text-caption font-normal text-xs'>دودیگرام بزرگترین پلتفرم آنلاین فروش دخانیات</span>
           </div>
+          {/* footerData-dependent support phone — commented for now
           <div className='flex items-center justify-center gap-1 lg:gap-2'>
             <span className='text-secondary-black-2 text-regular'>تماس با پشتیبانی</span>
             <a
@@ -44,9 +42,10 @@ export default async function Header({ wideContainer, headerData, footerData }: 
               toneTwoColor='--color-secondary-black-3'
             />
           </div>
+          */}
         </div>
       </div>
-      <HeaderClient wideContainer={wideContainer} headerData={headerData} footerData={footerData} socialToAction={socialToAction} />
+      <HeaderClient wideContainer={wideContainer} headerData={headerData} socialToAction={socialToAction} />
     </>
   );
 }

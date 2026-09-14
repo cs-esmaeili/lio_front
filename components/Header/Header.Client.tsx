@@ -13,22 +13,21 @@ import Link from 'next/link';
 import MobileMenu from '@/components/Header/mobile/MobileMenu';
 import UserNavButton from '@/components/Header/UserNavButton';
 import { useCart } from '@/hooks/shop/useCart';
-import TrakingOrder from '@/components/Header/TrakingOrder';
+// import TrakingOrder from '@/components/Header/TrakingOrder';
 
 import { usePathname } from 'next/navigation';
 import DashboardMobileMenu from '@/components/Header/mobile/DashboardMobileMenu';
+import type { Communication, HeaderData } from '@/typescript/types/header/header.types';
 
 
 export default function HeaderClient({
   wideContainer,
   headerData,
-  footerData,
   socialToAction,
 }: {
   wideContainer: boolean;
-  headerData: any;
-  footerData: any;
-  socialToAction: any;
+  headerData: HeaderData;
+  socialToAction: Communication[];
 }) {
   const [isSticky, setIsSticky] = useState(false);
   const { isOpen: isBasketOpen, open: openBasket, close: closeBasket } = useBasketUIStore();
@@ -99,7 +98,8 @@ export default function HeaderClient({
             </div>
 
             <div className='flex-1 flex justify-end gap-2'>
-              <TrakingOrder footerData={footerData} />
+              {/* footerData-dependent tracking order — commented for now */}
+              {/* <TrakingOrder footerData={footerData} /> */}
               <SearchPopover />
               <CartIcon onClick={openBasket} />
               <CompareIcon />

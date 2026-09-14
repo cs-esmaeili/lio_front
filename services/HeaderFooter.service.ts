@@ -1,10 +1,10 @@
-import type { AxiosResponse } from 'axios';
-import http from '@/services/core/clientService';
 import { cache } from 'react';
 import { fetcher } from '@/services/core/SSRService';
+import { ApiError } from '@/utils/api-error';
+import { CategoriesResponseSchema } from '@/typescript/schemas/header/menu.schema';
+import type { MenuItem } from '@/typescript/schemas/header/menu.schema';
 
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
-const csrPrefixUrl = `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT}`;
 
 
 // SSR — server-side requests (Next.js server components)
@@ -19,14 +19,22 @@ export const HeaderFooterInfo = cache(async (type: string): Promise<any> => {
   });
 });
 
-export const categories = cache(async (): Promise<any> => {
+export const categories = cache(async (): Promise<MenuItem[]> => {
   const url = `${ssrPrefixUrl}/categories`;
 
-  return fetcher(url, {
+  const data = await fetcher<unknown>(url, {
     next: {
       revalidate: 60,
     },
   });
+
+  const parsed = CategoriesResponseSchema.safeParse(data);
+
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ دسته‌بندی‌ها نامعتبر است', parsed.error);
+  }
+
+  return parsed.data.data.categories;
 });
 
 export const searchCategories = cache(
