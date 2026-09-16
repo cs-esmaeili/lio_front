@@ -3,20 +3,38 @@ import { fetcher } from '@/services/core/SSRService';
 import { ApiError } from '@/utils/api-error';
 import { CategoriesResponseSchema } from '@/typescript/schemas/header/menu.schema';
 import type { MenuItem } from '@/typescript/schemas/header/menu.schema';
+import { HeaderSectionSchema } from '@/typescript/schemas/header/header-section.schema';
+import type { HeaderData } from '@/typescript/types/header/header.types';
 
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
 
 
-// SSR — server-side requests (Next.js server components)
-// cache() ensures single call per unique args per request, even across multiple layouts
 export const HeaderFooterInfo = cache(async (type: string): Promise<any> => {
-  const url = `${ssrPrefixUrl}/menu-options?type=${type}`;
+  const url = `${ssrPrefixUrl}/page-sections/section?location=${type}`;
 
   return fetcher(url, {
     next: {
       revalidate: 60,
     },
   });
+});
+
+export const getHeaderData = cache(async (): Promise<HeaderData> => {
+  const url = `${ssrPrefixUrl}/page-sections/section?location=HEADER`;
+
+  const data = await fetcher<unknown>(url, {
+    next: {
+      revalidate: 60,
+    },
+  });
+
+  const parsed = HeaderSectionSchema.safeParse(data);
+
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ هدر نامعتبر است', parsed.error);
+  }
+
+  return { header: parsed.data.data.data.items };
 });
 
 export const categories = cache(async (): Promise<MenuItem[]> => {
