@@ -17,7 +17,7 @@ export const homeSections = async (): Promise<any> => {
 
 // SSR — new page-sections structure for the home page
 export const homePageSections = async (): Promise<any> => {
-  const url = `${ssrPrefixUrl}/page-sections?id=1&entityType=HOME`;
+  const url = `${ssrPrefixUrl}/page-sections/page?entityType=HOME`;
   const res = await fetcher<any>(url, {
     next: {
       revalidate: 60,
