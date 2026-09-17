@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { resolveFileUrl } from '@/utils/fileUrl';
 
 interface FooterLinkModel {
   id: number;
@@ -13,6 +14,7 @@ interface FooterModel {
   description: string | null;
   slogan: string | null;
   support_phone?: string;
+  logo: string | null;
 }
 
 const GENERAL_SECTION_TITLE = 'دسترسی سریع';
@@ -59,6 +61,13 @@ export const FooterSectionSchema = z
       type: z.string(),
       location: z.string(),
       data: z.object({
+        logo: z
+          .object({
+            small: z.string().nullable().catch(null),
+            large: z.string().nullable().catch(null),
+          })
+          .nullable()
+          .catch(null),
         description: z.string().nullable().catch(null),
         slogan: z.string().nullable().catch(null),
         supportPhone: z.string().nullable().catch(null),
@@ -91,6 +100,7 @@ export const FooterSectionSchema = z
       description: section.description,
       slogan: section.slogan,
       support_phone: section.supportPhone ?? undefined,
+      logo: resolveFileUrl(section.logo?.large ?? section.logo?.small),
     };
   });
 

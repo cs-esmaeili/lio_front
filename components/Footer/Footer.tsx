@@ -101,7 +101,7 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
 
           {/* Logo + social communications */}
           <div className='col-span-7 md:col-span-2 xl:col-span-2 max-md:my-6 flex flex-col items-center'>
-            <Image src={logo} alt='logo' className='mb-4' width={184} height={87} />
+            <Image src={footerData?.logo || logo} alt='logo' className='mb-4' width={184} height={87} />
             <div className='flex flex-row xl:flex-col items-center justify-center gap-2 w-full'>
               {communications.map((comm) => (
                 <a

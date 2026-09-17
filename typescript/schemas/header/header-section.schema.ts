@@ -50,6 +50,15 @@ export const HeaderSectionSchema = z.object({
     type: z.string(),
     location: z.string(),
     data: z.object({
+      slogan: z.string().nullable().catch(null),
+      supportPhone: z.string().nullable().catch(null),
+      logo: z
+        .object({
+          small: z.string().nullable().catch(null),
+          large: z.string().nullable().catch(null),
+        })
+        .nullable()
+        .catch(null),
       items: z.array(HeaderItemSchema),
     }),
   }),

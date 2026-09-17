@@ -10,6 +10,7 @@ export interface FooterCommunication {
 
 export interface FooterData {
   footer: FooterLink[];
+  logo?: string | null;
   description?: string | null;
   slogan?: string | null;
   communications?: FooterCommunication[];

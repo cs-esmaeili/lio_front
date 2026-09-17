@@ -7,6 +7,7 @@ import { HeaderSectionSchema } from '@/typescript/schemas/header/header-section.
 import type { HeaderData } from '@/typescript/types/header/header.types';
 import { FooterSectionSchema } from '@/typescript/schemas/footer/footer-section.schema';
 import type { FooterData } from '@/typescript/types/footer/footer.types';
+import { resolveFileUrl } from '@/utils/fileUrl';
 
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
 
@@ -27,7 +28,14 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
     throw new ApiError(422, 'پاسخ هدر نامعتبر است', parsed.error);
   }
 
-  return { header: parsed.data.data.data.items };
+  const section = parsed.data.data.data;
+
+  return {
+    header: section.items,
+    slogan: section.slogan,
+    supportPhone: section.supportPhone,
+    logo: resolveFileUrl(section.logo?.large ?? section.logo?.small) ?? undefined,
+  };
 });
 
 export const getFooterData = cache(async (): Promise<FooterData> => {
