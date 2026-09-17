@@ -23,8 +23,6 @@ import websiteSchema from '@/schema/seo/website';
 export default async function Home() {
   const data = await homePageSections();
   const sections = data?.sections ?? [];
-
-  console.log("sections" , sections[0].data.slides);
   
   // const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   // const siteUrl = process.env.NEXT_PUBLIC_SITE_ENDPOINT;

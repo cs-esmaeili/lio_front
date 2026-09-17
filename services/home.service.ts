@@ -1,6 +1,9 @@
 import type { AxiosResponse } from 'axios';
 import http from '@/services/core/clientService';
 import { fetcher } from '@/services/core/SSRService';
+import { ApiError } from '@/utils/api-error';
+import { HomePageSectionsSchema } from '@/typescript/schemas/home/home-sections.schema';
+import type { HomePageSections } from '@/typescript/schemas/home/home-sections.schema';
 
 const csrPrefixUrl = `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT}`;
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
@@ -16,14 +19,21 @@ export const homeSections = async (): Promise<any> => {
 };
 
 // SSR — new page-sections structure for the home page
-export const homePageSections = async (): Promise<any> => {
+export const homePageSections = async (): Promise<HomePageSections> => {
   const url = `${ssrPrefixUrl}/page-sections/page?entityType=HOME`;
-  const res = await fetcher<any>(url, {
+  const res = await fetcher<unknown>(url, {
     next: {
       revalidate: 60,
     },
   });
-  return res?.data;
+
+  const parsed = HomePageSectionsSchema.safeParse(res);
+
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ بخش‌های صفحه اصلی نامعتبر است', parsed.error);
+  }
+
+  return parsed.data;
 };
 
 

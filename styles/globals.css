@@ -9,15 +9,15 @@
 :root {
 
   /* --- Brand: Primary (Golden / Warm Brown) --- */
-  --primary-black-2: #5A472F;
-  --primary-black-1: #8A6940;
-  --primary-1: #BB8B50;
-  --primary-2: #CFAE84;
-  --primary-3: #E4D1B9;
-  --primary-4: #F8F3ED;
-  --primary-0: #02C39A;
-  --c-primary-1: #051F40;
-  --secondary-black: red;
+  --primary-black-2: #3A0B10;
+  --primary-black-1: #6B121B;
+  --primary-1: #C81E2E;
+  --primary-2: #E4032E;
+  --primary-3: #F08088;
+  --primary-4: #FCEBEC;
+  --primary-0: #7CB342;
+  --c-primary-1: #150C24;
+  --secondary-black: #0A0612;
   --secondary-black-3: #060607;
   --secondary-black-2: #1A1A1A;
   --secondary-black-1: #2D2D2E;
@@ -32,7 +32,9 @@
 
   --custom-purple: #4D3884;
   --custom-yellow: #EFB80B;
-  --custom-white: #ffff;
+  --custom-green: #7CB342;
+  --custom-red: #E4032E;
+  --custom-white: #FFFFFF;
 
   /* --- Layout --- */
   --globalPadding: 0.5rem 1rem;
