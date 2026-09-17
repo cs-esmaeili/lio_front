@@ -1,7 +1,6 @@
 import localFont from 'next/font/local';
 import '@/styles/globals.css';
 import { cn } from '@/lib/utils';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
 import { AuthListener } from '@/components/global/AuthListener';
 import Script from 'next/script';
 import { isSeoEnabled, SEO_DEFAULT_ROBOTS } from '@/lib/seo';
@@ -34,13 +33,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const headerData = await HeaderFooterInfo('header').catch(() => null);
-  const faviconUrl = headerData?.data?.favicon ?? null;
-
   return (
     <html lang='fa' dir='rtl' className={cn('overflow-x-hidden', yekanBakh.className, rajdhani.variable, dastnevis.variable)}>
       <body className='[scrollbar-gutter:stable]'>
-        {faviconUrl && <link rel='icon' href={faviconUrl} />}
         <AuthListener />
 
         <Script src='https://www.googletagmanager.com/gtag/js?id=G-5J1LNRS3YW' strategy='afterInteractive' />

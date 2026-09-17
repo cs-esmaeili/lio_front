@@ -6,7 +6,7 @@ import { convertFilters } from '@/utils/product/ConvertFilters';
 import useSeo from '@/hooks/seo/useSeo';
 import JsonLd from '@/components/seo/JsonLd';
 import collectionSchema from '@/schema/seo/collection';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getFooterData } from '@/services/HeaderFooter.service';
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -52,9 +52,9 @@ const page = async ({ params, searchParams }: Props) => {
 
   serverFilters.filters = convertFilters(serverFilters.filters);
 
-  const footer = await HeaderFooterInfo('footer');
-const callToAction = footer.data.support_phone || footer.data.telephone || '';
-const socialToAction = footer.data.communications || footer.data.communications || [];
+  const footer = await getFooterData();
+const callToAction = footer.support_phone || footer.telephone || '';
+const socialToAction = footer.communications || [];
 
   return (
     <>

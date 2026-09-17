@@ -10,7 +10,7 @@ import { homeSections } from '@/services/home.service';
 import { pageData } from '@/services/page.service';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getFooterData } from '@/services/HeaderFooter.service';
 import useSeo from '@/hooks/seo/useSeo';
 import JsonLd from '@/components/seo/JsonLd';
 import landingPageSchema from '@/schema/seo/landingPage';
@@ -85,11 +85,11 @@ export default async function DynamicLandingPage({ params }: Props) {
   });
   const breadcrumbJsonLd = breadcrumbSchema(breadcrumbItems);
 
-  const footer = await HeaderFooterInfo('footer');
+  const footer = await getFooterData();
 
-  const callToAction = footer.data.support_phone || footer.data.telephone || '';
+  const callToAction = footer.support_phone || footer.telephone || '';
 
-  const socialToAction = footer.data.communications || [];
+  const socialToAction = footer.communications || [];
 
   const homeData = await homeSections();
 

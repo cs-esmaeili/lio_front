@@ -4,7 +4,7 @@ import { buildQueryString } from '@/hooks/urlQuery/serverQuery';
 import { productListSSR, productFiltersSSR } from '@/services/shop.service';
 import { convertFilters } from '@/utils/product/ConvertFilters';
 import useSeo from '@/hooks/seo/useSeo';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getFooterData } from '@/services/HeaderFooter.service';
 import JsonLd from '@/components/seo/JsonLd';
 import shopSchema from '@/schema/seo/shop';
 import breadcrumbSchema from '@/schema/seo/breadcrumb';
@@ -53,9 +53,9 @@ const page = async ({ searchParams }: { params: Promise<{ slug: string }>; searc
 
   serverFilters.filters = convertFilters(serverFilters.filters);
 
-  const footer = await HeaderFooterInfo('footer');
-  const callToAction = footer.data.support_phone || footer.data.telephone || '';
-  const socialToAction = footer.data.communications || footer.data.communications || [];
+  const footer = await getFooterData();
+  const callToAction = footer.support_phone || footer.telephone || '';
+  const socialToAction = footer.communications || [];
 
   return (
     <>

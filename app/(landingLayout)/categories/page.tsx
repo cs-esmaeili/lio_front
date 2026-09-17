@@ -1,5 +1,5 @@
 import CategoryMobile from '@/components/Header/categoriesMobile/CategoryMobile';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getHeaderData } from '@/services/HeaderFooter.service';
 import type { CategoryItem } from '@/components/Header/categoriesMobile/types';
 
 function toCategoryItem(item: any): CategoryItem {
@@ -13,8 +13,8 @@ function toCategoryItem(item: any): CategoryItem {
 }
 
 export default async function CategoriesPage() {
-  const headerData = await HeaderFooterInfo('header');
-  const menuList: CategoryItem[] = (headerData.data?.header ?? []).map((item: any) => toCategoryItem(item));
+  const headerData = await getHeaderData();
+  const menuList: CategoryItem[] = headerData.header.map((item) => toCategoryItem(item));
 
   
   return (

@@ -5,19 +5,12 @@ import { CategoriesResponseSchema } from '@/typescript/schemas/header/menu.schem
 import type { MenuItem } from '@/typescript/schemas/header/menu.schema';
 import { HeaderSectionSchema } from '@/typescript/schemas/header/header-section.schema';
 import type { HeaderData } from '@/typescript/types/header/header.types';
+import { FooterSectionSchema } from '@/typescript/schemas/footer/footer-section.schema';
+import type { FooterData } from '@/typescript/types/footer/footer.types';
 
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
 
 
-export const HeaderFooterInfo = cache(async (type: string): Promise<any> => {
-  const url = `${ssrPrefixUrl}/page-sections/section?location=${type}`;
-
-  return fetcher(url, {
-    next: {
-      revalidate: 60,
-    },
-  });
-});
 
 export const getHeaderData = cache(async (): Promise<HeaderData> => {
   const url = `${ssrPrefixUrl}/page-sections/section?location=HEADER`;
@@ -35,6 +28,24 @@ export const getHeaderData = cache(async (): Promise<HeaderData> => {
   }
 
   return { header: parsed.data.data.data.items };
+});
+
+export const getFooterData = cache(async (): Promise<FooterData> => {
+  const url = `${ssrPrefixUrl}/page-sections/section?location=FOOTER`;
+
+  const data = await fetcher<unknown>(url, {
+    next: {
+      revalidate: 60,
+    },
+  });
+
+  const parsed = FooterSectionSchema.safeParse(data);
+
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ فوتر نامعتبر است', parsed.error);
+  }
+
+  return { footer: parsed.data };
 });
 
 export const categories = cache(async (): Promise<MenuItem[]> => {

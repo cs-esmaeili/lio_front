@@ -1,7 +1,8 @@
 import Icon from '@/components/global/Icon';
 import { Star } from 'iconsax-reactjs';
 import HeaderClient from './Header.Client';
-import type { Communication, FooterData, HeaderData } from '@/typescript/types/header/header.types';
+import type { Communication, HeaderData } from '@/typescript/types/header/header.types';
+import type { FooterData } from '@/typescript/types/footer/footer.types';
 
 
 export default function Header({ wideContainer, headerData, footerData }: { wideContainer: boolean; headerData: HeaderData; footerData?: FooterData }) {

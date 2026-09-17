@@ -1,11 +1,7 @@
 import Icon from '@/components/global/Icon';
 import { Mobile } from 'iconsax-reactjs';
 
-type callProps = {
-  callToAction?: any;
-};
-
-const DoodiContact = ({ callToAction }: { callToAction: callProps }) => {
+const DoodiContact = ({ callToAction }: { callToAction?: string }) => {
   return (
     <div className={`p-4 flex flex-col gap-4 bg-linear-to-r from-primary-3 to-primary-1 rounded-[20px]`}>
       <a href={`tel:${callToAction}`}>

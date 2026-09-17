@@ -8,34 +8,7 @@ import ScrollToTopButton from '@/components/Footer/ScrollToTopButton';
 import TrackingSticky from '@/components/Footer/TrackingSticky';
 
 import styles from '@/styles/modules/Carves.module.css';
-
-type FooterLink = {
-  id: number;
-  title: string;
-  link: string;
-  image: string | null;
-  sub_menus: FooterLink[];
-};
-
-type Communication = {
-  title: string;
-  image: string;
-  key: string;
-  value: string;
-  full_url: string;
-};
-
-type FooterData = {
-  footer: FooterLink[];
-  address: string;
-  telephone: string;
-  open_hour: string;
-  support_hour: string;
-  support_phone: string;
-  footer_text: string;
-  site_name : string;
-  communications: Communication[];
-};
+import type { FooterData } from '@/typescript/types/footer/footer.types';
 
 export default function Footer({ wideContainer, footerData }: { wideContainer: boolean; footerData: FooterData }) {
 
@@ -82,7 +55,6 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
 
             const subMenus = section.sub_menus ?? [];
 
-            
             return (
               <div key={section.id} className={colClasses}>
                 <span className='text-gray-2 text-regular pb-6 block'>{section.title}</span>

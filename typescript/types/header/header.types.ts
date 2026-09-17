@@ -9,9 +9,3 @@ export interface Communication {
   key: string;
   full_url: string;
 }
-
-export interface FooterData {
-  communications?: Communication[];
-  support_phone?: string;
-  telephone?: string;
-}

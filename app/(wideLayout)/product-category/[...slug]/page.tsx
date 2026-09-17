@@ -6,7 +6,7 @@ import { convertFilters } from '@/utils/product/ConvertFilters';
 import useSeo from '@/hooks/seo/useSeo';
 import categorySchema from '@/schema/seo/category';
 import JsonLd from '@/components/seo/JsonLd';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getFooterData } from '@/services/HeaderFooter.service';
 import breadcrumbSchema from '@/schema/seo/breadcrumb';
 
 type Props = {
@@ -110,9 +110,9 @@ const page = async ({ params, searchParams }: Props) => {
 
   serverFilters.filters = convertFilters(serverFilters.filters);
 
-  const footer = await HeaderFooterInfo('footer');
-  const callToAction = footer.data.support_phone || footer.data.telephone || '';
-  const socialToAction = footer.data.communications || footer.data.communications || [];
+  const footer = await getFooterData();
+  const callToAction = footer.support_phone || footer.telephone || '';
+  const socialToAction = footer.communications || [];
 
 
   return (

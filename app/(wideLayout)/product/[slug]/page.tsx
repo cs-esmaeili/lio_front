@@ -15,7 +15,7 @@ import useSeo from '@/hooks/seo/useSeo';
 import productSchema from '@/schema/seo/product';
 import JsonLd from '@/components/seo/JsonLd';
 import { convertSlugToBarcode } from '@/services/singelProduct.service';
-import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getFooterData } from '@/services/HeaderFooter.service';
 import breadcrumbSchema from '@/schema/seo/breadcrumb';
 import reviewSchema from '@/schema/seo/review';
 
@@ -67,11 +67,11 @@ export default async function Page({ params, searchParams }: Props) {
     barcode: string;
   };
 
-  const footer = await HeaderFooterInfo('footer');
+  const footer = await getFooterData();
 
-  const callToAction = footer.data.support_phone || footer.data.telephone || '';
+  const callToAction = footer.support_phone || footer.telephone || '';
 
-  const socialToAction = footer.data.communications || footer.data.communications || [];
+  const socialToAction = footer.communications || [];
 
   const currentTab = tab || 'overview';
 

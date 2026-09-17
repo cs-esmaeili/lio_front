@@ -1,17 +1,15 @@
 import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
+import BottomNavigation from '@/components/Footer/BottomNavigation';
 import { Toaster } from '@/components/shadcn/sonner';
-import { getHeaderData } from '@/services/HeaderFooter.service';
-// import Footer from '@/components/Footer/Footer';
-// import BottomNavigation from '@/components/Footer/BottomNavigation';
-// import { HeaderFooterInfo } from '@/services/HeaderFooter.service';
+import { getFooterData, getHeaderData } from '@/services/HeaderFooter.service';
 // import JsonLd from '@/components/seo/JsonLd';
 // import organizationSchema from '@/schema/seo/organization';
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
 
-  const headerData = await getHeaderData();
 
-  // const [headerData, footerData] = await Promise.all([HeaderFooterInfo('header'), HeaderFooterInfo('footer')]);
+  const [headerData, footerData] = await Promise.all([getHeaderData(), getFooterData()]);
 
   // const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   // const siteUrl = process.env.NEXT_PUBLIC_SITE_ENDPOINT;
@@ -27,8 +25,8 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       {/* <JsonLd data={organizationJsonLd} /> */}
       <Header wideContainer={false} headerData={headerData} />
       <main>{children}</main>
-      {/* <Footer wideContainer={false} footerData={footerData.data} /> */}
-      {/* <BottomNavigation supportPhone={footerData.data?.support_phone || footerData.data?.telephone} /> */}
+      <Footer wideContainer={false} footerData={footerData} />
+      <BottomNavigation supportPhone={footerData.support_phone || footerData.telephone} />
       <Toaster />
     </>
   );
