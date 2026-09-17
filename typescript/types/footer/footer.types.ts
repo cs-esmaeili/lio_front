@@ -10,9 +10,9 @@ export interface FooterCommunication {
 
 export interface FooterData {
   footer: FooterLink[];
+  description?: string | null;
+  slogan?: string | null;
   communications?: FooterCommunication[];
   support_phone?: string;
   telephone?: string;
-  site_name?: string;
-  footer_text?: string;
 }

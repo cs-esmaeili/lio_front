@@ -45,7 +45,7 @@ export const getFooterData = cache(async (): Promise<FooterData> => {
     throw new ApiError(422, 'پاسخ فوتر نامعتبر است', parsed.error);
   }
 
-  return { footer: parsed.data };
+  return parsed.data;
 });
 
 export const categories = cache(async (): Promise<MenuItem[]> => {

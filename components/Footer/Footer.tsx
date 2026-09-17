@@ -11,14 +11,13 @@ import styles from '@/styles/modules/Carves.module.css';
 import type { FooterData } from '@/typescript/types/footer/footer.types';
 
 export default function Footer({ wideContainer, footerData }: { wideContainer: boolean; footerData: FooterData }) {
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
 
   const footerSections = footerData?.footer ?? [];
   const communications = footerData?.communications ?? [];
 
-
   return (
     <footer className={`relative ${styles.footer} bg-secondary-black-2 mt-2.5`}>
-
       <TrackingSticky />
 
       <div className='absolute top-[-2%] md:top-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10'>
@@ -105,10 +104,15 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
             <Image src={logo} alt='logo' className='mb-4' width={184} height={87} />
             <div className='flex flex-row xl:flex-col items-center justify-center gap-2 w-full'>
               {communications.map((comm) => (
-                  <a key={comm.key} className='flex items-center md:mb-2 justify-center gap-3.5' href={comm.full_url} target='_blank' rel='noopener noreferrer'>
-                    <span className='text-gray-2 tracking-[0.25rem] hidden xl:block'>{comm.key}</span>
-                    <Image src={comm.image} sizes='30' width={30} height={30} alt={comm.key} />
-                  </a>
+                <a
+                  key={comm.key}
+                  className='flex items-center md:mb-2 justify-center gap-3.5'
+                  href={comm.full_url}
+                  target='_blank'
+                  rel='noopener noreferrer'>
+                  <span className='text-gray-2 tracking-[0.25rem] hidden xl:block'>{comm.key}</span>
+                  <Image src={comm.image} sizes='30' width={30} height={30} alt={comm.key} />
+                </a>
               ))}
             </div>
           </div>
@@ -116,12 +120,10 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
           {/* About section */}
           <div className='col-span-7 xl:col-span-3'>
             <div className='text-gray-1 text-regular flex justify-between w-full items-center'>
-              <span className='text-regular'>{footerData?.site_name || 'دودیگرام'}</span>
-              <span className='text-regular font-normal'>دودیگرام بزرگترین پلتفرم آنلاین فروش دخانیات</span>
+              <span className='text-regular'>{siteName}</span>
+              <span className='text-regular'>{footerData?.slogan}</span>
             </div>
-            {footerData?.footer_text && (
-              <div className='text-gray-1 text-regular font-light mt-6 text-justify' dangerouslySetInnerHTML={{ __html: footerData.footer_text }} />
-            )}
+            {footerData?.description && <div className='text-gray-1 text-regular font-light mt-6 text-justify'>{footerData.description}</div>}
           </div>
         </div>
 
