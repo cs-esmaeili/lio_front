@@ -10,11 +10,13 @@ import Image from 'next/image';
 import { useGetFavorites } from '@/hooks/favorites/useGetFavorites';
 import { useRemoveFavorite } from '@/hooks/favorites/useRemoveFavorite';
 import { PaginationGenerator } from '@/components/global/PaginationGenerator';
+import { normalizePagination } from '@/utils/pagination';
 
 export default function FavoritePage() {
   const pageInfo = { href: '/dashboard/favorite', label: 'علاقه‌مندی‌ها', icon: Like };
   const { favorites, loading, pagination, fetchFavorites, setFavorites } = useGetFavorites();
   const { removeFavorite } = useRemoveFavorite();
+  const paginationInfo = normalizePagination(pagination);
 
   useEffect(() => {
     fetchFavorites(1);
@@ -82,10 +84,10 @@ export default function FavoritePage() {
             ))}
           </div>
 
-          {pagination && pagination.last_page > 1 && (
+          {paginationInfo.totalPages > 1 && (
             <div className='flex justify-center mt-6'>
               <Suspense fallback={null}>
-                <PaginationGenerator pagination={pagination} onChange={(page) => fetchFavorites(page)} />
+                <PaginationGenerator pagination={paginationInfo} onChange={(page) => fetchFavorites(page)} />
               </Suspense>
             </div>
           )}

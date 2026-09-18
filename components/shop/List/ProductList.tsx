@@ -6,6 +6,7 @@ import ProductCard from '@/components/global/Cards/ProductCard';
 import ProductCardHorizontal from '@/components/global/Cards/ProductCardHorizontal';
 import { PaginationGenerator } from '@/components/global/PaginationGenerator';
 import { useShopContext } from '@/providers/ShopProvider';
+import { normalizePagination } from '@/utils/pagination';
 import styles from '@/styles/modules/borders/ProductListBorders.module.css';
 import { Spinner } from '@/components/shadcn/spinner';
 
@@ -30,6 +31,7 @@ const ProductList = ({ products, pagination, loading, setOpenFilter }: Props) =>
   }, []);
 
   const activeSortId = liveParams.get('sort');
+  const paginationInfo = normalizePagination(pagination);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -45,7 +47,7 @@ const ProductList = ({ products, pagination, loading, setOpenFilter }: Props) =>
       <SortTabs
         setCardHorizontalMode={setCardHorizontalMode}
         setOpenFilter={setOpenFilter}
-        productCount={pagination?.total}
+        productCount={paginationInfo.total}
         activeSortId={activeSortId}
         activeFilterCount={activeFilterCount}
       />
@@ -75,15 +77,17 @@ const ProductList = ({ products, pagination, loading, setOpenFilter }: Props) =>
             )}
           </div>
 
-          <PaginationGenerator
-            pagination={pagination}
-            onChange={(page) => {
-              const next = new URLSearchParams(liveParams.toString());
-              next.set('page', String(page));
-              onUrlChange(next);
-            }}
-            autoUpdateUrl={false}
-          />
+          {paginationInfo.totalPages > 1 && (
+            <PaginationGenerator
+              pagination={paginationInfo}
+              onChange={(page) => {
+                const next = new URLSearchParams(liveParams.toString());
+                next.set('page', String(page));
+                onUrlChange(next);
+              }}
+              autoUpdateUrl={false}
+            />
+          )}
         </>
       )}
     </div>

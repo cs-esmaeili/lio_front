@@ -14,6 +14,7 @@ import TicketViewModal from '@/components/dashboard/ticket/TicketViewModal';
 import TicketList from '@/components/dashboard/ticket/TicketList';
 
 import { PaginationGenerator } from '@/components/global/PaginationGenerator';
+import { normalizePagination } from '@/utils/pagination';
 import { Spinner } from '@/components/shadcn/spinner';
 
 import { useTicketsList } from '@/hooks/useTicketsList';
@@ -26,6 +27,7 @@ export default function TicketPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const { fetchTickets, loading, tickets, pagination } = useTicketsList();
+  const paginationInfo = normalizePagination(pagination);
 
   useEffect(() => {
     fetchTickets(currentPage);
@@ -104,9 +106,9 @@ export default function TicketPage() {
           <>
             <TicketList tickets={tickets} onView={handleView} />
 
-            {pagination && pagination.last_page > 1 && (
+            {paginationInfo.totalPages > 1 && (
               <div className="flex w-full items-center justify-center py-4">
-                <PaginationGenerator pagination={pagination} onChange={handlePageChange} />
+                <PaginationGenerator pagination={paginationInfo} onChange={handlePageChange} />
               </div>
             )}
           </>

@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import Shop from '@/components/shop/List/Shop';
-import { buildQueryString } from '@/hooks/urlQuery/serverQuery';
 import { productListSSR, productFiltersSSR } from '@/services/category.service';
 import useSeo from '@/hooks/seo/useSeo';
 import categorySchema from '@/schema/seo/category';
@@ -79,11 +78,8 @@ const page = async ({ params, searchParams }: Props) => {
   const sp = await searchParams;
 
   const lastSlug = slug[slug.length - 1];
-  const backendString = buildQueryString(sp, true);
 
-
-
-  const [serverFilters, searchResult] = await Promise.all([productFiltersSSR(lastSlug), productListSSR(lastSlug, backendString)]);
+  const [serverFilters, searchResult] = await Promise.all([productFiltersSSR(lastSlug), productListSSR(lastSlug, sp)]);
     
 
   // if (searchResult.breadcrumb && !Array.isArray(searchResult.breadcrumb)) {

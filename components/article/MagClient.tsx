@@ -6,6 +6,7 @@ import MagCardVertical from "@/components/global/Cards/MagCardVertical";
 import { PaginationGenerator } from "@/components/global/PaginationGenerator";
 import { Spinner } from "@/components/shadcn/spinner";
 import { useArticles } from "@/hooks/useArticles";
+import { normalizePagination } from "@/utils/pagination";
 
 function mapPost(post: any) {
   return {
@@ -22,12 +23,13 @@ function mapPost(post: any) {
 export function MagClient({ firstFive, restPosts, links }: { firstFive: any[]; restPosts: any[]; links: any }) {
 
   const { otherPosts, loading, pagination, goToPage } = useArticles(restPosts, links);
+  const paginationInfo = normalizePagination(pagination);
   const otherSectionRef = useRef<HTMLHeadingElement>(null);
-  const prevPageRef = useRef(pagination.current_page);
+  const prevPageRef = useRef(paginationInfo.page);
 
   useEffect(() => {
-    if (pagination.current_page !== prevPageRef.current) {
-      prevPageRef.current = pagination.current_page;
+    if (paginationInfo.page !== prevPageRef.current) {
+      prevPageRef.current = paginationInfo.page;
       setTimeout(() => {
         const el = otherSectionRef.current;
         if (el) {
@@ -36,7 +38,7 @@ export function MagClient({ firstFive, restPosts, links }: { firstFive: any[]; r
         }
       }, 200);
     }
-  }, [otherPosts, pagination.current_page]);
+  }, [otherPosts, paginationInfo.page]);
 
   const handlePageChange = (page: number) => {
     goToPage(page);
@@ -123,10 +125,10 @@ export function MagClient({ firstFive, restPosts, links }: { firstFive: any[]; r
           </div>
         )}
 
-        {pagination.last_page > 1 && (
+        {paginationInfo.totalPages > 1 && (
           <div className="mt-8">
             <PaginationGenerator
-              pagination={pagination}
+              pagination={paginationInfo}
               onChange={handlePageChange}
               autoUpdateUrl={true}
             />

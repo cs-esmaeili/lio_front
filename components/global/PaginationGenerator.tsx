@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { useLiveSearchParams, shallowReplace } from '@/hooks/useShallowUrl';
 import {
@@ -12,28 +11,28 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/shadcn/pagination';
+import type { Pagination as PaginationModel } from '@/typescript/schemas/pagination.schema';
 
-interface PaginationGeneratorProps {
-  pagination: {
-    current_page: number;
-    last_page: number;
-  };
+export function PaginationGenerator({
+  pagination,
+  onChange,
+  autoUpdateUrl = false,
+}: {
+  pagination: PaginationModel;
   onChange?: (page: number) => void;
   autoUpdateUrl?: boolean;
-}
-
-export function PaginationGenerator({ pagination, onChange, autoUpdateUrl = false }: PaginationGeneratorProps) {
-  const { current_page, last_page } = pagination;
+}) {
+  const { page, totalPages } = pagination;
   const query = useLiveSearchParams();
   const pathname = usePathname();
   const urlPage = query.get('page');
-  const activePage = urlPage ? Number(urlPage) : current_page;
+  const activePage = urlPage ? Number(urlPage) : page;
 
   const generatePages = () => {
-    const pages: (number | string)[] = [];
+    const pages: (number | 'ellipsis')[] = [];
 
-    if (last_page <= 7) {
-      for (let i = 1; i <= last_page; i++) {
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
       return pages;
@@ -41,27 +40,27 @@ export function PaginationGenerator({ pagination, onChange, autoUpdateUrl = fals
 
     pages.push(1);
 
-    if (current_page > 3) {
+    if (activePage > 3) {
       pages.push('ellipsis');
     }
 
-    const start = Math.max(2, current_page - 1);
-    const end = Math.min(last_page - 1, current_page + 1);
+    const start = Math.max(2, activePage - 1);
+    const end = Math.min(totalPages - 1, activePage + 1);
 
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
 
-    if (current_page < last_page - 2) {
+    if (activePage < totalPages - 2) {
       pages.push('ellipsis');
     }
 
-    pages.push(last_page);
+    pages.push(totalPages);
 
     return pages;
   };
 
-  const pages = useMemo(() => generatePages(), [current_page, last_page]);
+  const pages = generatePages();
 
   const handlePageChange = (page: number) => {
     if (autoUpdateUrl) {
@@ -98,7 +97,7 @@ export function PaginationGenerator({ pagination, onChange, autoUpdateUrl = fals
                 isActive={page === activePage}
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageChange(page as number);
+                  handlePageChange(page);
                 }}>
                 {page}
               </PaginationLink>
@@ -111,11 +110,11 @@ export function PaginationGenerator({ pagination, onChange, autoUpdateUrl = fals
             href='#'
             onClick={(e) => {
               e.preventDefault();
-              if (activePage < last_page) {
+              if (activePage < totalPages) {
                 handlePageChange(activePage + 1);
               }
             }}
-            className={activePage === last_page ? 'pointer-events-none opacity-50' : ''}
+            className={activePage === totalPages ? 'pointer-events-none opacity-50' : ''}
           />
         </PaginationItem>
       </PaginationContent>

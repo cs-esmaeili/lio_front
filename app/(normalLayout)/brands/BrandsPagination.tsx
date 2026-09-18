@@ -4,6 +4,7 @@ import { useLiveSearchParams } from '@/hooks/useShallowUrl';
 import { useBrandSearch } from '@/hooks/shop/useBrandSearch';
 import CategoryCard from '@/components/global/Cards/CategoryCard';
 import { PaginationGenerator } from '@/components/global/PaginationGenerator';
+import { normalizePagination } from '@/utils/pagination';
 import { Spinner } from '@/components/shadcn/spinner';
 
 interface BrandsPaginationProps {
@@ -17,6 +18,7 @@ interface BrandsPaginationProps {
 export function BrandsPagination({ initialBrands, initialPagination }: BrandsPaginationProps) {
   const liveParams = useLiveSearchParams();
   const { brands, pagination, loading } = useBrandSearch(liveParams, initialBrands, initialPagination);
+  const paginationInfo = normalizePagination(pagination);
 
 
   return (
@@ -37,13 +39,7 @@ export function BrandsPagination({ initialBrands, initialPagination }: BrandsPag
         </div>
       </div>
 
-      <PaginationGenerator
-        pagination={{
-          current_page: pagination.current_page,
-          last_page: pagination.last_page,
-        }}
-        autoUpdateUrl={true}
-      />
+      {paginationInfo.totalPages > 1 && <PaginationGenerator pagination={paginationInfo} autoUpdateUrl={true} />}
     </>
   );
 }

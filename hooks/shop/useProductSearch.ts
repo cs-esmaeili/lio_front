@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { searchCSR as shopSearchCSR } from '@/services/shop.service';
-import { searchCSR as categorySearchCSR } from '@/services/category.service';
+import { productSearchCSR } from '@/services/category.service';
 import { brandsShopListCSR } from '@/services/brands.service';
 
 export function useProductSearch(
@@ -33,27 +33,28 @@ export function useProductSearch(
 
     setLoading(true);
 
-    let promise;
+    const runSearch = async (): Promise<{ products: unknown[]; product_pagination: unknown }> => {
+      switch (type) {
+        case 'category':
+          return productSearchCSR(categorySlug!, query);
 
-    switch (type) {
-      case 'category':
-        promise = categorySearchCSR(categorySlug!, query);
-        break;
+        case 'shop': {
+          const response = await shopSearchCSR(query);
+          return { products: response.data.products, product_pagination: response.data.product_pagination };
+        }
 
-      case 'shop':
-        promise = shopSearchCSR(query);
-        break;
+        case 'brand': {
+          const response = await brandsShopListCSR(categorySlug!, query);
+          return { products: response.data.products, product_pagination: response.data.product_pagination };
+        }
+      }
+    };
 
-      case 'brand':
-        promise = brandsShopListCSR(categorySlug!, query);
-        break;
-    }
-
-    promise
-      .then((response) => {
+    runSearch()
+      .then((result) => {
         if (!cancelled && id === reqRef.current) {
-          setProducts(response.data.products);
-          setPagination(response.data.product_pagination);
+          setProducts(result.products);
+          setPagination(result.product_pagination);
           setLoading(false);
         }
       })

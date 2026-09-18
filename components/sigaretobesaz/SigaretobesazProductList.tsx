@@ -2,6 +2,7 @@
 
 import ProductCard from '@/components/global/Cards/ProductCard';
 import { PaginationGenerator } from '@/components/global/PaginationGenerator';
+import { normalizePagination } from '@/utils/pagination';
 import { Spinner } from '@/components/shadcn/spinner';
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export default function SigaretobesazProductList({ products, pagination, loading, hasSearched, onPageChange }: Props) {
+  const paginationInfo = normalizePagination(pagination);
+
   // Nothing has been searched yet — show nothing but a hint, per requirement.
   if (!hasSearched) {
     return (
@@ -46,8 +49,8 @@ export default function SigaretobesazProductList({ products, pagination, loading
         ))}
       </div>
 
-      {pagination && pagination.last_page > 1 && (
-        <PaginationGenerator pagination={pagination} onChange={onPageChange} autoUpdateUrl={false} />
+      {paginationInfo.totalPages > 1 && (
+        <PaginationGenerator pagination={paginationInfo} onChange={onPageChange} autoUpdateUrl={false} />
       )}
     </div>
   );
