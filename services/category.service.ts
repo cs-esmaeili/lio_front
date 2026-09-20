@@ -4,6 +4,11 @@ import { fetcher } from '@/services/core/SSRService';
 import { ApiError } from '@/utils/api-error';
 import { CategoryFiltersSchema } from '@/typescript/schemas/products/category-filters.schema';
 import type { CategoryFilterView } from '@/typescript/schemas/products/category-filters.schema';
+import {
+  ProductGlobalFiltersSchema,
+  ProductSortOptionsSchema,
+} from '@/typescript/schemas/products/product-options.schema';
+import type { ProductSortOption } from '@/typescript/schemas/products/product-options.schema';
 import { ProductSearchResponseSchema } from '@/typescript/schemas/products/product-search.schema';
 import type { ProductSearchItem } from '@/typescript/schemas/products/product-search.schema';
 import type { Pagination } from '@/typescript/schemas/pagination.schema';
@@ -83,20 +88,36 @@ export const productListSSR = async (
 
 export const productFiltersSSR = async (
   slug: string,
-): Promise<{ filters: CategoryFilterView[]; sort_options: { id: number; key: string; title: string }[] }> => {
-  const url = `${ssrPrefixUrl}/categories/${slug}/filters`;
+): Promise<{ filters: CategoryFilterView[]; sort_options: ProductSortOption[] }> => {
+  const [filtersData, sortOptionsData, globalFiltersData] = await Promise.all([
+    fetcher<unknown>(`${ssrPrefixUrl}/categories/${slug}/filters`, {
+      next: {
+        revalidate: 60,
+      },
+    }),
+    fetcher<unknown>(`${ssrPrefixUrl}/products/sort-options`, {
+      next: {
+        revalidate: 60,
+      },
+    }),
+    fetcher<unknown>(`${ssrPrefixUrl}/products/global-filters`, {
+      next: {
+        revalidate: 60,
+      },
+    }),
+  ]);
 
-  const data = await fetcher<unknown>(url, {
-    next: {
-      revalidate: 60,
-    },
-  });
-
-  const parsed = CategoryFiltersSchema.safeParse(data);
+  const parsed = CategoryFiltersSchema.safeParse(filtersData);
 
   if (!parsed.success) {
     throw new ApiError(422, 'پاسخ فیلترهای دسته‌بندی نامعتبر است', parsed.error);
   }
 
-  return { filters: parsed.data, sort_options: [] };
+  const sortOptions = ProductSortOptionsSchema.safeParse(sortOptionsData);
+  const globalFilters = ProductGlobalFiltersSchema.safeParse(globalFiltersData);
+
+  return {
+    filters: [...(globalFilters.success ? globalFilters.data : []), ...parsed.data],
+    sort_options: sortOptions.success ? sortOptions.data : [],
+  };
 };

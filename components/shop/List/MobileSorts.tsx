@@ -1,19 +1,14 @@
 import { useEffect } from 'react';
 import Icon from '@/components/global/Icon';
 import { ArrowLeft2, CloseCircle } from 'iconsax-reactjs';
-
-interface FilterItem {
-  id: number;
-  key: string;
-  title: string;
-}
+import type { ProductSortOption } from '@/typescript/schemas/products/product-options.schema';
 
 interface MobileSortsProps {
   isOpen: boolean;
   onClose: () => void;
-  filters: FilterItem[];
+  filters: ProductSortOption[];
   activeSortId?: string | null;
-  onSortSelect: (filter: FilterItem) => void;
+  onSortSelect: (filter: ProductSortOption) => void;
 }
 
 const SHEET_MAX_HEIGHT = '100dvh';
@@ -33,7 +28,7 @@ const MobileSorts = ({
     };
   }, [isOpen]);
 
-  const handleSortSelect = (filter: FilterItem) => {
+  const handleSortSelect = (filter: ProductSortOption) => {
     onSortSelect(filter);
     onClose();
   };
@@ -48,9 +43,9 @@ const MobileSorts = ({
             <div className='flex flex-col p-3.5'>
               {filters.map((filter) => (
                 <div
-                  key={filter.id}
+                  key={filter.key}
                   className={`flex gap-6 justify-between py-3 border-b border-primary-3 cursor-pointer transition-colors text-body ${
-                    activeSortId === String(filter.id)
+                    activeSortId === filter.key
                       ? 'text-primary-1'
                       : 'text-secondary-2'
                   }`}

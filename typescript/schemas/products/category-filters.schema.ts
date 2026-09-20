@@ -7,15 +7,18 @@ import { z } from 'zod';
 export const CategoryFilterViewSchema = z.object({
   key: z.string(),
   title: z.string(),
-  type: z.enum(['checkbox', 'price']),
+  type: z.enum(['checkbox', 'price', 'toggle']),
   multiselect: z.boolean(),
   goToLink: z.boolean(),
+  baseLink: z.string().optional(),
   items: z
     .array(
       z.object({
         id: z.number(),
         title: z.string(),
-        value: z.number(),
+        value: z.union([z.string(), z.number()]),
+        slug: z.string().optional(),
+        color: z.string().optional(),
       }),
     )
     .optional(),

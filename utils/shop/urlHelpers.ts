@@ -27,8 +27,10 @@ export function setScalarParam(params: URLSearchParams, key: string, value: stri
 /** Set price range params. Resets page to 1. */
 export function setPriceParams(params: URLSearchParams, min: number, max: number): URLSearchParams {
   const next = cloneParams(params);
-  next.set('min_amount', String(min));
-  next.set('max_amount', String(max));
+  if (min > 0) next.set('minPrice', String(min));
+  else next.delete('minPrice');
+  if (max > 0) next.set('maxPrice', String(max));
+  else next.delete('maxPrice');
   next.delete('page');
   return next;
 }

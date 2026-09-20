@@ -1,18 +1,14 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
-
-interface SortOption {
-  id: number;
-  key: string;
-  title: string;
-}
+import type { CategoryFilterView } from '@/typescript/schemas/products/category-filters.schema';
+import type { ProductSortOption } from '@/typescript/schemas/products/product-options.schema';
 
 interface ShopContextValue {
   liveParams: URLSearchParams;
   onUrlChange: (params: URLSearchParams) => void;
-  serverFilters: any; // normalized Filter[] from convertFilters
-  sortOptions: SortOption[];
+  serverFilters: CategoryFilterView[];
+  sortOptions: ProductSortOption[];
 }
 
 const ShopContext = createContext<ShopContextValue | null>(null);

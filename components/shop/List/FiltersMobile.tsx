@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import Icon from '@/components/global/Icon';
 import { ArrowLeft2 } from 'iconsax-reactjs';
 import InnerSwitch from '@/components/shop/List/InnerSwitch';
-import MadeIranSelect from '@/components/shop/List/MadeIranSelect';
+import PriceFilter from '@/components/shop/List/PriceFilter';
 import { MultiCheckBox } from '@/components/shop/List/MultiCheckBox';
 import { MultiRaidoButton } from '@/components/shop/List/MultiRaidoButton';
 import ActiveFilterChips from '@/components/shop/List/ActiveFilterChips';
 import { MobileBackdrop, MobileSheet, MobileSheetHeader, MobileSheetContent } from '@/components/shop/List/MobileSheet';
 import { useShopContext } from '@/providers/ShopProvider';
+import type { CategoryFilterView } from '@/typescript/schemas/products/category-filters.schema';
 import { paramsToObject, objectToParams } from '@/utils/shop/urlHelpers';
 import gridStyles from '@/styles/modules/mobileFilterGrid.module.css';
 
@@ -28,18 +29,32 @@ function DraftFilterControl({
   onUpdateDraft,
   onToggleDraftArray,
 }: {
-  filter: any;
+  filter: CategoryFilterView;
   draftParams: URLSearchParams;
   onUpdateDraft: (key: string, value: string | string[] | null) => void;
   onToggleDraftArray: (key: string, value: string) => void;
 }) {
   if (!filter) return null;
 
+  if (filter.type === 'toggle') {
+    const active = draftParams.get(filter.key) === '1';
+    return <InnerSwitch label={filter.title} checked={active} onToggle={() => onUpdateDraft(filter.key, active ? null : '1')} />;
+  }
+
   if (filter.type === 'price') {
+    const min = filter.value?.min ?? 0;
+    const max = filter.value?.max ?? 0;
+
     return (
-      <div className="flex flex-col gap-6 justify-between py-5">
-        <span>محدوده قیمت (به‌زودی)</span>
-      </div>
+      <PriceFilter
+        min={min}
+        max={max}
+        value={[Number(draftParams.get('minPrice')) || min, Number(draftParams.get('maxPrice')) || max]}
+        onChange={([newMin, newMax]: [number, number]) => {
+          onUpdateDraft('minPrice', newMin > 0 ? String(newMin) : null);
+          onUpdateDraft('maxPrice', newMax > 0 ? String(newMax) : null);
+        }}
+      />
     );
   }
 
@@ -50,7 +65,7 @@ function DraftFilterControl({
     if (filter.multiselect) {
       return (
         <MultiCheckBox
-          items={filter.items}
+          items={filter.items ?? []}
           checkedValues={draftParams.getAll(key)}
           onToggle={(val) => onToggleDraftArray(key, val)}
           searchable={searchable}
@@ -61,7 +76,7 @@ function DraftFilterControl({
 
     return (
       <MultiRaidoButton
-        items={filter.items}
+        items={filter.items ?? []}
         selectedValue={draftParams.getAll(key)[0] ?? ''}
         onSelect={(val) => {
           const current = draftParams.getAll(key)[0];
@@ -84,7 +99,9 @@ function DraftFilterControl({
 
 const FiltersMobile = ({ isOpen, onClose }: Props) => {
   const { liveParams, onUrlChange, serverFilters } = useShopContext();
-  const filters = (serverFilters as any[]) ?? [];
+  const filters = serverFilters ?? [];
+  const toggles = filters.filter((filter) => filter.type === 'toggle');
+  const subFilters = filters.filter((filter) => filter.type !== 'toggle');
   const [draft, setDraft] = useState<Record<string, string | string[]>>({});
   const [activeFilterKey, setActiveFilterKey] = useState<string | null>(null);
 
@@ -102,7 +119,7 @@ const FiltersMobile = ({ isOpen, onClose }: Props) => {
   }, [isOpen]);
 
   const draftParams = objectToParams(draft);
-  const activeFilter = filters.find((f: any) => f.key === activeFilterKey) ?? null;
+  const activeFilter = subFilters.find((filter) => filter.key === activeFilterKey) ?? null;
 
   const updateDraft = (key: string, value: string | string[] | null) => {
     setDraft((prev) => {
@@ -138,32 +155,20 @@ const FiltersMobile = ({ isOpen, onClose }: Props) => {
     onClose();
   };
 
-  // build menu from server filters only (boolean switches shown inline)
-  const menuItems: { key: string; title: string }[] = [
-    { key: 'made_iran', title: 'نوع محصول' },
-    ...filters.map((f: any) => ({ key: f.key, title: f.title })),
-  ];
+  const menuItems: { key: string; title: string }[] = subFilters.map((filter) => ({ key: filter.key, title: filter.title }));
 
   return (
     <>
       <MobileBackdrop isOpen={isOpen} onClick={onClose} />
       <MobileSheet isOpen={isOpen}>
         <MobileSheetHeader
-          title={activeFilterKey === 'made_iran' ? 'نوع محصول' : activeFilter ? activeFilter.title : 'فیلتر ها'}
-          subMenu={activeFilterKey === 'made_iran' || !!activeFilter}
+          title={activeFilter ? activeFilter.title : 'فیلتر ها'}
+          subMenu={!!activeFilter}
           onBack={() => setActiveFilterKey(null)}
           onClose={onClose}
         />
         <MobileSheetContent>
-          {activeFilterKey === 'made_iran' ? (
-            <div className='h-fit rounded-[20px] p-4'>
-              <span className='text-sm text-secondary-2'>نوع محصول</span>
-              <MadeIranSelect
-                value={draftParams.get('made_iran')}
-                onValueChange={(val) => updateDraft('made_iran', val)}
-              />
-            </div>
-          ) : activeFilter ? (
+          {activeFilter ? (
             <div className={`${gridStyles.gridList} h-fit rounded-[20px] p-4`}>
               <DraftFilterControl
                 filter={activeFilter}
@@ -176,20 +181,14 @@ const FiltersMobile = ({ isOpen, onClose }: Props) => {
             <div className="flex flex-col h-fit rounded-[20px]">
               <ActiveFilterChips />
               <div className="flex flex-col p-3.5">
-                <InnerSwitch
-                  label="محصولات دارای تخفیف"
-                  checked={draftParams.get('has_discount') === '1'}
-                  onToggle={() =>
-                    updateDraft('has_discount', draftParams.get('has_discount') === '1' ? null : '1')
-                  }
-                />
-                <InnerSwitch
-                  label="محصولات موجود"
-                  checked={draftParams.get('available') === '1'}
-                  onToggle={() =>
-                    updateDraft('available', draftParams.get('available') === '1' ? null : '1')
-                  }
-                />
+                {toggles.map((filter) => (
+                  <InnerSwitch
+                    key={filter.key}
+                    label={filter.title}
+                    checked={draftParams.get(filter.key) === '1'}
+                    onToggle={() => updateDraft(filter.key, draftParams.get(filter.key) === '1' ? null : '1')}
+                  />
+                ))}
                 {menuItems.map((item) => (
                   <div
                     key={item.key}

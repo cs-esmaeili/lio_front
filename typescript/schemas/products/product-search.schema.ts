@@ -10,14 +10,23 @@ export const ProductSearchFilterSchema = z.object({
   valueIds: z.array(z.number().int()),
 });
 
+/** Sort keys accepted by `POST /products/search` (see `GET /products/sort-options`). */
+export const ProductSortSchema = z.enum(['newest', 'cheapest', 'most_expensive']);
+
 export const ProductSearchRequestSchema = z.object({
   categorySlug: z.string(),
   filters: z.array(ProductSearchFilterSchema),
+  minPrice: z.number().nonnegative().optional(),
+  maxPrice: z.number().nonnegative().optional(),
+  inStock: z.boolean().optional(),
+  hasDiscount: z.boolean().optional(),
+  sort: ProductSortSchema.optional(),
   page: z.number().int().positive().optional(),
   limit: z.number().int().positive().optional(),
 });
 
 export type ProductSearchFilter = z.infer<typeof ProductSearchFilterSchema>;
+export type ProductSort = z.infer<typeof ProductSortSchema>;
 export type ProductSearchRequest = z.infer<typeof ProductSearchRequestSchema>;
 
 /* -------------------------------------------------------------------------- */

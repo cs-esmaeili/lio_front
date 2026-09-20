@@ -8,7 +8,7 @@ import InnerRadioButton from './InnerRadioButton';
 interface FilterItem {
   id?: number | string;
   title: string;
-  value: string;
+  value: string | number;
   slug?: string;
 }
 

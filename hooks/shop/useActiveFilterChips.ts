@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { separator } from '@/utils/number';
 import { cloneParams, toggleArrayParam, setScalarParam } from '@/utils/shop/urlHelpers';
+import type { CategoryFilterView } from '@/typescript/schemas/products/category-filters.schema';
 
 export interface FilterChip {
   id: string;
@@ -11,38 +12,32 @@ export interface FilterChip {
   remove: () => void;
 }
 
-const BOOLEAN_FILTERS: { key: string; label: string }[] = [
-  { key: 'has_discount', label: 'محصولات دارای تخفیف' },
-  { key: 'available', label: 'محصولات موجود' },
-];
-
 export function useActiveFilterChips(
   liveParams: URLSearchParams,
-  serverFilters: any[] | undefined,
+  serverFilters: CategoryFilterView[] | undefined,
   onUrlChange: (params: URLSearchParams) => void
 ): FilterChip[] {
   return useMemo(() => {
     const chips: FilterChip[] = [];
 
-    // Boolean switches
-    for (const { key, label } of BOOLEAN_FILTERS) {
-      if (liveParams.get(key) === '1') {
-        chips.push({
-          id: `${key}::bool`,
-          filterKey: key,
-          label,
-          remove: () => onUrlChange(setScalarParam(liveParams, key, null)),
-        });
-      }
-    }
-
-    // Iterate normalized filter list
     for (const filter of serverFilters ?? []) {
-      const key: string = filter.key;
+      const key = filter.key;
+
+      if (filter.type === 'toggle') {
+        if (liveParams.get(key) === '1') {
+          chips.push({
+            id: `${key}::bool`,
+            filterKey: key,
+            label: filter.title,
+            remove: () => onUrlChange(setScalarParam(liveParams, key, null)),
+          });
+        }
+        continue;
+      }
 
       if (filter.type === 'price') {
-        const min = liveParams.get('min_amount');
-        const max = liveParams.get('max_amount');
+        const min = liveParams.get('minPrice');
+        const max = liveParams.get('maxPrice');
 
         if (min == null && max == null) continue;
 
@@ -55,8 +50,8 @@ export function useActiveFilterChips(
           label: `${filter.title}: ${minText} - ${maxText}`,
           remove: () => {
             const next = cloneParams(liveParams);
-            next.delete('min_amount');
-            next.delete('max_amount');
+            next.delete('minPrice');
+            next.delete('maxPrice');
             next.delete('page');
             onUrlChange(next);
           },
@@ -70,7 +65,7 @@ export function useActiveFilterChips(
 
       for (const raw of values) {
         const str = String(raw);
-        const item = filter.items?.find((it: any) => String(it.value) === str || String(it.id) === str);
+        const item = filter.items?.find((it) => String(it.value) === str || String(it.id) === str);
         chips.push({
           id: `${key}::${str}`,
           filterKey: key,

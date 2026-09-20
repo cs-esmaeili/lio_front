@@ -9,7 +9,7 @@ import InnerCheckBox from './InnerCheckBox';
 interface FilterItem {
   id?: number | string;
   title: string;
-  value: string;
+  value: string | number;
   slug?: string;
 }
 

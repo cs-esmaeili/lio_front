@@ -5,6 +5,7 @@ import Icon from '@/components/global/Icon';
 import { Candle2, RowVertical, Sort } from 'iconsax-reactjs';
 import { separator } from '@/utils/number';
 import { useShopContext } from '@/providers/ShopProvider';
+import type { ProductSortOption } from '@/typescript/schemas/products/product-options.schema';
 import MobileSorts from './MobileSorts';
 
 interface SortTabsProps {
@@ -20,7 +21,7 @@ const SortTabs = ({ setCardHorizontalMode, setOpenFilter, productCount = 0, acti
   const { sortOptions, liveParams, onUrlChange } = useShopContext();
   const [rotateIcon, setRotateIcon] = useState(false);
 
-  const filters = sortOptions ?? [];
+  const filters: ProductSortOption[] = sortOptions ?? [];
 
   return (
     <>
@@ -33,15 +34,15 @@ const SortTabs = ({ setCardHorizontalMode, setOpenFilter, productCount = 0, acti
           </div>
           {filters.map((filter) => (
             <div
-              key={filter.id}
+              key={filter.key}
               onClick={() => {
                 const next = new URLSearchParams(liveParams.toString());
-                next.set('sort', String(filter.id));
+                next.set('sort', filter.key);
                 next.delete('page');
                 onUrlChange(next);
               }}
               className={`cursor-pointer transition-colors ${
-                activeSortId === String(filter.id) ? 'text-primary-1 font-semibold' : 'text-secondary-2 hover:text-primary-1'
+                activeSortId === filter.key ? 'text-primary-1 font-semibold' : 'text-secondary-2 hover:text-primary-1'
               }`}>
               {filter.title}
             </div>
@@ -94,7 +95,7 @@ const SortTabs = ({ setCardHorizontalMode, setOpenFilter, productCount = 0, acti
         activeSortId={activeSortId}
         onSortSelect={(f) => {
           const next = new URLSearchParams(liveParams.toString());
-          next.set('sort', String(f.id));
+          next.set('sort', f.key);
           next.delete('page');
           onUrlChange(next);
           setOpenSort(false);

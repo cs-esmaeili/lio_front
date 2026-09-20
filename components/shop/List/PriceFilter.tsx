@@ -17,6 +17,10 @@ const PriceFilter = ({ min = 0, max = 0, value, onChange }: Props) => {
   const [local, setLocal] = useState<[number, number]>(value);
   const prevValueRef = useRef(value);
 
+  // the global price filter has no fixed bounds, so only render the slider
+  // when the backend/filter config provides a range
+  const hasSlider = max > min;
+
   // sync from external URL changes (e.g. chip removal, mobile apply)
   useEffect(() => {
     const prev = prevValueRef.current;
@@ -60,30 +64,32 @@ const PriceFilter = ({ min = 0, max = 0, value, onChange }: Props) => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-full px-[38px]">
-          <Slider
-            value={local}
-            onValueChange={(v: number[]) => setLocal([v[0], v[1]])}
-            onValueCommit={(v: number[]) => commit([v[0], v[1]])}
-            min={min}
-            max={max}
-            step={1000}
-            dir="rtl"
-          />
-        </div>
+      {hasSlider && (
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-full px-[38px]">
+            <Slider
+              value={local}
+              onValueChange={(v: number[]) => setLocal([v[0], v[1]])}
+              onValueCommit={(v: number[]) => commit([v[0], v[1]])}
+              min={min}
+              max={max}
+              step={1000}
+              dir="rtl"
+            />
+          </div>
 
-        <div className="flex justify-between w-full">
-          <div className="flex flex-col justify-center items-center w-[85px]">
-            <span>{separator(local[0])}</span>
-            <span>{process.env.NEXT_PUBLIC_CURRENCY}</span>
-          </div>
-          <div className="flex flex-col justify-center items-center w-[85px]">
-            <span>{separator(local[1])}</span>
-            <span>{process.env.NEXT_PUBLIC_CURRENCY}</span>
+          <div className="flex justify-between w-full">
+            <div className="flex flex-col justify-center items-center w-[85px]">
+              <span>{separator(local[0])}</span>
+              <span>{process.env.NEXT_PUBLIC_CURRENCY}</span>
+            </div>
+            <div className="flex flex-col justify-center items-center w-[85px]">
+              <span>{separator(local[1])}</span>
+              <span>{process.env.NEXT_PUBLIC_CURRENCY}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
