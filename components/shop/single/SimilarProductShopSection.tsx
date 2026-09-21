@@ -6,7 +6,6 @@ import "swiper/css/pagination";
 
 import styles from "@/styles/modules/swipers/NewsProduct.module.css";
 
-import Link from "next/link";
 import { useRef, useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -15,29 +14,21 @@ import { FreeMode, Pagination, Navigation } from "swiper/modules";
 
 import ProductCard from "@/components/global/Cards/ProductCard";
 import Icon from "@/components/global/Icon";
+import type { ProductCardItem } from "@/typescript/schemas/products/product-details.schema";
 
-import {
-  ArrowLeft,
-  ArrowLeft3,
-  ArrowRight3,
-  TickSquare,
-} from "iconsax-reactjs";
-
-type Props = {
-  section: any;
-};
+import { ArrowLeft3, ArrowRight3, TickSquare } from "iconsax-reactjs";
 
 export default function SimilarProductShopSection({
-  section,
-}: Props) {
+  products,
+}: {
+  products: ProductCardItem[];
+}) {
 
   const swiperRef = useRef<SwiperType | null>(null);
 
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
 
-  const products = section?.sections?.similar ?? [];
-  // const buttonLink = section?.button_link ?? "#";
 
   if (!products.length) {
     return null;
@@ -160,7 +151,7 @@ export default function SimilarProductShopSection({
             1920: { slidesPerView: 7 },
           }}
         >
-          {products.map((product: any) => (
+          {products.map((product) => (
             <SwiperSlide key={product.id}>
               <ProductCard
                 data={product}

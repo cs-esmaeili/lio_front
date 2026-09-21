@@ -5,41 +5,28 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
 
 import { OverviewTab } from '@/components/shop/single/tabs/OverviewTab';
 import { FeaturesTab } from '@/components/shop/single/tabs/FeaturesTab';
-import { CommentsSection } from '@/components/shop/single/tabs/comments/CommentsSection';
-import type { CommentApiResponse, AnswerApiResponse } from '@/services/singelProduct.service';
+// کامنت شد تا API دیدگاه‌ها دوباره وصل شود
+// import { CommentsSection } from '@/components/shop/single/tabs/comments/CommentsSection';
+import type {
+  AttributeGroup,
+  ProductDetailsProduct,
+} from '@/typescript/schemas/products/product-details.schema';
 
-type TabType = 'overview' | 'features' | 'reviews';
-
-
-type AttributeItem = {
-  id: number;
-  title: string;
-  values: string;
-};
-
-type AttributeGroup = {
-  id: number;
-  title: string;
-  attributes: AttributeItem[];
-};
-
-type Props = {
-  product: any;
-  attributeGroups: AttributeGroup[];
-  initialTab: TabType;
-  shortDescription?: string;
-  barcode: string;
-  communications?: {
-    comments?: CommentApiResponse[];
-    questions?: AnswerApiResponse[];
-  };
-};
+type TabType = 'overview' | 'features';
 
 const isValidTab = (val: string | null): val is TabType => {
-  return !!val && ['overview', 'features', 'reviews'].includes(val);
+  return !!val && ['overview', 'features'].includes(val);
 };
 
-export default function TabsClient({ product, attributeGroups, initialTab, shortDescription, barcode, communications }: Props) {
+export default function TabsClient({
+  product,
+  attributeGroups,
+  initialTab,
+}: {
+  product: ProductDetailsProduct;
+  attributeGroups: AttributeGroup[];
+  initialTab: TabType;
+}) {
   const [tab, setTab] = useState<TabType>(initialTab);
   const [isPending, startTransition] = useTransition();
 
@@ -49,7 +36,7 @@ export default function TabsClient({ product, attributeGroups, initialTab, short
     if (!isValidTab(value)) return;
 
     startTransition(() => {
-      setTab(value as TabType);
+      setTab(value);
     });
   };
 
@@ -102,46 +89,36 @@ export default function TabsClient({ product, attributeGroups, initialTab, short
             ویژگی‌ها
           </TabsTrigger>
 
+          {/* دیدگاه‌ها — تا وصل شدن API کامنت‌ها کامنت شده است
           <TabsTrigger
             value='reviews'
             className='text-[18px] text-secondary-3 shadow-none rounded-none border-b-2 border-transparent data-[state=active]:text-primary-1 data-[state=active]:after:bg-primary-1 transition-colors duration-200'>
             دیدگاه‌ها
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
 
         <div className={`mt-6 transition-opacity duration-200 ${isPending ? 'opacity-50' : 'opacity-100'}`}>
           {tab === 'overview' && <OverviewTab data={product.description} />}
 
-          {tab === 'features' && (
-            <>
-              {attributeGroups.map((group) => (
-                <div key={group.id}>
-                  <span className='block mt-5 mb-3'>{/* {group.title} */}</span>
+          {tab === 'features' &&
+            attributeGroups.map((group) => (
+              <div key={group.attributeId}>
+                <span className='block mt-5 mb-3'>{group.title}</span>
 
-                  <FeaturesTab
-                    features={group.attributes.map((attr) => ({
-                      title: attr.title,
-                      description: attr.values,
-                    }))}
-                    showAll={true}
-                    showLink={false}
-                  />
-                </div>
-              ))}
-
-              {shortDescription && (
-                <div
-                  className='flex flex-col gap-4 font-light text-secondary-1 text-justify box-description text-body mt-6'
-                  dangerouslySetInnerHTML={{ __html: shortDescription }}
-                  suppressHydrationWarning
+                <FeaturesTab
+                  features={group.attributes.map((attribute) => ({
+                    title: attribute.title,
+                    description: attribute.value,
+                  }))}
+                  showAll={true}
+                  showLink={false}
                 />
-              )}
-            </>
-          )}
+              </div>
+            ))}
 
-          {tab === 'reviews' && (
+          {/* {tab === 'reviews' && (
             <CommentsSection barcode={barcode} initialComments={communications?.comments} initialQuestions={communications?.questions} />
-          )}
+          )} */}
         </div>
       </Tabs>
     </div>

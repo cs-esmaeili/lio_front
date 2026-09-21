@@ -1,6 +1,9 @@
 import type { AxiosResponse } from 'axios';
 import http from '@/services/core/clientService';
 import { fetcher } from '@/services/core/SSRService';
+import { ApiError } from '@/utils/api-error';
+import { ProductDetailsSchema } from '@/typescript/schemas/products/product-details.schema';
+import type { ProductDetails } from '@/typescript/schemas/products/product-details.schema';
 
 const csrPrefixUrl = `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT}`;
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
@@ -79,50 +82,24 @@ export type CommunicationsResponse = {
 // SSR — server-side requests (Next.js server components)
 // ==========================
 
-// https://dudigram.behidopro.ir/api/product/62512/view-all
+// GET /products/{slug}/details
 
-export const productDetails = async (code: string): Promise<any> => {
-  const url = `${ssrPrefixUrl}/product/${code}/view-all`;
+export const getProductDetails = async (slug: string): Promise<ProductDetails> => {
+  const url = `${ssrPrefixUrl}/products/${encodeURIComponent(slug)}/details`;
 
-  return fetcher(url, {
+  const data = await fetcher<unknown>(url, {
     next: {
       revalidate: 60,
     },
   });
-};
 
-// https://dudigram.behidopro.ir/api/product/1020230/more-products
+  const parsed = ProductDetailsSchema.safeParse(data);
 
-export const moreProductsSection = async (code: string): Promise<any> => {
-  const url = `${ssrPrefixUrl}/product/${code}/more-products`;
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ جزئیات محصول نامعتبر است', parsed.error);
+  }
 
-  return fetcher(url, {
-    next: {
-      revalidate: 60,
-    },
-  });
-};
-
-// https://dudigram.behidopro.ir/api/sections/index/view/8
-
-export const newProductsSection = async () => {
-  const url = `${ssrPrefixUrl}/sections/index/view/8`;
-
-  return fetcher(url, {
-    next: {
-      revalidate: 60,
-    },
-  });
-};
-
-export const convertSlugToBarcode = async (slug: string) => {
-  const url = `${ssrPrefixUrl}/product/barcode/${slug}`;
-
-  return fetcher(url, {
-    next: {
-      revalidate: 60,
-    },
-  });
+  return parsed.data;
 };
 
 // ==========================

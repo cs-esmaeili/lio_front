@@ -2,25 +2,20 @@
 
 import { useEffect } from 'react';
 import { useProductBottomNavStore } from '@/stores/productBottomNavStore';
+import type { ProductDetailsProduct } from '@/typescript/schemas/products/product-details.schema';
 
-type Props = {
-  baseAttributes: any;
-  prices: any;
-  product: any;
-};
-
-export default function ProductBottomNavSetter({ baseAttributes, prices, product }: Props) {
+export default function ProductBottomNavSetter({ product }: { product: ProductDetailsProduct }) {
   useEffect(() => {
     useProductBottomNavStore.getState().setProductData({
-      baseAttributes,
-      prices,
+      baseAttributes: [],
+      prices: [],
       product,
     });
 
     return () => {
       useProductBottomNavStore.getState().clear();
     };
-  }, [baseAttributes, prices, product]);
+  }, [product]);
 
   return null;
 }

@@ -1,11 +1,7 @@
-type Props = {
-  data: string;
-};
-
-export function OverviewTab({ data }: Props) {
+export function OverviewTab({ data }: { data?: string | null }) {
 
   // const html = data.replace(/\\n/g, '').replace(/&nbsp;/g, ' ');
-  const html = data.replace(/\\n/g, '<br />');
+  const html = (data ?? '').replace(/\\n/g, '<br />');
 
   return (
     <div className='space-y-6' suppressHydrationWarning>
