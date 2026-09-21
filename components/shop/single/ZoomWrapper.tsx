@@ -1,16 +1,20 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
 import fadeStyles from '@/styles/modules/imageFade.module.css';
 
-interface ZoomWrapperProps {
+const ZOOM_SCALE = 1.5;
+
+const ZoomWrapper = ({
+  src,
+  alt,
+  priority = false,
+}: {
   src: string;
   alt: string;
   priority?: boolean;
-}
-
-const ZoomWrapper = ({ src, alt, priority = false }: ZoomWrapperProps) => {
+}) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [loaded, setLoaded] = useState(false);
@@ -25,18 +29,16 @@ const ZoomWrapper = ({ src, alt, priority = false }: ZoomWrapperProps) => {
 
   return (
     <div
-      className="relative w-full h-full overflow-hidden"
+      className='relative w-full h-full overflow-hidden'
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsZoomed(true)}
-      onMouseLeave={() => setIsZoomed(false)}
-    >
+      onMouseLeave={() => setIsZoomed(false)}>
       <div
-        className="relative w-full h-full transition-all duration-200"
+        className='relative w-full h-full transition-transform duration-300 ease-out will-change-transform'
         style={{
-          transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
+          transform: isZoomed ? `scale(${ZOOM_SCALE})` : 'scale(1)',
           transformOrigin: `${position.x}% ${position.y}%`,
-        }}
-      >
+        }}>
         <Image
           src={src}
           alt={alt}
@@ -46,17 +48,6 @@ const ZoomWrapper = ({ src, alt, priority = false }: ZoomWrapperProps) => {
           priority={priority}
         />
       </div>
-      {isZoomed && (
-        <div
-          className="absolute w-32 h-32 rounded-full border-2 border-white pointer-events-none hidden md:block"
-          style={{
-            left: `${position.x}%`,
-            top: `${position.y}%`,
-            transform: 'translate(-50%, -50%)',
-            background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)',
-          }}
-        />
-      )}
     </div>
   );
 };
