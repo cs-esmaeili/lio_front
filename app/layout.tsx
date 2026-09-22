@@ -2,7 +2,6 @@ import localFont from 'next/font/local';
 import '@/styles/globals.css';
 import { cn } from '@/lib/utils';
 import { AuthListener } from '@/components/global/AuthListener';
-import Script from 'next/script';
 import { isSeoEnabled, SEO_DEFAULT_ROBOTS } from '@/lib/seo';
 import type { Metadata } from 'next';
 import NextTopLoader from 'nextjs-toploader';
@@ -37,20 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang='fa' dir='rtl' className={cn('overflow-x-hidden', yekanBakh.className, rajdhani.variable, dastnevis.variable)}>
       <body className='[scrollbar-gutter:stable]'>
         <AuthListener />
-
-        <Script src='https://www.googletagmanager.com/gtag/js?id=G-5J1LNRS3YW' strategy='afterInteractive' />
-
-        <Script id='google-analytics' strategy='afterInteractive'>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-5J1LNRS3YW');
-          `}
-        </Script>
         <NextTopLoader color='#BB8B50' showSpinner={false}/>
-
         {children}
       </body>
     </html>
