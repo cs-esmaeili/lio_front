@@ -11,6 +11,7 @@ import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import { separator } from '@/utils/number';
 import CallSocial from '@/components/global/CallSocial';
 import { useMatchedVariant } from '@/hooks/shop/useMatchedVariant';
+import { useCart } from '@/hooks/cart/useCart';
 import type {
   BaseAttribute,
   ProductDetailsProduct,
@@ -19,8 +20,8 @@ import type {
 import type { FooterCommunication } from '@/typescript/types/footer/footer.types';
 
 /**
- * Adds the product to the cart. NOTE: the add-to-cart request is intentionally
- * inert for now — the button renders but does nothing until the cart API is wired.
+ * Adds the product to the cart through the single `useCart` hook. Uses the
+ * resolved `matchedVariant.id` (the cart key is `variantId`, never `productId`).
  */
 const AddToCart = ({
   showProductInfo = true,
@@ -49,9 +50,16 @@ const AddToCart = ({
 
   const [count, setCount] = useState(1);
 
+  const { addItem, addToCartLoading } = useCart();
+
   const onValueChange = (attributeId: number, valueId: string) => {
     setCount(1);
     handleValueChange(attributeId, valueId);
+  };
+
+  const handleAddToCart = () => {
+    if (!matchedVariant) return;
+    void addItem(matchedVariant.id, count, matchedVariant.stock > 0 ? matchedVariant.stock : undefined);
   };
 
   const isCall = matchedVariant?.zeroPrice === 'call';
@@ -134,14 +142,14 @@ const AddToCart = ({
         </div>
       )}
 
-      {/* BUTTON — inert for now, wired again once the cart API returns */}
+      {/* BUTTON — wired to the single cart hook */}
       {isCall ? (
         <a href={`tel:${callToAction}`}>
           <Button className={btnClass}>تماس بگیرید</Button>
         </a>
       ) : isAvailable ? (
-        <Button className={btnClass} type='button'>
-          افزودن به سبد خرید
+        <Button className={btnClass} type='button' onClick={handleAddToCart} disabled={addToCartLoading}>
+          {addToCartLoading ? 'در حال افزودن...' : 'افزودن به سبد خرید'}
         </Button>
       ) : (
         <Button className={btnClass} type='button' disabled>
