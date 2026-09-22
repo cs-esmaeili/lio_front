@@ -111,7 +111,7 @@ export default function CheckoutList({ items }: Props) {
         }}
       >
         {items.map((item) => (
-          <SwiperSlide key={String(item.product.product_price_id)}>
+          <SwiperSlide key={item.variantId}>
             <CheckoutCard data={item} />
           </SwiperSlide>
         ))}

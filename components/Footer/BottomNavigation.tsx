@@ -9,9 +9,7 @@ import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import { Spinner } from '@/components/shadcn/spinner';
 import { separator } from '@/utils/number';
 import { productStatus } from '@/utils/product/Product';
-import { useCart } from '@/hooks/shop/useCart';
-import { useCartStore } from '@/stores/cartStore';
-import { useBasketUIStore } from '@/stores/basketUIStore';
+import { useCart } from '@/hooks/cart/useCart';
 import { useProductBottomNavStore } from '@/stores/productBottomNavStore';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -40,13 +38,10 @@ function ProductBottomBar() {
   const isCall = status === 'call';
   const hasDiscount = defaultPrice && defaultPrice.discount_percent > 0;
 
-  const { addToCart, addToCartLoading } = useCart();
-
-  const cartItems = useCartStore((s) => s.items);
-  const openBasket = useBasketUIStore((s) => s.open);
+  const { addItem, addToCartLoading, items, openCart } = useCart();
 
   const cartQuantity = defaultPrice
-    ? (cartItems.find((i) => i.variant_id === defaultPrice.id)?.quantity ?? 0)
+    ? (items.find((i) => i.variantId === defaultPrice.id)?.quantity ?? 0)
     : 0;
 
   const isInCart = cartQuantity > 0;
@@ -56,9 +51,8 @@ function ProductBottomBar() {
 
     const qty = defaultVariant.min_order ?? 1;
 
-    addToCart(
+    addItem(
       defaultPrice.id,
-      product.id,
       qty,
       defaultVariant.max_order,
     );
@@ -71,7 +65,7 @@ function ProductBottomBar() {
           <button
             type='button'
             className='text-body bg-secondary-black-3 text-gray-1 rounded-[50px] py-2 px-3 w-full text-center text-nowrap hover:bg-secondary-black-2 transition-colors cursor-pointer'
-            onClick={openBasket}>
+            onClick={openCart}>
             مشاهده سبد خرید
           </button>
         ) : isAvailable ? (
@@ -144,13 +138,12 @@ const BottomNavigation = ({
 
   const productData = useProductBottomNavStore((s) => s.product);
 
-  const cartItems = useCartStore((s) => s.items);
-  const openBasket = useBasketUIStore((s) => s.open);
+  const { distinctItemCount, openCart } = useCart();
 
   // مهم: این Hook باید قبل از هر return شرطی اجرا شود
   const { isHydrated } = useAuth();
 
-  const cartLength = cartItems.length;
+  const cartLength = distinctItemCount;
 
   if (isProductPage && !productData) {
     return null;
@@ -196,7 +189,7 @@ const BottomNavigation = ({
 
         <button
           type='button'
-          onClick={openBasket}
+          onClick={openCart}
           className='cursor-pointer'>
           <div className='flex flex-row items-center justify-center gap-1.5 py-2.5 px-5 rounded-[50px]'>
             <div className='relative'>

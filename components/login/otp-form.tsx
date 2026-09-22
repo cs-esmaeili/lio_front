@@ -8,7 +8,7 @@ import { LoginSubmitButton } from '@/components/login/login-submit-button';
 import { Timer } from '@/components/login/timer';
 import { useCheckOtp } from '@/hooks/login/useCheckOtp';
 import { useSendOtp } from '@/hooks/login/useSendOtp';
-import { useCart } from '@/hooks/shop/useCart';
+import { useCart } from '@/hooks/cart/useCart';
 
 type Props = {
   phone: string;
@@ -22,7 +22,7 @@ export function OtpForm({ phone, formattedPhone, onBack, returnUrl }: Props) {
   const [otpKey, setOtpKey] = useState(0);
   const { checkOtp, loading } = useCheckOtp();
   const { sendOtp } = useSendOtp();
-  const { syncGuestCart } = useCart();
+  const { mergeAfterLogin } = useCart();
 
   const handleSubmit = async () => {
     if (loading || otpCode.length !== 4) return;
@@ -36,7 +36,7 @@ export function OtpForm({ phone, formattedPhone, onBack, returnUrl }: Props) {
     const maxAge = Number(process.env.NEXT_PUBLIC_SESSION_MAX_AGE) || 7200;
     document.cookie = `auth_token=${encodeURIComponent(result.accessToken)}; Path=/; Max-Age=${maxAge}; SameSite=Strict; Secure`;
 
-    await syncGuestCart();
+    await mergeAfterLogin();
 
     window.location.href = returnUrl || '/dashboard';
   };

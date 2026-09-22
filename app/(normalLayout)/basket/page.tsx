@@ -4,48 +4,28 @@ import { useEffect } from 'react';
 import BasketList from '@/components/shop/basket/BasketList';
 import OrderSummary from '@/components/shop/basket/OrderSummary';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn/tabs';
-import AstelamCard from '@/components/global/Cards/AstelamCard';
-import { useCart } from '@/hooks/shop/useCart';
+import { useCart } from '@/hooks/cart/useCart';
 import { Spinner } from '@/components/shadcn/spinner';
-import { useNextPurchaseStore } from '@/stores/nextPurchaseStore';
 
 export default function PurchaseBasketPage() {
-  const { loading, isEmpty, cartItems, cartSummary, updatingItems, updateQuantity, removeItem, refetch } = useCart();
+  const { loading, items, updatingVariants, updateQuantity, removeItem, refetch, subtotal, itemCount } = useCart();
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  const items = cartItems.map((ci) => ({
-    ...ci,
-    isUpdating: updatingItems.has(ci.product.product_price_id),
+  const basketItems = items.map((item) => ({
+    ...item,
+    isUpdating: updatingVariants.has(item.variantId),
   }));
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
-    updateQuantity(Number(id), newQuantity);
+    void updateQuantity(Number(id), newQuantity);
   };
 
   const handleRemove = (id: string) => {
-    removeItem(Number(id));
+    void removeItem(Number(id));
   };
-
-  const handleMoveToNextPurchase = (id: string) => {
-    // Move item to next-purchase list, then remove from cart
-    const item = cartItems.find((ci) => String(ci.product.product_price_id) === id);
-    if (item) {
-      useNextPurchaseStore.getState().addItem(item);
-      removeItem(Number(id));
-    }
-  };
-
-  const final_price = cartSummary?.final_price ?? 0;
-  const discount = cartSummary?.discount ?? 0;
-  const payment_price = cartSummary?.payment_price ?? 0;
-  const base_price = cartSummary?.base_price ?? 0;
-  const itemCount = cartSummary?.items_count ?? 0;
-  const max_persent = cartSummary?.max_persent ?? 0;
-  const remaining = cartSummary?.remaining ?? 0;
-  const max_price = cartSummary?.max_price ?? 0;
 
   return (
     <div className='container' dir='rtl'>
@@ -74,10 +54,9 @@ export default function PurchaseBasketPage() {
                 </div>
               ) : (
                 <BasketList
-                  items={items}
+                  items={basketItems}
                   onQuantityChange={handleQuantityChange}
                   onRemove={handleRemove}
-                  onMoveToNextPurchase={handleMoveToNextPurchase}
                 />
               )}
             </TabsContent>
@@ -91,22 +70,16 @@ export default function PurchaseBasketPage() {
         {/* Left column: Order Summary (1/3 width) */}
         <div className='order-2 md:order-2 md:col-span-1 flex flex-col gap-4 sticky top-4'>
           <OrderSummary
-            finalPrice={final_price}
-            discount={discount}
-            paymentPrice={payment_price}
+            finalPrice={subtotal}
+            discount={0}
+            paymentPrice={subtotal}
             itemCount={itemCount}
-            basePrice={base_price}
-            maxPersent={max_persent}
-            remaining={remaining}
-            maxPrice={max_price}
+            basePrice={subtotal}
             desktopButtonText='تایید و تکمیل سفارش'
             mobileButtonText='تایید سفارش'
           />
-          {/* <AstelamCard /> */}
         </div>
       </div>
-
-      {/* Action buttons row – commented out, keep as is */}
     </div>
   );
 }

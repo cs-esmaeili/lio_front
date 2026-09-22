@@ -14,6 +14,8 @@ interface CheckoutCardProps {
   onBlackBackGround?: boolean;
 }
 
+const PLACEHOLDER_IMAGE = '/test/image 54.png';
+
 export default function CheckoutCard({
   data,
   onBlackBackGround = false,
@@ -21,7 +23,7 @@ export default function CheckoutCard({
   const [loaded, setLoaded] = useState(false);
 
   const hasDiscount =
-    data.base_discount > 0 && data.base_amount > data.final_amount;
+    data.variant.compareAtPrice != null && data.variant.compareAtPrice > data.variant.price;
 
   return (
     <div
@@ -37,11 +39,11 @@ export default function CheckoutCard({
             className={`${styles.productCardImage} relative h-[250px] w-full max-w-[200px] rounded-xl bg-white`}
           >
             <Image
-              src={data.product.image}
-              alt={data.product.title}
+              src={PLACEHOLDER_IMAGE}
+              alt={data.product.name}
               fill
               onLoad={() => setLoaded(true)}
-              className={`relative z-10 rounded-xl object-cover transition-all duration-500 group-hover:-translate-y-2 ${
+              className={`relative z-10 rounded-xl object-contain transition-all duration-500 group-hover:-translate-y-2 ${
                 loaded ? fadeStyles.fadeIn : 'opacity-0'
               }`}
             />
@@ -55,7 +57,7 @@ export default function CheckoutCard({
               : 'text-secondary-black-1'
           }`}
         >
-          {data.product.title}
+          {data.product.name}
         </h5>
       </Link>
       
@@ -70,7 +72,7 @@ export default function CheckoutCard({
       <div className="flex items-end justify-between">
         {hasDiscount ? (
           <div className="text-sm text-secondary-3 line-through">
-            {data.base_amount.toLocaleString()}
+            {(data.variant.compareAtPrice ?? 0).toLocaleString()}
           </div>
         ) : (
           <div />
@@ -84,7 +86,7 @@ export default function CheckoutCard({
                 : 'text-secondary-black-1'
             }
           >
-            {data.final_amount.toLocaleString()}
+            {data.variant.price.toLocaleString()}
           </span>
 
           <div

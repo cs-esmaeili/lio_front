@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -8,25 +8,22 @@ import Icon from '@/components/global/Icon';
 import { ShoppingCart } from 'iconsax-reactjs';
 import Image from 'next/image';
 import CurrencyLabel from '../Cards/CurrencyLabel';
-import { SuccessCheckbox } from '../Checkboxes/SuccessCheckBox';
 import { QuantitySelector } from '@/components/shop/single/QuantitySelector';
-import { SolidPrimaryButton } from '../Buttons/SolidPrimaryButton';
 import { StrokePrimaryButton } from '../Buttons/StrokePrimaryButton';
-import { useCart, type CartProductItem } from '@/hooks/shop/useCart';
+import { useCart } from '@/hooks/cart/useCart';
 import { separator } from '@/utils/number';
 import { Spinner } from '@/components/shadcn/spinner';
-import { Progress } from '@/components/shadcn/progress';
 
 interface ShoppingBasketProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const PLACEHOLDER_IMAGE = '/test/image 54.png';
+
 export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const { loading, isEmpty, cartItems, cartSummary, updatingItems, updateQuantity, removeItem, refetch } = useCart();
-
-  const [isBoxMap, setIsBoxMap] = useState<Record<number, boolean>>({});
+  const { loading, isEmpty, items, subtotal, updatingVariants, updateQuantity, removeItem, refetch } = useCart();
 
   useEffect(() => {
     if (isOpen) refetch();
@@ -46,10 +43,6 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
-
-  const handleToggleUnit = (variantId: number, isBox: boolean) => {
-    setIsBoxMap((prev) => ({ ...prev, [variantId]: isBox }));
-  };
 
   if (!isOpen) return null;
 
@@ -97,15 +90,14 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
           ) : isEmpty ? (
             <div className='text-center text-gray-500 py-10'>سبد خرید شما خالی است</div>
           ) : (
-            cartItems.map((item) => {
-              const variantId = item.product.product_price_id;
-              const isBox = isBoxMap[variantId] ?? false;
-              const hasDiscount = item.base_discount > 0;
-              const attributes = item.product.attributes;
-              const isUpdating = updatingItems.has(variantId);
+            items.map((item) => {
+              const variantId = item.variantId;
+              const hasDiscount = item.variant.compareAtPrice != null && item.variant.compareAtPrice > item.variant.price;
+              const isUpdating = updatingVariants.has(variantId);
+              const maxQuantity = item.variant.stock > 0 ? item.variant.stock : 1;
 
               return (
-                <div key={item.cart_id} className='w-full border-b border-gray-100 pb-1 last:border-0 relative'>
+                <div key={variantId} className='w-full border-b border-gray-100 pb-1 last:border-0 relative'>
                   {/* Per-item loading overlay */}
                   {isUpdating && (
                     <div className='absolute inset-0 z-10 flex items-center justify-center bg-white/60 rounded-lg'>
@@ -116,11 +108,11 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
                   {/* Row 1: Image, name, delete button */}
                   <div className='flex gap-4'>
                     <Link href={`/product/${item.product.slug}`} onClick={onClose} className='relative w-24 h-24 bg-gray-100 rounded-lg shrink-0 overflow-hidden block'>
-                      <Image src={item.product.image || '/test/image 54.png'} alt={item.product.title} fill className='object-contain' sizes='96px' />
+                      <Image src={PLACEHOLDER_IMAGE} alt={item.product.name} fill className='object-contain' sizes='96px' />
                     </Link>
                     <div className='flex-1 flex justify-between items-center'>
                       <Link href={`/product/${item.product.slug}`} onClick={onClose} className='font-medium text-regular text-gray-800 hover:text-primary-1 transition-colors no-underline'>
-                        {item.product.title}
+                        {item.product.name}
                       </Link>
                       <button onClick={() => removeItem(variantId)} className='text-gray-400 hover:text-red-500 transition' aria-label='حذف'>
                         <Trash2 size={18} />
@@ -128,16 +120,13 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
                     </div>
                   </div>
 
-                  {/* Row 2: Checkbox + Quantity controls */}
+                  {/* Row 2: Quantity controls */}
                   <div className='flex justify-between items-center mt-3'>
-                    {attributes.map((atr ,index) => {
-                      return <div key={index}>{atr}</div>;
-                    })}
                     <QuantitySelector
                       value={item.quantity}
                       onChange={(newQty) => updateQuantity(variantId, newQty)}
-                      min={item.product.min_order ?? 1}
-                      max={item.product.max_order}
+                      min={1}
+                      max={maxQuantity}
                       size='sm'
                       disabled={isUpdating}
                     />
@@ -146,21 +135,12 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
                   {/* Row 3: Price display with optional strikethrough */}
                   <div className='text-left mt-4'>
                     <div className='flex flex-row gap-4 items-end justify-end'>
-                      {hasDiscount && <div className='text-secondary-3 line-through'>{separator(item.base_amount)}</div>}
+                      {hasDiscount && <div className='text-secondary-3 line-through'>{separator(item.variant.compareAtPrice ?? 0)}</div>}
                       <div className='flex flex-row justify-end items-start gap-1'>
-                        <div className='text-secondary-black-1'>{separator(item.final_amount)}</div>
+                        <div className='text-secondary-black-1'>{separator(item.lineTotal)}</div>
                         <CurrencyLabel />
                       </div>
                     </div>
-                    {/* {item.quantity > 1 && (
-                      <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
-                        <span className="text-regular text-gray-600">مجموع:</span>
-                        <div className="flex items-center gap-1">
-                          <span className="text-regular text-gray-600">{separator(item.final_amount * item.quantity)}</span>
-                          <CurrencyLabel />
-                        </div>
-                      </div>
-                    )} */}
                   </div>
                 </div>
               );
@@ -171,46 +151,16 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
         {/* Footer with total and buttons */}
         {!loading && !isEmpty && (
           <div className='border-t border-gray-100 pt-4 px-4 pb-5 space-y-3'>
-            <div className='space-y-2 border-t border-gray-100 pt-2'>
-              {cartSummary && cartSummary.max_price > 0 && (
-                <div className='bg-green-50 rounded-2xl p-4'>
-                  {cartSummary.max_persent === 100 ? (
-                    <div className='text-sm text-green-600 font-medium'>هزینه ارسال رایگان است</div>
-                  ) : (
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm text-gray-600'>مانده تا ارسال رایگان</span>
-                      <div className='flex items-center gap-1'>
-                        <span className='text-sm text-secondary-black-1 font-bold'>{separator(cartSummary?.remaining ?? 0)}</span>
-                        <CurrencyLabel />
-                      </div>
-                    </div>
-                  )}
-                  <div className='flex items-center gap-2'>
-                    <Progress value={cartSummary?.max_persent ?? 0} className='flex-1 h-2' />
-                    <span className='text-sm text-gray-500 min-w-[3ch] text-left'>{cartSummary?.max_persent ?? 0}%</span>
-                  </div>
-                </div>
-              )}
-              <div className='flex justify-between items-center'>
-                <span className='text-regular text-gray-600'>مبلغ تخفیف</span>
-              <div className='flex items-center gap-1'>
-                <span className='text-regular text-secondary-black-1 font-bold'>{separator(cartSummary?.discount!)}</span>
-                <CurrencyLabel />
-              </div>
-              </div>
-            </div>
-
             <div className='flex justify-between items-center border-t border-gray-100 pt-2'>
               <span className='text-regular text-gray-600'>قیمت کل</span>
               <div className='flex items-center gap-1'>
-                <span className='text-regular text-secondary-black-1 font-bold'>{separator(cartSummary?.final_price!)}</span>
+                <span className='text-regular text-secondary-black-1 font-bold'>{separator(subtotal)}</span>
                 <CurrencyLabel />
               </div>
             </div>
 
             <div className='flex gap-4 pt-2 justify-center'>
-              <StrokePrimaryButton href='/basket' desktopText='مشاهده سبد خرید' mobileText='سبد خرید' className='w-full flex-1.5' onClick={()=> onClose()}/>
-              {/* <SolidPrimaryButton href='/checkout' desktopText='تسویه حساب' mobileText='تسویه' className='flex-1' /> */}
+              <StrokePrimaryButton href='/basket' desktopText='مشاهده سبد خرید' mobileText='سبد خرید' className='w-full flex-1.5' onClick={() => onClose()} />
             </div>
           </div>
         )}

@@ -8,11 +8,10 @@ import CompareIcon from '@/components/Header/CompareIcon';
 import { ShoppingBasket } from '@/components/global/Sidebars/ShoppingBasket';
 import MegaMenu from '@/components/Header/megaMenu/MegaMenu';
 import { useEffect, useState } from 'react';
-import { useBasketUIStore } from '@/stores/basketUIStore';
 import Link from 'next/link';
 import MobileMenu from '@/components/Header/mobile/MobileMenu';
 import UserNavButton from '@/components/Header/UserNavButton';
-import { useCart } from '@/hooks/shop/useCart';
+import { useCart } from '@/hooks/cart/useCart';
 // import TrakingOrder from '@/components/Header/TrakingOrder';
 
 import { usePathname } from 'next/navigation';
@@ -30,8 +29,7 @@ export default function HeaderClient({
   socialToAction: Communication[];
 }) {
   const [isSticky, setIsSticky] = useState(false);
-  const { isOpen: isBasketOpen, open: openBasket, close: closeBasket } = useBasketUIStore();
-  const { refetch } = useCart();
+  const { isOpen, openCart, closeCart, refetch } = useCart();
 
   const pathname = usePathname();
   const isDashboardRoute = pathname?.startsWith('/dashboard');
@@ -101,7 +99,7 @@ export default function HeaderClient({
               {/* footerData-dependent tracking order — commented for now */}
               {/* <TrakingOrder footerData={footerData} /> */}
               <SearchPopover />
-              <CartIcon onClick={openBasket} />
+              <CartIcon onClick={openCart} />
               <CompareIcon />
               <UserNavButton />
             </div>
@@ -109,7 +107,7 @@ export default function HeaderClient({
         </div>
       </header>
 
-      <ShoppingBasket isOpen={isBasketOpen} onClose={closeBasket} />
+      <ShoppingBasket isOpen={isOpen} onClose={closeCart} />
     </>
   );
 }

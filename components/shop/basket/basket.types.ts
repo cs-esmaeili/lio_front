@@ -1,3 +1,3 @@
-import type { CartProductItem } from '@/hooks/shop/useCart';
+import type { CartItem } from '@/typescript/schemas/cart.schema';
 
-export type BasketItem = CartProductItem & { isUpdating?: boolean };
+export type BasketItem = CartItem & { isUpdating?: boolean };

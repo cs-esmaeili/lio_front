@@ -6,12 +6,11 @@ interface BasketListProps {
   items: BasketItem[];
   onQuantityChange: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
-  onMoveToNextPurchase: (id: string) => void;
 }
 
 const TABLE_HEADERS = ['تصویر', 'نام محصول', 'قیمت واحد', 'تعداد', 'جمع جز', ''];
 
-export default function BasketList({ items, onQuantityChange, onRemove, onMoveToNextPurchase }: BasketListProps) {
+export default function BasketList({ items, onQuantityChange, onRemove }: BasketListProps) {
   if (items.length === 0) {
     return <div className="text-center py-12 text-gray-400">سبد خرید خالی است</div>;
   }
@@ -34,11 +33,10 @@ export default function BasketList({ items, onQuantityChange, onRemove, onMoveTo
         <tbody>
           {items.map((item) => (
             <BasketListItem
-              key={String(item.product.product_price_id)}
+              key={item.variantId}
               item={item}
               onQuantityChange={onQuantityChange}
               onRemove={onRemove}
-              onMoveToNextPurchase={onMoveToNextPurchase}
             />
           ))}
         </tbody>

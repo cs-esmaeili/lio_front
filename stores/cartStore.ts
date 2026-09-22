@@ -1,65 +1,59 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-
-export interface CartItemEntry {
-  variant_id: number;
-  product_id: number;
-  quantity: number;
-  cart_id?: number;
-}
+import { createStore } from 'zustand/vanilla';
+import type { Cart } from '@/typescript/schemas/cart.schema';
 
 interface CartState {
-  items: CartItemEntry[];
+  cart: Cart | null;
+  loading: boolean;
+  loaded: boolean;
+  pending: boolean;
+  isOpen: boolean;
+  updatingVariants: Set<number>;
 
-  addItem: (variant_id: number, product_id: number, quantity: number, cart_id?: number) => void;
-  updateQuantity: (variant_id: number, quantity: number) => void;
-  removeItem: (variant_id: number) => void;
-  getVariantQty: (variant_id: number) => number;
-  setCartId: (variant_id: number, cart_id: number) => void;
-  clearCart: () => void;
+  setCart: (cart: Cart) => void;
+  setLoading: (loading: boolean) => void;
+  setPending: (pending: boolean) => void;
+  setUpdating: (variantId: number, updating: boolean) => void;
+  openCart: () => void;
+  closeCart: () => void;
+  toggleCart: () => void;
+  reset: () => void;
 }
 
-export const useCartStore = create<CartState>()(
-  persist(
-    (set, get) => ({
-      items: [],
+/**
+ * Vanilla cart store — the single source of truth for cart state.
+ * `useCart` is the only hook that reads/writes it, so there is exactly one
+ * cart-management hook in the app.
+ */
+export const cartStore = createStore<CartState>()((set, get) => ({
+  cart: null,
+  loading: true,
+  loaded: false,
+  pending: false,
+  isOpen: false,
+  updatingVariants: new Set<number>(),
 
-      addItem: (variant_id, product_id, quantity, cart_id) => {
-        const items = get().items;
-        const existing = items.find((i) => i.variant_id === variant_id);
-        if (existing) {
-          set({ items: items.map((i) => (i.variant_id === variant_id ? { ...i, quantity: i.quantity + quantity } : i)) });
-        } else {
-          set({ items: [...items, { variant_id, product_id, quantity, ...(cart_id != null ? { cart_id } : {}) }] });
-        }
-      },
+  setCart: (cart) => set({ cart, loading: false, loaded: true }),
+  setLoading: (loading) => set({ loading }),
+  setPending: (pending) => set({ pending }),
 
-      updateQuantity: (variant_id, quantity) => {
-        const items = get().items;
-        if (quantity <= 0) {
-          set({ items: items.filter((i) => i.variant_id !== variant_id) });
-        } else {
-          set({ items: items.map((i) => (i.variant_id === variant_id ? { ...i, quantity } : i)) });
-        }
-      },
+  setUpdating: (variantId, updating) => {
+    const next = new Set(get().updatingVariants);
+    if (updating) next.add(variantId);
+    else next.delete(variantId);
+    set({ updatingVariants: next });
+  },
 
-      removeItem: (variant_id) => {
-        set({ items: get().items.filter((i) => i.variant_id !== variant_id) });
-      },
+  openCart: () => set({ isOpen: true }),
+  closeCart: () => set({ isOpen: false }),
+  toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
-      getVariantQty: (variant_id) => {
-        return get().items.find((i) => i.variant_id === variant_id)?.quantity ?? 0;
-      },
-
-      setCartId: (variant_id, cart_id) => {
-        set({ items: get().items.map((i) => (i.variant_id === variant_id ? { ...i, cart_id } : i)) });
-      },
-
-      clearCart: () => set({ items: [] }),
+  reset: () =>
+    set({
+      cart: null,
+      loading: true,
+      loaded: false,
+      pending: false,
+      isOpen: false,
+      updatingVariants: new Set<number>(),
     }),
-    {
-      name: 'cart-items',
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
+}));

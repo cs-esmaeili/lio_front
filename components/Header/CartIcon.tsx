@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Icon from '@/components/global/Icon';
 import { ShoppingCart } from 'iconsax-reactjs';
-import { useCartStore } from '@/stores/cartStore';
+import { useCart } from '@/hooks/cart/useCart';
 import { usePathname } from 'next/navigation';
 
 interface CartIconProps {
@@ -16,8 +16,8 @@ export default function CartIcon({ onClick }: CartIconProps) {
 
   useEffect(() => setMounted(true), []);
 
-  const items = useCartStore((s) => s.items);
-  const cartLength = mounted ? items.length : 0;
+  const { distinctItemCount } = useCart();
+  const cartLength = mounted ? distinctItemCount : 0;
 
   
   if (pathname === '/basket/' || pathname === '/checkout/') return null;

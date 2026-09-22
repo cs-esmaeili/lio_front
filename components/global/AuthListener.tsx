@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useCartStore } from '@/stores/cartStore';
+import { cartStore } from '@/stores/cartStore';
+import { rotateGuestToken } from '@/services/cart.service';
 
 /**
  * Listens for auth:logout events (dispatched by the axios interceptor on 401)
@@ -12,9 +13,9 @@ import { useCartStore } from '@/stores/cartStore';
 export function AuthListener() {
   useEffect(() => {
     const handleLogout = () => {
-      // Clear cart store — server is the source of truth for auth users,
-      // and localStorage data is now stale since the session is gone.
-      useCartStore.getState().clearCart();
+      // Cart is server-side now; drop stale state and start a fresh guest identity.
+      cartStore.getState().reset();
+      rotateGuestToken();
     };
 
     window.addEventListener('auth:logout', handleLogout);

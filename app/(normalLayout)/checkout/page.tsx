@@ -5,7 +5,7 @@ import AuthGuard from '@/components/global/AuthGuard';
 import CheckoutList from '@/components/shop/checkout/CheckoutList';
 import CheckoutSummary from '@/components/shop/checkout/CheckoutSummary';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn/tabs';
-import { useCart } from '@/hooks/shop/useCart';
+import { useCart } from '@/hooks/cart/useCart';
 import AddressSection from '@/components/shop/checkout/AddressSection';
 import PaymentSection, { CARD_TO_CARD_PAYMENT_ID } from '@/components/shop/checkout/PaymentSection';
 import ShippingMethodSection from '@/components/shop/checkout/ShippingMethodSection';
@@ -21,7 +21,7 @@ type CheckoutTab = 'address';
 
 export default function PurchaseBasketPage() {
   const router = useRouter();
-  const { cartItems, updatingItems, refetch } = useCart();
+  const { items: cartItems, updatingVariants, refetch } = useCart();
 
   useEffect(() => {
     refetch();
@@ -29,7 +29,7 @@ export default function PurchaseBasketPage() {
 
   const items = cartItems.map((ci) => ({
     ...ci,
-    isUpdating: updatingItems.has(ci.product.product_price_id),
+    isUpdating: updatingVariants.has(ci.variantId),
   }));
 
   // ---- tab state ----
