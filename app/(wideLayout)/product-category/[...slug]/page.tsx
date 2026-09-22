@@ -80,7 +80,6 @@ const page = async ({ params, searchParams }: Props) => {
   const lastSlug = slug[slug.length - 1];
 
   const [serverFilters, searchResult] = await Promise.all([productFiltersSSR(lastSlug), productListSSR(lastSlug, sp)]);
-    
 
   // if (searchResult.breadcrumb && !Array.isArray(searchResult.breadcrumb)) {
   //   searchResult.breadcrumb = Object.values(searchResult.breadcrumb).sort((a: any, b: any) => a.position - b.position);
@@ -105,7 +104,6 @@ const page = async ({ params, searchParams }: Props) => {
   const footer = await getFooterData();
   const callToAction = footer.support_phone || footer.telephone || '';
   const socialToAction = footer.communications || [];
-
 
   return (
     <>
