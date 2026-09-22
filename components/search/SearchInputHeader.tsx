@@ -1,20 +1,30 @@
 'use client';
 
-import { CloseCircle, SearchStatus } from 'iconsax-reactjs';
+import type { KeyboardEvent } from 'react';
+import { CloseCircle } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
 
 type Props = {
   value: string;
   onChange: (val: string) => void;
   onClear: () => void;
+  onSubmit?: () => void;
 };
 
-const SearchInputHeader = ({ value, onChange, onClear }: Props) => {
+const SearchInputHeader = ({ value, onChange, onClear, onSubmit }: Props) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      onSubmit?.();
+    }
+  };
+
   return (
     <div className='relative w-full h-full'>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder='جستجوی محصولات,دسته بندی ها و...'
         dir='rtl'
         autoFocus={true}

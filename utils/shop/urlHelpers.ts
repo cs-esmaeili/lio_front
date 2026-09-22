@@ -1,3 +1,8 @@
+/** Builds the /shop URL that lists every product matching a header search query. */
+export function buildProductsSearchUrl(query: string): string {
+  return `/shop?name=${encodeURIComponent(query.trim())}`;
+}
+
 export function cloneParams(params: URLSearchParams): URLSearchParams {
   return new URLSearchParams(params.toString());
 }

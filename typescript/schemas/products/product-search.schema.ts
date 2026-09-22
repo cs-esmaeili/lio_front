@@ -14,8 +14,9 @@ export const ProductSearchFilterSchema = z.object({
 export const ProductSortSchema = z.enum(['newest', 'cheapest', 'most_expensive']);
 
 export const ProductSearchRequestSchema = z.object({
-  categorySlug: z.string(),
-  filters: z.array(ProductSearchFilterSchema),
+  categorySlug: z.string().optional(),
+  name: z.string().optional(),
+  filters: z.array(ProductSearchFilterSchema).optional(),
   minPrice: z.number().nonnegative().optional(),
   maxPrice: z.number().nonnegative().optional(),
   inStock: z.boolean().optional(),

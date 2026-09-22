@@ -1,22 +1,25 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { SearchStatus } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
 import { useSearch } from '@/hooks/useSearch';
 import SearchResults from '@/components/search/SearchResults';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useBackdropPortal } from '@/hooks/useBackdropPortal';
+import { buildProductsSearchUrl } from '@/utils/shop/urlHelpers';
 import SearchInputHeader from '../search/SearchInputHeader';
 
 export default function SearchPopover() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
   const openTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const { query, setQuery, results, loading, clearSearch } = useSearch('global');
+  const { query, setQuery, results, loading, clearSearch } = useSearch();
 
   // click outside = close + clear
   useClickOutside(wrapperRef, () => {
@@ -76,6 +79,14 @@ export default function SearchPopover() {
     clearSearch();
   };
 
+  const handleSubmit = () => {
+    if (!query.trim()) return;
+
+    setOpen(false);
+    clearSearch();
+    router.push(buildProductsSearchUrl(query));
+  };
+
   // cleanup timers
   useEffect(() => {
     return () => {
@@ -109,6 +120,7 @@ export default function SearchPopover() {
               if (val.trim() && !open) setOpen(true);
             }}
             onClear={clearSearch}
+            onSubmit={handleSubmit}
           />
 
           <SearchResults items={results} query={query} loading={loading} onItemClick={handleItemClick} />
