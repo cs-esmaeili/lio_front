@@ -17,12 +17,14 @@ const readPositiveNumber = (params: URLSearchParams, key: string): number | unde
  * Converts the shop URL params into the payload expected by
  * `POST /products/search`.
  *
+ * - `categorySlug` → omitted when empty, so the whole catalogue is searched
+ * - `name` → optional name match (e.g. from the header search)
  * - repeated `attribute_values[{id}]` → `filters` (OR within one attribute)
  * - `minPrice` / `maxPrice` → price range of the default variant
  * - `inStock` / `hasDiscount` → `"1"` flags
  * - `sort` → one of `newest | cheapest | most_expensive`
  */
-export const buildProductSearchBody = (categorySlug: string, params: URLSearchParams): ProductSearchRequest => {
+export const buildProductSearchBody = (categorySlug: string | null, params: URLSearchParams): ProductSearchRequest => {
   const filters = new Map<number, number[]>();
 
   params.forEach((value, key) => {
@@ -40,9 +42,14 @@ export const buildProductSearchBody = (categorySlug: string, params: URLSearchPa
   });
 
   const body: ProductSearchRequest = {
-    categorySlug,
     filters: Array.from(filters, ([attributeId, valueIds]) => ({ attributeId, valueIds })),
   };
+
+  const slug = categorySlug?.trim();
+  if (slug) body.categorySlug = slug;
+
+  const name = params.get('name')?.trim();
+  if (name) body.name = name;
 
   const minPrice = readPositiveNumber(params, 'minPrice');
   if (minPrice !== undefined) body.minPrice = minPrice;

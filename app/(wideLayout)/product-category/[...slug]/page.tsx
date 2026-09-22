@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Shop from '@/components/shop/List/Shop';
-import { productListSSR, productFiltersSSR } from '@/services/category.service';
+import { productListSSR, productFiltersSSR } from '@/services/shop.service';
 import useSeo from '@/hooks/seo/useSeo';
 import categorySchema from '@/schema/seo/category';
 import JsonLd from '@/components/seo/JsonLd';

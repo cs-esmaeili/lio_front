@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { searchCSR as shopSearchCSR } from '@/services/shop.service';
-import { productSearchCSR } from '@/services/category.service';
+import { productSearchCSR } from '@/services/shop.service';
 import { brandsShopListCSR } from '@/services/brands.service';
 
 export function useProductSearch(
@@ -36,12 +35,8 @@ export function useProductSearch(
     const runSearch = async (): Promise<{ products: unknown[]; product_pagination: unknown }> => {
       switch (type) {
         case 'category':
-          return productSearchCSR(categorySlug!, query);
-
-        case 'shop': {
-          const response = await shopSearchCSR(query);
-          return { products: response.data.products, product_pagination: response.data.product_pagination };
-        }
+        case 'shop':
+          return productSearchCSR(categorySlug, query);
 
         case 'brand': {
           const response = await brandsShopListCSR(categorySlug!, query);
