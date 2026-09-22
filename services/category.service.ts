@@ -2,13 +2,9 @@ import type { AxiosResponse } from 'axios';
 import http from '@/services/core/clientService';
 import { fetcher } from '@/services/core/SSRService';
 import { ApiError } from '@/utils/api-error';
-import { CategoryFiltersSchema } from '@/typescript/schemas/products/category-filters.schema';
 import type { CategoryFilterView } from '@/typescript/schemas/products/category-filters.schema';
-import {
-  ProductGlobalFiltersSchema,
-  ProductSortOptionsSchema,
-} from '@/typescript/schemas/products/product-options.schema';
 import type { ProductSortOption } from '@/typescript/schemas/products/product-options.schema';
+import { ProductSearchConfigSchema } from '@/typescript/schemas/products/search-config.schema';
 import { ProductSearchResponseSchema } from '@/typescript/schemas/products/product-search.schema';
 import type { ProductSearchItem } from '@/typescript/schemas/products/product-search.schema';
 import type { Pagination } from '@/typescript/schemas/pagination.schema';
@@ -89,35 +85,19 @@ export const productListSSR = async (
 export const productFiltersSSR = async (
   slug: string,
 ): Promise<{ filters: CategoryFilterView[]; sort_options: ProductSortOption[] }> => {
-  const [filtersData, sortOptionsData, globalFiltersData] = await Promise.all([
-    fetcher<unknown>(`${ssrPrefixUrl}/categories/${slug}/filters`, {
-      next: {
-        revalidate: 60,
-      },
-    }),
-    fetcher<unknown>(`${ssrPrefixUrl}/products/sort-options`, {
-      next: {
-        revalidate: 60,
-      },
-    }),
-    fetcher<unknown>(`${ssrPrefixUrl}/products/global-filters`, {
-      next: {
-        revalidate: 60,
-      },
-    }),
-  ]);
+  const url = `${ssrPrefixUrl}/products/search-config?categorySlug=${encodeURIComponent(slug)}`;
 
-  const parsed = CategoryFiltersSchema.safeParse(filtersData);
+  const data = await fetcher<unknown>(url, {
+    next: {
+      revalidate: 60,
+    },
+  });
+
+  const parsed = ProductSearchConfigSchema.safeParse(data);
 
   if (!parsed.success) {
-    throw new ApiError(422, 'پاسخ فیلترهای دسته‌بندی نامعتبر است', parsed.error);
+    throw new ApiError(422, 'پاسخ تنظیمات جستجوی دسته‌بندی نامعتبر است', parsed.error);
   }
 
-  const sortOptions = ProductSortOptionsSchema.safeParse(sortOptionsData);
-  const globalFilters = ProductGlobalFiltersSchema.safeParse(globalFiltersData);
-
-  return {
-    filters: [...(globalFilters.success ? globalFilters.data : []), ...parsed.data],
-    sort_options: sortOptions.success ? sortOptions.data : [],
-  };
+  return parsed.data;
 };
