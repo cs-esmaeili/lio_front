@@ -8,7 +8,8 @@ import { useCart } from '@/hooks/cart/useCart';
 import { Spinner } from '@/components/shadcn/spinner';
 
 export default function PurchaseBasketPage() {
-  const { loading, items, updatingVariants, updateQuantity, removeItem, refetch, subtotal, itemCount } = useCart();
+  const { loading, items, updatingVariants, updateQuantity, removeItem, refetch, subtotal, totalDiscount, itemCount } =
+    useCart();
 
   useEffect(() => {
     refetch();
@@ -71,10 +72,10 @@ export default function PurchaseBasketPage() {
         <div className='order-2 md:order-2 md:col-span-1 flex flex-col gap-4 sticky top-4'>
           <OrderSummary
             finalPrice={subtotal}
-            discount={0}
+            discount={totalDiscount}
             paymentPrice={subtotal}
             itemCount={itemCount}
-            basePrice={subtotal}
+            basePrice={subtotal + totalDiscount}
             desktopButtonText='تایید و تکمیل سفارش'
             mobileButtonText='تایید سفارش'
           />

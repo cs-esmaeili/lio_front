@@ -25,6 +25,7 @@ export const CartItemSchema = z.object({
   variantId: z.number(),
   quantity: z.number().int().nonnegative().catch(1),
   lineTotal: z.number().catch(0),
+  discount: z.number().catch(0),
   product: CartProductSchema,
   variant: CartVariantSchema,
 });
@@ -34,6 +35,7 @@ export const CartSchema = z.object({
   itemCount: z.number().catch(0),
   distinctItemCount: z.number().catch(0),
   subtotal: z.number().catch(0),
+  totalDiscount: z.number().catch(0),
 });
 
 /** Success envelope: `{ statusCode, data, message }`. */
@@ -60,4 +62,5 @@ export const EMPTY_CART: Cart = {
   itemCount: 0,
   distinctItemCount: 0,
   subtotal: 0,
+  totalDiscount: 0,
 };

@@ -121,6 +121,7 @@ export function useCart() {
   const itemCount = cart?.itemCount ?? 0;
   const distinctItemCount = cart?.distinctItemCount ?? items.length;
   const subtotal = cart?.subtotal ?? 0;
+  const totalDiscount = cart?.totalDiscount ?? 0;
   const isEmpty = !loading && items.length === 0;
 
   const isUpdating = useCallback(
@@ -134,6 +135,7 @@ export function useCart() {
     itemCount,
     distinctItemCount,
     subtotal,
+    totalDiscount,
     loading,
     isEmpty,
     isOpen,
