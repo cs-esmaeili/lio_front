@@ -38,7 +38,7 @@ export function OtpInput({
       aria-label={`رقم ${index + 1} کد تایید`}
       aria-invalid={error}
       className={[
-        "h-12 w-12 rounded-lg border text-center text-xl font-semibold outline-none transition-all caret-primary-1 text-gray-1",
+        "h-12 w-12 rounded-lg border text-center text-xl font-semibold outline-none transition-all caret-primary-1 text-secondary-black-3",
         "focus:ring-2",
         error
           ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"

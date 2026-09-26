@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { z } from 'zod';
 import { ApiError } from '@/utils/api-error';
 import { useCsrf } from '@/hooks/useCsrf';
-import { getMeCSR, logoutCSR, requestOtpCSR, verifyOtpCSR } from '@/services/auth.service';
+import { getMeCSR, loginCSR, logoutCSR, requestOtpCSR, verifyOtpCSR } from '@/services/auth.service';
 import {
   AuthEnvelopeSchema,
   AuthErrorBodySchema,
@@ -89,10 +89,18 @@ export function useAuthRequest() {
     [buildHeaders],
   );
 
+  const login = useCallback(
+    async (username: string, password: string): Promise<AuthUser> => {
+      const headers = await buildHeaders();
+      return parseAuthResponse(await loginCSR(username, password, headers), AuthUserSchema);
+    },
+    [buildHeaders],
+  );
+
   const logout = useCallback(async (): Promise<void> => {
     const headers = await buildHeaders();
     await parseAuthResponse(await logoutCSR(headers), LogoutSchema);
   }, [buildHeaders]);
 
-  return { getMe, requestOtp, verifyOtp, logout } as const;
+  return { getMe, requestOtp, verifyOtp, login, logout } as const;
 }

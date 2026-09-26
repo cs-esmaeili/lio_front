@@ -56,8 +56,8 @@ export function OtpForm({ phone, formattedPhone, onBack, returnUrl }: Props) {
   return (
     <div>
       <div className='mb-6'>
-        <h1 className='mb-4 text-xl font-bold text-gray-1'>کد تایید را وارد کنید</h1>
-        <p className='text-sm leading-6 text-gray-3'>
+        <h1 className='mb-4 text-xl font-bold text-secondary-black-3'>کد تایید را وارد کنید</h1>
+        <p className='text-sm leading-6 text-secondary-2'>
           کد تایید برای شماره{' '}
           <span className='font-semibold' dir='ltr'>
             {formattedPhone}

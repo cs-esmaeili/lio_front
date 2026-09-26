@@ -37,8 +37,8 @@ export function PhoneForm({ onSubmit }: Props) {
   return (
     <form onSubmit={handleSubmit(onValid)}>
       <div className='mb-6'>
-        <h1 className='mb-1 text-xl text-gray-1 font-normal'>ورود | ثبت نام</h1>
-        <p className='text-sm text-gray-3'>لطفا شماره موبایل خود را وارد کنید</p>
+        <h1 className='mb-1 text-xl text-secondary-black-3 font-normal'>ورود | ثبت نام</h1>
+        <p className='text-sm text-secondary-2'>لطفا شماره موبایل خود را وارد کنید</p>
       </div>
 
       <div className='mb-4'>
@@ -54,10 +54,10 @@ export function PhoneForm({ onSubmit }: Props) {
           aria-describedby={errors.phone ? 'phone-error' : undefined}
           aria-invalid={!!errors.phone}
           className={[
-            'h-12 bg-transparent! rounded-lg px-4 text-center text-base text-gray-1 placeholder:text-slate-300',
+            'h-12 bg-transparent! rounded-lg px-4 text-center text-base text-secondary-black-3 placeholder:text-secondary-3',
             errors.phone
               ? 'border-red-400 focus-visible:border-red-400 focus-visible:ring-red-400/20'
-              : 'border-gray-1 focus-visible:border-primary-2 focus-visible:ring-gray-1/20',
+              : 'border-gray-2 focus-visible:border-primary-2 focus-visible:ring-gray-2/40',
           ].join(' ')}
           {...register('phone', {
             onChange: (e) => {
@@ -94,7 +94,7 @@ export function PhoneForm({ onSubmit }: Props) {
           type='button'
           variant='link'
           asChild
-          className='text-xs text-gray-3 hover:text-primary-1 cursor-pointer'>
+          className='text-xs text-secondary-2 hover:text-primary-1 cursor-pointer'>
           <Link href='/'>بازگشت به صفحه اصلی</Link>
         </Button>
       </div>
