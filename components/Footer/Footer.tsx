@@ -5,7 +5,6 @@ import behido from '@/public/behido.png';
 import Image from 'next/image';
 import { Star, Timer1 } from 'iconsax-reactjs';
 import ScrollToTopButton from '@/components/Footer/ScrollToTopButton';
-import TrackingSticky from '@/components/Footer/TrackingSticky';
 
 import styles from '@/styles/modules/Carves.module.css';
 import type { FooterData } from '@/typescript/types/footer/footer.types';
@@ -18,7 +17,6 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
 
   return (
     <footer className={`relative ${styles.footer} bg-secondary-black-2 mt-2.5`}>
-      <TrackingSticky />
 
       <div className='absolute top-[-2%] md:top-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10'>
         <ScrollToTopButton />
