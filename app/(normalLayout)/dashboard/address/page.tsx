@@ -18,6 +18,7 @@ import type { Address } from '@/components/dashboard/address/address.model';
 
 import { useAddressList } from '@/hooks/address/useAddressList';
 import { useRemoveAddress } from '@/hooks/address/useRemoveAddress';
+import { useSetMainAddress } from '@/hooks/address/useSetMainAddress';
 
 export default function AddressPage() {
   const [isAddressModalOpen, setAddressModalOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function AddressPage() {
 
   const { addresses, loading, refetch } = useAddressList();
   const { removeAddress } = useRemoveAddress();
+  const { setMainAddress } = useSetMainAddress();
 
   //----------------------------------------------------
 
@@ -60,6 +62,16 @@ export default function AddressPage() {
     if (!Number.isFinite(id) || id <= 0) return;
 
     const result = await removeAddress(id);
+    if (result) refetch();
+  };
+
+  //----------------------------------------------------
+
+  const handleSetMain = async (address: Address) => {
+    const id = Number(address.id);
+    if (!Number.isFinite(id) || id <= 0) return;
+
+    const result = await setMainAddress(id);
     if (result) refetch();
   };
 
@@ -109,7 +121,7 @@ export default function AddressPage() {
 
         {/* Address List */}
         {!loading && addresses.length > 0 && (
-          <AddressList addresses={addresses} onEdit={handleEdit} onDelete={handleDelete} />
+          <AddressList addresses={addresses} onEdit={handleEdit} onDelete={handleDelete} onSetMain={handleSetMain} />
         )}
       </div>
 

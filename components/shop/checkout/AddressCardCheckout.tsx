@@ -40,30 +40,26 @@ export default function AddressCardCheckout({
             />
 
             <div className="flex flex-1 flex-col gap-2">
-                <span className="font-medium text-secondary-1">
+                <span className="flex items-center gap-2 font-medium text-secondary-1">
                     {address.title}
+
+                    {address.isMain && (
+                        <span className="rounded-full bg-primary-3 px-2 py-0.5 text-xs text-primary-1">
+                            پیش‌فرض
+                        </span>
+                    )}
                 </span>
 
                 <span className="text-sm text-secondary-2">
-                    {address.province}، {address.city}، {address.address}
+                    {address.province}، {address.city}
+                </span>
+
+                <span className="text-sm text-secondary-2">
+                    {address.address}
                 </span>
 
                 <span className="text-sm text-secondary-2">
                     کد پستی: {address.postalCode}
-                </span>
-
-                <span className="text-sm text-secondary-2">
-                    گیرنده:
-                    {" "}
-                    {address.receiverType === "self"
-                        ? "خودم"
-                        : address.receiverName}
-                </span>
-
-                <span className="text-sm text-secondary-2">
-                    تلفن:
-                    {" "}
-                    {address.receiverPhone}
                 </span>
             </div>
 

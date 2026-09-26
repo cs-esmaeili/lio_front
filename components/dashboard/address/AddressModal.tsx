@@ -6,22 +6,20 @@ import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
+import { Checkbox } from '@/components/shadcn/checkbox';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { Textarea } from '@/components/shadcn/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import ReusableModal from '@/components/global/Modal/ReusableModal';
 
-import { useProvinces } from '@/hooks/address/useProvinces';
-import { useCities } from '@/hooks/address/useCities';
+import { useLocations } from '@/hooks/address/useLocations';
 import { useAddAddress } from '@/hooks/address/useAddAddress';
 import { useEditAddress } from '@/hooks/address/useEditAddress';
 
 import type { Address } from '@/components/dashboard/address/address.model';
-import { initialAddress } from '@/components/dashboard/address/address.model';
-import { AddressFormSchema, type AddressFormValues } from '@/typescript/schemas/address-form.schema';
-import { type AddressAddPayload, type AddressEditPayload, extractAddressId } from '@/services/address.service';
+import { AddressFormSchema, emptyAddressForm, type AddressFormValues } from '@/typescript/schemas/address-form.schema';
+import { type AddressAddPayload, type AddressEditPayload } from '@/services/address.service';
 
 interface AddressModalProps {
   open: boolean;
@@ -31,31 +29,18 @@ interface AddressModalProps {
   onSuccess?: (newAddressId?: number) => void;
 }
 
-const toNumber = (v: number | string | undefined): number | undefined => {
-  if (v === undefined || v === null || v === '') return undefined;
-  const n = typeof v === 'string' ? Number(v) : v;
-  return Number.isFinite(n) ? n : undefined;
-};
-
 const toDefaults = (initial: Address | null): AddressFormValues => {
-  const src = initial ?? initialAddress;
+  if (!initial) return { ...emptyAddressForm };
 
   return {
-    id: src.id,
-    lat: toNumber(src.lat),
-    lng: toNumber(src.lng),
-    place_id: toNumber(src.place_id),
-    province_id: toNumber(src.province_id),
-    name_family: (src as any).name_family ?? '',
-    province: src.province ?? '',
-    city: src.city ?? '',
-    title: src.title ?? '',
-    postalCode: src.postalCode ?? '',
-    address: src.address ?? '',
-    receiverType: (src.receiverType ?? 'self') as 'self' | 'other',
-    receiverName: src.receiverName ?? '',
-    receiverPhone: src.receiverPhone ?? '',
-  } as AddressFormValues;
+    id: initial.id,
+    title: initial.title,
+    address: initial.address,
+    postalCode: initial.postalCode,
+    province: initial.province,
+    locationId: initial.locationId,
+    isMain: initial.isMain,
+  };
 };
 
 export default function AddressModal({ open, onOpenChange, mode, initialData, onSuccess }: AddressModalProps) {
@@ -78,11 +63,14 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
     formState: { errors },
   } = methods;
 
-  const provinceId = useWatch({ control, name: 'province_id' });
-  const receiverType = useWatch({ control, name: 'receiverType' });
+  const province = useWatch({ control, name: 'province' });
 
-  const { provinces, loading: loadingProvinces } = useProvinces();
-  const { cities, loading: loadingCities } = useCities(provinceId);
+  const { locations, provinces, loading: loadingLocations } = useLocations();
+
+  const cities = useMemo(
+    () => locations.filter((location) => location.province === province),
+    [locations, province],
+  );
 
   // --------------------------------------------------------
 
@@ -102,35 +90,21 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
 
   // --------------------------------------------------------
 
-  const buildPayload = (data: AddressFormValues): AddressAddPayload => {
-    const isSelf = data.receiverType === 'self';
-
-    const base: AddressAddPayload = {
-      lat: data.lat ?? 0,
-      lng: data.lng ?? 0,
-      place_id: data.place_id ?? 0,
-      province_id: data.province_id ?? 0,
-      title: data.title,
-      postal_code: data.postalCode,
-      value: data.address,
-      is_default_recipient: isSelf ? '1' : '0',
-      recipient_mobile: isSelf ? '' : data.receiverPhone,
-      name_family: data.name_family,
-    };
-
-    if (!isSelf) {
-      base.recipient_name = data.receiverName;
-    }
-
-    return base;
-  };
+  const buildPayload = (data: AddressFormValues): AddressAddPayload => ({
+    title: data.title,
+    address: data.address,
+    postalCode: data.postalCode,
+    locationId: data.locationId,
+    isMain: data.isMain,
+  });
 
   const onValid = async (data: AddressFormValues) => {
-    let result: unknown = null;
-
     if (mode === 'create') {
-      result = await addAddress(buildPayload(data));
-      if (result) toast.success('آدرس با موفقیت ثبت شد');
+      const created = await addAddress(buildPayload(data));
+      if (!created) return;
+
+      toast.success('آدرس با موفقیت ثبت شد');
+      onSuccess?.(Number(created.id));
     } else {
       const address_id = Number(data.id);
 
@@ -144,13 +118,13 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
         address_id,
       };
 
-      result = await editAddress(payload);
-      if (result) toast.success('آدرس با موفقیت ویرایش شد');
+      const updated = await editAddress(payload);
+      if (!updated) return;
+
+      toast.success('آدرس با موفقیت ویرایش شد');
+      onSuccess?.();
     }
 
-    if (!result) return;
-
-    onSuccess?.(mode === 'create' ? extractAddressId(result) : undefined);
     reset(toDefaults(null));
     onOpenChange(false);
   };
@@ -192,88 +166,6 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
     <FormProvider {...methods}>
       <ReusableModal open={open} onOpenChange={handleOpenChange} title={title} footer={footer} size='lg'>
         <div key={formKey} className='flex flex-col gap-6'>
-          {/* Name Family */}
-          <div className='flex flex-col gap-2'>
-            <label className='text-sm text-secondary-1'>نام و نام خانوادگی</label>
-
-            <Input className='h-12' placeholder='نام و نام خانوادگی خود را وارد کنید' {...register('name_family')} />
-
-            {errors.name_family && <p className='text-xs text-red-500'>{errors.name_family.message}</p>}
-          </div>
-
-          {/* Province & City */}
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='flex flex-col gap-2'>
-              <label className='text-sm text-secondary-1'>استان</label>
-
-              <Controller
-                control={control}
-                name='province_id'
-                render={({ field }) => (
-                  <Select
-                    value={field.value ? String(field.value) : ''}
-                    onValueChange={(val) => {
-                      const id = Number(val);
-                      const selected = provinces.find((p) => p.id === id);
-                      field.onChange(id);
-                      setValue('province', selected?.title ?? '', { shouldValidate: false });
-                      setValue('place_id', undefined as unknown as number, { shouldValidate: false });
-                      setValue('city', '', { shouldValidate: false });
-                    }}
-                    disabled={loadingProvinces}>
-                    <SelectTrigger className='!h-12 w-full rounded-md border border-input px-3' dir='rtl'>
-                      <SelectValue placeholder={loadingProvinces ? 'در حال بارگذاری...' : 'انتخاب استان'} />
-                    </SelectTrigger>
-
-                    <SelectContent position='popper' dir='rtl' className='z-50 max-h-64'>
-                      {provinces.map((p) => (
-                        <SelectItem key={p.id} value={String(p.id)}>
-                          {p.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-
-              {errors.province_id && <p className='text-xs text-red-500'>{errors.province_id.message}</p>}
-            </div>
-
-            <div className='flex flex-col gap-2'>
-              <label className='text-sm text-secondary-1'>شهر</label>
-
-              <Controller
-                control={control}
-                name='place_id'
-                render={({ field }) => (
-                  <Select
-                    value={field.value ? String(field.value) : ''}
-                    onValueChange={(val) => {
-                      const id = Number(val);
-                      const selected = cities.find((c) => c.id === id);
-                      field.onChange(id);
-                      setValue('city', selected?.title ?? '', { shouldValidate: false });
-                    }}
-                    disabled={!provinceId || loadingCities}>
-                    <SelectTrigger className='!h-12 w-full rounded-md border border-input px-3' dir='rtl'>
-                      <SelectValue placeholder={!provinceId ? 'ابتدا استان را انتخاب کنید' : loadingCities ? 'در حال بارگذاری...' : 'انتخاب شهر'} />
-                    </SelectTrigger>
-
-                    <SelectContent position='popper' dir='rtl' className='z-50 max-h-64'>
-                      {cities.map((c) => (
-                        <SelectItem key={c.id} value={String(c.id)}>
-                          {c.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-
-              {errors.place_id && <p className='text-xs text-red-500'>{errors.place_id.message}</p>}
-            </div>
-          </div>
-
           {/* Title */}
           <div className='flex flex-col gap-2'>
             <label className='text-sm text-secondary-1'>عنوان آدرس</label>
@@ -283,11 +175,80 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
             {errors.title && <p className='text-xs text-red-500'>{errors.title.message}</p>}
           </div>
 
+          {/* Province & City */}
+          <div className='grid grid-cols-2 gap-4'>
+            <div className='flex flex-col gap-2'>
+              <label className='text-sm text-secondary-1'>استان</label>
+
+              <Controller
+                control={control}
+                name='province'
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ''}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setValue('locationId', 0, { shouldValidate: false });
+                    }}
+                    disabled={loadingLocations}>
+                    <SelectTrigger className='!h-12 w-full rounded-md border border-input px-3' dir='rtl'>
+                      <SelectValue placeholder={loadingLocations ? 'در حال بارگذاری...' : 'انتخاب استان'} />
+                    </SelectTrigger>
+
+                    <SelectContent position='popper' dir='rtl' className='z-50 max-h-64'>
+                      {provinces.map((name) => (
+                        <SelectItem key={name} value={name}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+
+              {errors.province && <p className='text-xs text-red-500'>{errors.province.message}</p>}
+            </div>
+
+            <div className='flex flex-col gap-2'>
+              <label className='text-sm text-secondary-1'>شهر</label>
+
+              <Controller
+                control={control}
+                name='locationId'
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : ''}
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    disabled={!province || loadingLocations}>
+                    <SelectTrigger className='!h-12 w-full rounded-md border border-input px-3' dir='rtl'>
+                      <SelectValue placeholder={!province ? 'ابتدا استان را انتخاب کنید' : 'انتخاب شهر'} />
+                    </SelectTrigger>
+
+                    <SelectContent position='popper' dir='rtl' className='z-50 max-h-64'>
+                      {cities.map((location) => (
+                        <SelectItem key={location.id} value={String(location.id)}>
+                          {location.city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+
+              {errors.locationId && <p className='text-xs text-red-500'>{errors.locationId.message}</p>}
+            </div>
+          </div>
+
           {/* Address */}
           <div className='flex flex-col gap-2'>
-            <label className='text-sm text-secondary-1'>آدرس پستی کامل</label>
+            <label className='text-sm text-secondary-1'>نشانی دقیق</label>
 
-            <Textarea rows={4} placeholder='آدرس کامل خود را وارد کنید...' className='resize-none' {...register('address')} />
+            <Textarea
+              rows={4}
+              placeholder='خیابان، کوچه، پلاک و واحد را وارد کنید...'
+              className='resize-none'
+              {...register('address')}
+            />
 
             {errors.address && <p className='text-xs text-red-500'>{errors.address.message}</p>}
           </div>
@@ -296,62 +257,25 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
           <div className='flex flex-col gap-2'>
             <label className='text-sm text-secondary-1'>کد پستی</label>
 
-            <Input className='h-12' placeholder='کد پستی' inputMode='numeric' {...register('postalCode')} />
+            <Input className='h-12' placeholder='کد پستی' inputMode='numeric' maxLength={10} {...register('postalCode')} />
 
             {errors.postalCode && <p className='text-xs text-red-500'>{errors.postalCode.message}</p>}
           </div>
 
-          {/* Receiver Type */}
-          <div className='flex flex-col gap-5'>
-            <h6 className='text-sm font-normal text-secondary-1'>سفارش‌های این آدرس را چه کسی تحویل می‌گیرد؟</h6>
+          {/* Is Main */}
+          <Controller
+            control={control}
+            name='isMain'
+            render={({ field }) => (
+              <div className='flex items-center gap-2'>
+                <Checkbox id='address-is-main' checked={field.value} onCheckedChange={(checked) => field.onChange(checked === true)} />
 
-            <Controller
-              control={control}
-              name='receiverType'
-              render={({ field }) => (
-                <RadioGroup
-                  dir='rtl'
-                  value={field.value}
-                  onValueChange={(value) => field.onChange(value as 'self' | 'other')}
-                  className='flex flex-col gap-4'>
-                  <div className='flex items-center justify-start gap-2'>
-                    <RadioGroupItem value='self' id='receiver-self' />
-                    <Label htmlFor='receiver-self' className='text-sm font-normal text-secondary-1 cursor-pointer'>
-                      تحویل به خودم
-                    </Label>
-                  </div>
-
-                  <div className='flex items-center justify-start gap-2'>
-                    <RadioGroupItem value='other' id='receiver-other' />
-                    <Label htmlFor='receiver-other' className='text-sm font-normal text-secondary-1 cursor-pointer'>
-                      تحویل به شخص دیگر
-                    </Label>
-                  </div>
-                </RadioGroup>
-              )}
-            />
-          </div>
-
-          {/* Receiver Info (conditional) */}
-          {receiverType === 'other' && (
-            <div className='flex flex-col md:flex-row gap-4'>
-              <div className='flex flex-1 flex-col gap-2'>
-                <Label className='text-sm font-normal text-secondary-1'>نام و نام خانوادگی گیرنده</Label>
-
-                <Input className='h-12' placeholder='نام و نام خانوادگی' {...register('receiverName')} />
-
-                {errors.receiverName && <p className='text-xs text-red-500'>{errors.receiverName.message}</p>}
+                <Label htmlFor='address-is-main' className='text-sm font-normal text-secondary-1 cursor-pointer'>
+                  این آدرس به عنوان آدرس پیش‌فرض انتخاب شود
+                </Label>
               </div>
-
-              <div className='flex flex-1 flex-col gap-2'>
-                <Label className='text-sm font-normal text-secondary-1'>شماره تماس گیرنده</Label>
-
-                <Input className='h-12' placeholder='0912...' inputMode='numeric' {...register('receiverPhone')} />
-
-                {errors.receiverPhone && <p className='text-xs text-red-500'>{errors.receiverPhone.message}</p>}
-              </div>
-            </div>
-          )}
+            )}
+          />
         </div>
       </ReusableModal>
     </FormProvider>

@@ -3,26 +3,26 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { removeAddressCSR } from '@/services/address.service';
+import { setMainAddressCSR } from '@/services/address.service';
 import { getApiErrorMessage, isApiError } from '@/utils/api-error';
 
-export function useRemoveAddress() {
+export function useSetMainAddress() {
   const [loading, setLoading] = useState(false);
 
-  const removeAddress = async (address_id: number) => {
+  const setMainAddress = async (address_id: number) => {
     setLoading(true);
 
     try {
-      return await removeAddressCSR(address_id);
+      return await setMainAddressCSR(address_id);
     } catch (error) {
       if (isApiError(error) && error.handled) return null;
 
-      toast.error(getApiErrorMessage(error, 'خطا در حذف آدرس. دوباره تلاش کنید.'));
+      toast.error(getApiErrorMessage(error, 'خطا در تعیین آدرس پیش‌فرض. دوباره تلاش کنید.'));
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  return { removeAddress, loading };
+  return { setMainAddress, loading };
 }

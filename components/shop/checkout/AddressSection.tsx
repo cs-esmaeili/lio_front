@@ -16,7 +16,7 @@ interface AddressSectionProps {
   onAddressesChange?: (addresses: Address[]) => void;
   onSelectionChange?: (selectedAddressId: string | undefined) => void;
   /** When set, opens the AddressModal in edit mode for the address with this ID.
-   *  Used to react to /payment errors like missing name_family. */
+   *  Used to react to /payment errors pointing at an invalid address. */
   editAddressId?: string;
   /** Called after the edit modal opens, so parent can clear the trigger. */
   onEditAddressHandled?: () => void;
@@ -62,7 +62,7 @@ export default function AddressSection({
     onSelectionChange?.(selectedAddressId);
   }, [selectedAddressId, onSelectionChange]);
 
-  // ---- trigger edit from external signal (e.g. /payment name_family error) ----
+  // ---- trigger edit from external signal (e.g. /payment invalid-address error) ----
 
   useEffect(() => {
     if (!editAddressId) return;

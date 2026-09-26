@@ -89,6 +89,7 @@ export default {
   get: api.get,
   post: api.post,
   put: api.put,
+  patch: api.patch,
   delete: api.delete,
   axios: api,
 };

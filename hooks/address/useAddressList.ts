@@ -3,11 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import {
-  listAddressesCSR,
-  mapAddressListItem,
-  type AddressListItem,
-} from '@/services/address.service';
+import { listAddressesCSR } from '@/services/address.service';
 import { getApiErrorMessage, isApiError } from '@/utils/api-error';
 
 import type { Address } from '@/components/dashboard/address/address.model';
@@ -16,19 +12,13 @@ export function useAddressList() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchAddresses = useCallback(async () => {
+  const fetchAddresses = useCallback(async (): Promise<Address[] | null> => {
     setLoading(true);
 
     try {
-      const res = await listAddressesCSR();
-      const body = res.data as unknown;
-
-      const rawList: AddressListItem[] = Array.isArray(body)
-        ? (body as AddressListItem[])
-        : ((body as { data?: AddressListItem[] })?.data ?? []);
-
-      setAddresses(rawList.map(mapAddressListItem));
-      return rawList;
+      const list = await listAddressesCSR();
+      setAddresses(list);
+      return list;
     } catch (error) {
       if (isApiError(error) && error.handled) return null;
 

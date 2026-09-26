@@ -16,6 +16,7 @@ interface AddressCardProps {
     address: Address;
     onEdit: (address: Address) => void;
     onDelete: (address: Address) => Promise<void>;
+    onSetMain?: (address: Address) => Promise<void> | void;
     selectable?: boolean;
     isSelected?: boolean;
     onSelect?: (address: Address) => void;
@@ -25,11 +26,13 @@ export default function AddressCard({
     address,
     onEdit,
     onDelete,
+    onSetMain,
     selectable,
     isSelected,
     onSelect,
 }: AddressCardProps) {
     const [deleting, setDeleting] = useState(false);
+    const [settingMain, setSettingMain] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleDelete = async () => {
@@ -37,6 +40,13 @@ export default function AddressCard({
         await onDelete(address);
         setDeleting(false);
         setDeleteDialogOpen(false);
+    };
+
+    const handleSetMain = async () => {
+        if (!onSetMain) return;
+        setSettingMain(true);
+        await onSetMain(address);
+        setSettingMain(false);
     };
 
     const cardContent = (
@@ -58,13 +68,21 @@ export default function AddressCard({
             />
 
             <div className="flex flex-1 flex-col gap-2">
-                <span className="font-medium text-secondary-1">
+                <span className="flex items-center gap-2 font-medium text-secondary-1">
                     {address.title}
+
+                    {address.isMain && (
+                        <span className="rounded-full bg-primary-3 px-2 py-0.5 text-xs text-primary-1">
+                            پیش‌فرض
+                        </span>
+                    )}
                 </span>
 
                 <span className="text-sm text-secondary-2">
-                    {address.city}
-                    <br />
+                    {address.province}، {address.city}
+                </span>
+
+                <span className="text-sm text-secondary-2">
                     {address.address}
                 </span>
 
@@ -72,16 +90,19 @@ export default function AddressCard({
                     کد پستی: {address.postalCode}
                 </span>
 
-                <span className="text-sm text-secondary-2">
-                    گیرنده:{" "}
-                    {address.receiverType === "self"
-                        ? "خودم"
-                        : address.receiverName}
-                </span>
-
-                <span className="text-sm text-secondary-2">
-                    تلفن: {address.receiverPhone}
-                </span>
+                {!address.isMain && onSetMain && (
+                    <button
+                        type="button"
+                        disabled={settingMain}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleSetMain();
+                        }}
+                        className="w-fit cursor-pointer text-sm text-primary-1 transition-colors hover:text-primary-black-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        {settingMain ? "در حال ثبت..." : "تعیین به عنوان پیش‌فرض"}
+                    </button>
+                )}
             </div>
 
             <div

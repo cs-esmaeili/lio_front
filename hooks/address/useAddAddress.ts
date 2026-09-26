@@ -6,15 +6,16 @@ import { toast } from 'sonner';
 import { addAddressCSR, type AddressAddPayload } from '@/services/address.service';
 import { getApiErrorMessage, isApiError } from '@/utils/api-error';
 
+import type { Address } from '@/components/dashboard/address/address.model';
+
 export function useAddAddress() {
   const [loading, setLoading] = useState(false);
 
-  const addAddress = async (payload: AddressAddPayload) => {
+  const addAddress = async (payload: AddressAddPayload): Promise<Address | null> => {
     setLoading(true);
 
     try {
-      const res = await addAddressCSR(payload);
-      return res.data;
+      return await addAddressCSR(payload);
     } catch (error) {
       if (isApiError(error) && error.handled) return null;
 
