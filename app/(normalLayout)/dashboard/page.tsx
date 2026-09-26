@@ -4,12 +4,12 @@ import Image from 'next/image';
 
 import Icon from '@/components/global/Icon';
 import PageHeader from '@/components/dashboard/PageHeader';
-import ProductListItem from '@/components/dashboard/product/ProductListItem';
+// import ProductListItem from '@/components/dashboard/product/ProductListItem';
 import OrderStatCard from '@/components/dashboard/order/OrderStatCard';
 import emptyData from '@/public/icons/empty-data.svg';
-import OrderTrackingForm from '@/components/dashboard/order/OrderTrackingForm';
+// import OrderTrackingForm from '@/components/dashboard/order/OrderTrackingForm';
 
-import { ShoppingCart, Heart, TruckTime } from 'iconsax-reactjs';
+import { ShoppingCart } from 'iconsax-reactjs';
 
 import { useDashboard } from '@/hooks/dashboard/useDashboard';
 import { Spinner } from '@/components/shadcn/spinner';
@@ -22,17 +22,17 @@ export default function DashboardHome() {
       icon: ShoppingCart,
     },
 
-    orderTracking: {
-      href: '/dashboard/tracking',
-      label: 'پیگیری سفارش',
-      icon: TruckTime,
-    },
+    // orderTracking: {
+    //   href: '/dashboard/tracking',
+    //   label: 'پیگیری سفارش',
+    //   icon: TruckTime,
+    // },
 
-    recentViews: {
-      href: '/dashboard',
-      label: 'محصولات مورد علاقه',
-      icon: Heart,
-    },
+    // recentViews: {
+    //   href: '/dashboard',
+    //   label: 'محصولات مورد علاقه',
+    //   icon: Heart,
+    // },
   };
 
   const { dashboard, loading } = useDashboard();
@@ -72,7 +72,7 @@ export default function DashboardHome() {
       } => item !== null
     );
 
-  const favoriteProducts = dashboard?.favorites ?? [];
+  // const favoriteProducts = dashboard?.favorites ?? [];
 
   return (
     <div className='flex w-full flex-col gap-4'>
@@ -118,6 +118,7 @@ export default function DashboardHome() {
         )}
       </div>
 
+      {/* Order tracking — disabled for now
       <div className='flex w-full flex-col gap-3 rounded-xl border-2 border-gray-1 p-6 sm:p-4'>
         <PageHeader
           titleSlot={
@@ -137,7 +138,9 @@ export default function DashboardHome() {
         />
         <OrderTrackingForm />
       </div>
+      */}
 
+      {/* Favorite products — disabled for now
       <div className='flex w-full flex-col gap-3 rounded-xl border-2 border-gray-1 p-6 sm:p-4'>
         <PageHeader
           className='mb-2 sm:mb-4'
@@ -188,6 +191,7 @@ export default function DashboardHome() {
           </div>
         )}
       </div>
+      */}
     </div>
   );
 }
