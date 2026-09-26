@@ -3,13 +3,9 @@
 import { SolidPrimaryButton } from '@/components/global/Buttons/SolidPrimaryButton';
 import PriceWithToman from '@/components/global/PriceWithToman';
 import { useAuth } from '@/hooks/auth/useAuth';
-import { Switch } from '@/components/shadcn/switch';
-import { Label } from '@/components/shadcn/label';
-import { Field, FieldLabel } from '@/components/shadcn/field';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import { Progress } from '@/components/shadcn/progress';
 import { separator } from '@/utils/number';
-import type { WalletInfo } from '@/typescript/types/checkout.types';
 
 interface OrderSummaryProps {
   finalPrice: number;
@@ -23,14 +19,12 @@ interface OrderSummaryProps {
   onButtonClick?: () => void;
   buttonDisabled?: boolean;
   children?: React.ReactNode;
-  wallet?: WalletInfo | null;
   maxPersent?: number;
   remaining?: number;
   maxPrice?: number;
 }
 
 export default function OrderSummary({
-  finalPrice,
   discount,
   paymentPrice,
   itemCount,
@@ -41,7 +35,6 @@ export default function OrderSummary({
   onButtonClick,
   buttonDisabled = false,
   children,
-  wallet = null,
   maxPersent = 0,
   remaining = 0,
   maxPrice = 0,
@@ -79,36 +72,6 @@ export default function OrderSummary({
 
     <div className='flex flex-col gap-4 bg-gray-1 rounded-2xl p-4'>
       {children && <div className='flex flex-col gap-4'>{children}</div>}
-
-      {/* Wallet — readonly */}
-      {wallet && wallet.balance > 0 && (
-        <div className='flex flex-col gap-4'>
-          <span className='block border-b border-primary-3 pb-2 text-body'>کیف پول</span>
-          <div className='flex-1'>
-            <div className='w-full h-full'>
-              <FieldLabel>
-                <Field orientation='horizontal' className='flex flex-col h-full'>
-                  <div className='flex w-full items-center gap-3 text-body'>
-                    <Switch disabled checked={true} />
-                    <Label>استفاده خودکار از کیف پول</Label>
-                  </div>
-                  <span className='flex flex-row w-full text-secondary-2'>
-                    موجودی شما:
-                    <div className='flex items-start gap-1 whitespace-nowrap'>
-                      <span className='text-secondary-black-1'>{wallet.balance.toLocaleString()}</span>
-                      <div className='text-secondary-2 text-[10px] sm:text-[11px] md:text-[12px]'>
-                        <CurrencyLabel />
-                      </div>
-                    </div>
-                  </span>
-                </Field>
-              </FieldLabel>
-            </div>
-          </div>
-        </div>
-      )}
-
-      
 
       <div className='flex flex-col gap-5 text-sm'>
         <div className='flex justify-between'>
