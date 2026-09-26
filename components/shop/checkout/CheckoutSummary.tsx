@@ -1,6 +1,7 @@
 'use client';
 
-import { SolidPrimaryButton } from '@/components/global/Buttons/SolidPrimaryButton';
+import { Button } from '@/components/shadcn/button';
+import { Spinner } from '@/components/shadcn/spinner';
 import PriceWithToman from '@/components/global/PriceWithToman';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import { Progress } from '@/components/shadcn/progress';
@@ -10,17 +11,19 @@ import type { Checkout } from '@/typescript/schemas/checkout.schema';
 
 /**
  * Order pricing summary. Everything is derived from the `GET /checkout`
- * payload; the buy button is intentionally inert for now.
+ * payload; the buy button is disabled here and wired by the checkout page.
  */
 export default function CheckoutSummary({
   checkout,
   buttonText = 'پرداخت',
   buttonDisabled = false,
+  buttonLoading = false,
   onButtonClick,
 }: {
   checkout: Checkout;
   buttonText?: string;
   buttonDisabled?: boolean;
+  buttonLoading?: boolean;
   onButtonClick?: () => void;
 }) {
   const { subtotal, totalDiscount, shippingCost, total, itemCount, shipping } = checkout;
@@ -79,13 +82,15 @@ export default function CheckoutSummary({
           </div>
         </div>
 
-        <SolidPrimaryButton
-          href='#'
-          desktopText={buttonText}
-          mobileText={buttonText}
-          className={`w-full ${buttonDisabled ? 'pointer-events-none opacity-50' : ''}`}
-          onClick={buttonDisabled ? undefined : onButtonClick}
-        />
+        <Button
+          type='button'
+          size='lg'
+          className='h-12 w-full rounded-lg text-base'
+          disabled={buttonDisabled || buttonLoading}
+          onClick={onButtonClick}>
+          {buttonLoading && <Spinner className='size-4' />}
+          {buttonLoading ? 'در حال انتقال به درگاه بانک…' : buttonText}
+        </Button>
 
         <div className='text-sm text-center text-secondary-2'>
           <p>هزینه این سفارش هنوز پرداخت نشده و در صورت اتمام موجودی، کالاها از سبد حذف می‌شوند</p>
