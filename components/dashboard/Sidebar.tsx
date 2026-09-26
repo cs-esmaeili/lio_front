@@ -4,18 +4,32 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/auth/useAuth';
 import Icon from '../global/Icon';
-import { Home, Edit2, Wallet, ShoppingCart, Like, Location, MessageText1, Logout, Archive, Profile, UserEdit, TruckTime, Setting2 } from 'iconsax-reactjs';
-import PriceWithToman from '../global/PriceWithToman';
-import { usePersonalInfo } from '@/hooks/dashboard/usePersonalInfo';
+import {
+  Home,
+  Edit2,
+  ShoppingCart,
+  Location,
+  Logout,
+  Archive,
+  Profile,
+  UserEdit,
+  Setting2,
+  // Disabled dashboard entries (favorites / tracking / tickets / wallet):
+  // Wallet,
+  // Like,
+  // MessageText1,
+  // TruckTime,
+} from 'iconsax-reactjs';
+// import PriceWithToman from '../global/PriceWithToman';
 
 const navItems = [
   { href: '/dashboard/', label: 'داشبورد', icon: Archive },
   { href: '/dashboard/edit-profile/', label: 'ویرایش اطلاعات', icon: UserEdit },
   { href: '/dashboard/order/', label: 'سفارشات', icon: ShoppingCart },
-  { href: '/dashboard/tracking/', label: 'پیگیری سفارش', icon: TruckTime },
-  { href: '/dashboard/favorite/', label: 'علاقه‌مندی‌ها', icon: Like },
+  // { href: '/dashboard/tracking/', label: 'پیگیری سفارش', icon: TruckTime },
+  // { href: '/dashboard/favorite/', label: 'علاقه‌مندی‌ها', icon: Like },
   { href: '/dashboard/address/', label: 'آدرس‌ها', icon: Location },
-  { href: '/dashboard/ticket/', label: 'تیکت‌ها', icon: MessageText1 },
+  // { href: '/dashboard/ticket/', label: 'تیکت‌ها', icon: MessageText1 },
 ];
 
 /** Only shown when the backend reports `showAdminPanel` for the user. */
@@ -24,12 +38,12 @@ const adminNavItem = { href: '/admin', label: 'داشبورد ادمین', icon:
 const navMap = {
   dashboard: { href: '/dashboard/', label: 'داشبورد', icon: Home },
   userEdit: { href: '/dashboard/edit-profile/', label: 'کاربر', icon: Edit2 },
-  wallet: { href: '/dashboard/wallet/', label: 'کیف پول', icon: Wallet },
+  // wallet: { href: '/dashboard/wallet/', label: 'کیف پول', icon: Wallet },
   order: { href: '/dashboard/order/', label: 'سفارشات', icon: ShoppingCart },
-  tracking: { href: '/dashboard/tracking/', label: 'پیگیری سفارش', icon: TruckTime },
-  favorite: { href: '/dashboard/favorite/', label: 'علاقه‌مندی‌ها', icon: Like },
+  // tracking: { href: '/dashboard/tracking/', label: 'پیگیری سفارش', icon: TruckTime },
+  // favorite: { href: '/dashboard/favorite/', label: 'علاقه‌مندی‌ها', icon: Like },
   address: { href: '/dashboard/address/', label: 'آدرس‌ها', icon: Location },
-  ticket: { href: '/dashboard/ticket/', label: 'تیکت‌ها', icon: MessageText1 },
+  // ticket: { href: '/dashboard/ticket/', label: 'تیکت‌ها', icon: MessageText1 },
 };
 
 type SidebarVariant = 'light' | 'dark';
@@ -119,7 +133,7 @@ export function SidebarNavList({ onNavigate, variant = 'light' }: { onNavigate?:
 }
 
 export function Sidebar() {
-  const { personal, loading } = usePersonalInfo();
+  const { user, isLoading } = useAuth();
 
   return (
     <aside className='w-full md:w-80 bg-white h-fit md:sticky top-0'>
@@ -133,12 +147,12 @@ export function Sidebar() {
               </div>
             </Link>
             <div>
-              {!loading && (
+              {!isLoading && (
                 <>
                   <p className='text-regular text-secondary-1'>
-                    {[personal?.user?.first_name, personal?.user?.last_name].filter(Boolean).join(' ') || 'کاربر'}
+                    {[user?.name, user?.lastName].filter(Boolean).join(' ') || 'کاربر'}
                   </p>
-                  <p className='text-regular text-secondary-1'> {personal?.user?.mobile ?? '-'}</p>
+                  <p className='text-regular text-secondary-1'> {user?.username ?? '-'}</p>
                 </>
               )}
             </div>
@@ -160,7 +174,7 @@ export function Sidebar() {
           </div>
         </div>
 
-        {/* Wallet Card */}
+        {/* Wallet Card — disabled for now
         <div className='flex flex-row items-center justify-between p-2'>
           <div className='flex flex-col justify-between gap-2'>
             <div className='flex items-center justify-between gap-2'>
@@ -179,6 +193,7 @@ export function Sidebar() {
             <PriceWithToman price={personal?.wallets?.[0]?.balance ?? 0} />
           </div>
         </div>
+        */}
       </div>
 
       <div className='hidden md:flex flex-col px-4 rounded-xl border-gray-1 border-2'>
