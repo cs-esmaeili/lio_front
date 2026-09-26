@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Heart } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
 import { Spinner } from '@/components/shadcn/spinner';
-import { getAuthToken } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import { useAddFavorite } from '@/hooks/favorites/useAddFavorite';
 import { useRemoveFavorite } from '@/hooks/favorites/useRemoveFavorite';
 
@@ -20,6 +20,7 @@ export default function FavoriteButton({ barcode, productId, initiallyFavorited 
   const pathname = usePathname();
   const { addFavorite, loading: addLoading } = useAddFavorite();
   const { removeFavorite, loading: removeLoading } = useRemoveFavorite();
+  const { isLoggedIn } = useAuth();
 
   const [isFavorited, setIsFavorited] = useState(initiallyFavorited);
   const [mounted, setMounted] = useState(false);
@@ -31,8 +32,7 @@ export default function FavoriteButton({ barcode, productId, initiallyFavorited 
   const isLoading = addLoading || removeLoading;
 
   const handleClick = async () => {
-    const token = getAuthToken();
-    if (!token) {
+    if (!isLoggedIn) {
       router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`);
       return;
     }

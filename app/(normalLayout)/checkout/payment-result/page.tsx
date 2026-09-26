@@ -62,13 +62,16 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
   }
 
   const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((cookie) => `${cookie.name}=${cookie.value}`)
+    .join('; ');
 
   let invoiceData;
   let fetchError = false;
 
   try {
-    invoiceData = await orderInvoiceSSR(code, token);
+    invoiceData = await orderInvoiceSSR(code, cookieHeader);
   } catch {
     fetchError = true;
   }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { logout } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import Icon from '../global/Icon';
 import { Home, Edit2, Wallet, ShoppingCart, Like, Location, MessageText1, Logout, Archive, Profile, UserEdit, TruckTime } from 'iconsax-reactjs';
 import PriceWithToman from '../global/PriceWithToman';
@@ -34,11 +34,12 @@ type SidebarVariant = 'light' | 'dark';
 export function SidebarNavList({ onNavigate, variant = 'light' }: { onNavigate?: () => void; variant?: SidebarVariant }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
   const isActive = (href: string) => pathname === href;
   const isDark = variant === 'dark';
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.replace('/');
   };
 

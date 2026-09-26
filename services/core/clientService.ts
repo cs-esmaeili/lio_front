@@ -1,51 +1,22 @@
 import axios, { isAxiosError } from 'axios';
-import type { InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 import { ApiError } from '@/utils/api-error';
 
-const SESSION_MAX_AGE = Number(process.env.NEXT_PUBLIC_SESSION_MAX_AGE) || 7200;
-
-function getAuthToken(): string {
-  if (typeof document === 'undefined') return '';
-
-  const match = document.cookie.match(/(?:^|;\s*)auth_token=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : '';
-}
-
-function refreshAuthCookie(): void {
-  if (typeof document === 'undefined') return;
-
-  const token = getAuthToken();
-  if (!token) return;
-
-  document.cookie = `auth_token=${token}; path=/; max-age=${SESSION_MAX_AGE}; SameSite=Lax`;
-}
-
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT,
+  // Session lives in an HttpOnly cookie — cookies must ride every request,
+  // and the readable `csrf_token` cookie must be echoed as X-CSRF-Token.
+  withCredentials: true,
+  withXSRFToken: true,
+  xsrfCookieName: 'csrf_token',
+  xsrfHeaderName: 'X-CSRF-Token',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = getAuthToken();
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${decodeURIComponent(token)}`;
-  } else {
-    delete config.headers.Authorization;
-  }
-
-  return config;
-});
-
 api.interceptors.response.use(
-  (response) => {
-    // Refresh session cookie on every successful API call
-    refreshAuthCookie();
-    return response;
-  },
+  (response) => response,
   (error: unknown) => {
     // Network error (no response at all)
     if (!isAxiosError(error) || !error.response) {
@@ -64,11 +35,9 @@ api.interceptors.response.use(
     const message: string = error.response?.data?.message || '';
     const data = error.response?.data;
 
-    // 401 — token expired or invalid → trigger logout
-    if (status === 401 || message === 'token expired' || message === 'token is wrong') {
-      // Clear invalid token cookie so components re-read auth state correctly
+    // 401 — session expired or invalid → trigger logout
+    if (status === 401) {
       if (typeof window !== 'undefined') {
-        document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         window.dispatchEvent(new CustomEvent('auth:logout'));
       }
       const apiError = new ApiError(
@@ -82,11 +51,11 @@ api.interceptors.response.use(
       return Promise.reject(apiError);
     }
 
-    // 403 — permission denied
-    if (status === 403 || message === 'permission denied') {
+    // 403 — permission denied (or missing/invalid CSRF token)
+    if (status === 403) {
       const apiError = new ApiError(
         status,
-        'شما دسترسی لازم برای این عملیات را ندارید.',
+        message || 'شما دسترسی لازم برای این عملیات را ندارید.',
         data,
         error,
         true, // handled

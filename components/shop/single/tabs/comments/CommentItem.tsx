@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CommentReply } from '@/components/shop/single/tabs/comments/CommentReply';
 import type { Comment } from '@/components/shop/single/tabs/comments/CommentsSection';
 import { useReactToComment } from '@/hooks/shop/useReactToComment';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import { Button } from '@/components/shadcn/button';
 import avatar1 from '@/public/avatars/avatar1.jpg';
 import Image from 'next/image';

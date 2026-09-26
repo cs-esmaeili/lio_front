@@ -52,11 +52,11 @@ export const paymentFinal = (
 // SSR - Order Invoice
 ////////////////////////////////////////////////////////////
 
-export const orderInvoiceSSR = async (code: string, token?: string): Promise<OrderInvoiceResponse> => {
+export const orderInvoiceSSR = async (code: string, cookie?: string): Promise<OrderInvoiceResponse> => {
   const url = `${ssrPrefixUrl}/payment/order-invoice`;
   return fetcher<OrderInvoiceResponse>(url, {
     method: 'POST',
     body: JSON.stringify({ code }),
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    headers: cookie ? { Cookie: cookie } : undefined,
   });
 };

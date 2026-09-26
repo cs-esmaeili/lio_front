@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { User } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 export default function UserNavButton() {
   const { isHydrated, isLoggedIn } = useAuth();

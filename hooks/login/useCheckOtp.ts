@@ -2,28 +2,22 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { checkOtpCSR } from '@/services/auth.service';
+import { useAuthRequest } from '@/hooks/auth/useAuthRequest';
+import { authStore } from '@/stores/authStore';
 import { isApiError, getApiErrorMessage } from '@/utils/api-error';
 
 export function useCheckOtp() {
   const [loading, setLoading] = useState(false);
+  const { verifyOtp } = useAuthRequest();
 
   const checkOtp = async (username: string, code: string) => {
     setLoading(true);
 
     try {
-      const response = await checkOtpCSR(username, code);
-      const data = response.data;
-
-      if (!data?.accessToken) {
-        toast.error('پاسخ غیرمنتظره از سرور. لطفا دوباره تلاش کنید.');
-        return null;
-      }
-
-      return data;
+      const user = await verifyOtp(username, code);
+      authStore.getState().setUser(user);
+      return user;
     } catch (error: unknown) {
-      // Interceptor already handled global errors (401, 403, 5xx, network) —
-      // skip showing a second toast unless we want to override
       if (isApiError(error) && error.handled) {
         return null;
       }

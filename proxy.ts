@@ -5,8 +5,12 @@ import { lookupRedirect } from '@/services/redirect.service';
 const protectedPaths = ['/dashboard' , '/checkout'];
 const authPaths = ['/login'];
 
-const SESSION_MAX_AGE =
-  Number(process.env.NEXT_PUBLIC_SESSION_MAX_AGE) || 7200;
+/** HttpOnly session cookie set by the backend (`__Host-session` when Secure). */
+function hasSession(request: NextRequest): boolean {
+  return Boolean(
+    request.cookies.get('__Host-session')?.value || request.cookies.get('session')?.value,
+  );
+}
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -18,36 +22,25 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Authentication
-  const token = request.cookies.get('auth_token')?.value;
+  const session = hasSession(request);
 
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
   const isAuthPage = authPaths.some((p) => pathname.startsWith(p));
 
   // Redirect unauthenticated users away from protected routes
-  if (isProtected && !token) {
+  if (isProtected && !session) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('returnUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users away from auth pages
-  if (isAuthPage && token) {
+  if (isAuthPage && session) {
     const returnUrl = request.nextUrl.searchParams.get('returnUrl') || '/dashboard';
     return NextResponse.redirect(new URL(returnUrl, request.url));
   }
 
-  const response = NextResponse.next();
-
-  // Refresh session cookie on every request (covers both SSR page loads and client API calls)
-  if (token) {
-    response.cookies.set('auth_token', token, {
-      path: '/',
-      maxAge: SESSION_MAX_AGE,
-      sameSite: 'lax',
-    });
-  }
-
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

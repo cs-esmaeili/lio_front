@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CommentForm } from '@/components/shop/single/tabs/comments/CommentForm';
 import { useProductComments } from '@/hooks/shop/useProductComments';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import type { CommentApiResponse, AnswerApiResponse } from '@/services/singelProduct.service';
 import { CommentItem } from '@/components/shop/single/tabs/comments/CommentItem';
 

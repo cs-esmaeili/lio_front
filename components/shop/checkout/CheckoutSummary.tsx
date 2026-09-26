@@ -2,7 +2,7 @@
 
 import { SolidPrimaryButton } from '@/components/global/Buttons/SolidPrimaryButton';
 import PriceWithToman from '@/components/global/PriceWithToman';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import { Switch } from '@/components/shadcn/switch';
 import { Label } from '@/components/shadcn/label';
 import { Field, FieldLabel } from '@/components/shadcn/field';

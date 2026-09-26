@@ -11,7 +11,7 @@ import { separator } from '@/utils/number';
 import { productStatus } from '@/utils/product/Product';
 import { useCart } from '@/hooks/cart/useCart';
 import { useProductBottomNavStore } from '@/stores/productBottomNavStore';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 const NAV_ITEMS = [
   { href: '/', label: 'خانه', IconComponent: Home },

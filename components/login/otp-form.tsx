@@ -29,12 +29,9 @@ export function OtpForm({ phone, formattedPhone, onBack, returnUrl }: Props) {
 
     const result = await checkOtp(phone, otpCode);
 
-    if (!result?.accessToken) {
+    if (!result) {
       return;
     }
-
-    const maxAge = Number(process.env.NEXT_PUBLIC_SESSION_MAX_AGE) || 7200;
-    document.cookie = `auth_token=${encodeURIComponent(result.accessToken)}; Path=/; Max-Age=${maxAge}; SameSite=Strict; Secure`;
 
     await mergeAfterLogin();
 

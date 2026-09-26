@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import tracking from '@/public/tracking.svg';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import Tracking from '@/styles/modules/tracking/TrackingSticky.module.css';
 
 export default function TrackingSticky() {
