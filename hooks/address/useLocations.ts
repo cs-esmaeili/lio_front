@@ -9,13 +9,16 @@ import { getApiErrorMessage, isApiError } from '@/utils/api-error';
 import type { Location } from '@/components/dashboard/address/address.model';
 
 /**
- * Fetches the whole province/city list once (`GET /locations`) and derives the
+ * Fetches the whole province/city list (`GET /locations`) and derives the
  * province names used by the address form. The API returns a flat list, so the
  * city options are filtered from the same array.
+ *
+ * `enabled` keeps the request lazy: the address form only needs the list while
+ * it is open, so callers pass the modal's `open` state.
  */
-export function useLocations() {
+export function useLocations(enabled = true) {
   const [locations, setLocations] = useState<Location[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchLocations = useCallback(async () => {
     setLoading(true);
@@ -35,8 +38,10 @@ export function useLocations() {
   }, []);
 
   useEffect(() => {
+    if (!enabled) return;
+
     fetchLocations();
-  }, [fetchLocations]);
+  }, [enabled, fetchLocations]);
 
   const provinces = useMemo(
     () => Array.from(new Set(locations.map((location) => location.province))),

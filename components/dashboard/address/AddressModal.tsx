@@ -65,7 +65,7 @@ export default function AddressModal({ open, onOpenChange, mode, initialData, on
 
   const province = useWatch({ control, name: 'province' });
 
-  const { locations, provinces, loading: loadingLocations } = useLocations();
+  const { locations, provinces, loading: loadingLocations } = useLocations(open);
 
   const cities = useMemo(
     () => locations.filter((location) => location.province === province),
