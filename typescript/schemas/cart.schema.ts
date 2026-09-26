@@ -9,8 +9,9 @@ const CartProductSchema = z
     id: z.number(),
     name: z.string(),
     slug: z.string(),
+    image: z.string().nullable().catch(null),
   })
-  .catch({ id: 0, name: '', slug: '' });
+  .catch({ id: 0, name: '', slug: '', image: null });
 
 const CartVariantSchema = z.object({
   id: z.number(),

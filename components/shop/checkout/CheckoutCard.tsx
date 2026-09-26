@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import noImage from '@/public/global/no-img.svg';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import styles from '@/styles/modules/Product.module.css';
 import fadeStyles from '@/styles/modules/imageFade.module.css';
@@ -13,8 +14,6 @@ interface CheckoutCardProps {
   data: BasketItem;
   onBlackBackGround?: boolean;
 }
-
-const PLACEHOLDER_IMAGE = '/test/image 54.png';
 
 export default function CheckoutCard({
   data,
@@ -39,7 +38,7 @@ export default function CheckoutCard({
             className={`${styles.productCardImage} relative h-[250px] w-full max-w-[200px] rounded-xl bg-white`}
           >
             <Image
-              src={PLACEHOLDER_IMAGE}
+              src={data.product.image || noImage}
               alt={data.product.name}
               fill
               onLoad={() => setLoaded(true)}

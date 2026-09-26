@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 
+import noImage from '@/public/global/no-img.svg';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import { QuantitySelector } from '@/components/shop/single/QuantitySelector';
 import { Spinner } from '@/components/shadcn/spinner';
@@ -15,8 +16,6 @@ interface BasketListItemProps {
   onQuantityChange: (id: string, newQuantity: number) => void;
   onRemove: (id: string) => void;
 }
-
-const PLACEHOLDER_IMAGE = '/test/image 54.png';
 
 export default function BasketListItem({ item, onQuantityChange, onRemove }: BasketListItemProps) {
   const id = String(item.variantId);
@@ -32,7 +31,7 @@ export default function BasketListItem({ item, onQuantityChange, onRemove }: Bas
       {/* Product image */}
       <td className='py-4 ps-0 pe-2 align-middle text-center'>
         <Link href={`/product/${product.slug}`} className='inline-block relative w-24 h-24 bg-gray-100 rounded-lg overflow-hidden'>
-          <Image src={PLACEHOLDER_IMAGE} alt={product.name} fill className='object-contain' sizes='96px' />
+          <Image src={product.image || noImage} alt={product.name} fill className='object-contain' sizes='96px' />
         </Link>
       </td>
 

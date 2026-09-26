@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Icon from '@/components/global/Icon';
 import { ShoppingCart } from 'iconsax-reactjs';
 import Image from 'next/image';
+import noImage from '@/public/global/no-img.svg';
 import CurrencyLabel from '../Cards/CurrencyLabel';
 import { QuantitySelector } from '@/components/shop/single/QuantitySelector';
 import { StrokePrimaryButton } from '../Buttons/StrokePrimaryButton';
@@ -18,8 +19,6 @@ interface ShoppingBasketProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const PLACEHOLDER_IMAGE = '/test/image 54.png';
 
 export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -108,7 +107,7 @@ export function ShoppingBasket({ isOpen, onClose }: ShoppingBasketProps) {
                   {/* Row 1: Image, name, delete button */}
                   <div className='flex gap-4'>
                     <Link href={`/product/${item.product.slug}`} onClick={onClose} className='relative w-24 h-24 bg-gray-100 rounded-lg shrink-0 overflow-hidden block'>
-                      <Image src={PLACEHOLDER_IMAGE} alt={item.product.name} fill className='object-contain' sizes='96px' />
+                      <Image src={item.product.image || noImage} alt={item.product.name} fill className='object-contain' sizes='96px' />
                     </Link>
                     <div className='flex-1 flex justify-between items-center'>
                       <Link href={`/product/${item.product.slug}`} onClick={onClose} className='font-medium text-regular text-gray-800 hover:text-primary-1 transition-colors no-underline'>
