@@ -14,9 +14,9 @@ export function useCheckOtp() {
     setLoading(true);
 
     try {
-      const user = await verifyOtp(username, code);
-      authStore.getState().setUser(user);
-      return user;
+      const session = await verifyOtp(username, code);
+      authStore.getState().setUser(session, session.showAdminPanel);
+      return session;
     } catch (error: unknown) {
       if (isApiError(error) && error.handled) {
         return null;

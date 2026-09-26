@@ -6,9 +6,11 @@ export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'guest';
 interface AuthState {
   status: AuthStatus;
   user: AuthUser | null;
+  /** Whether the signed-in user may open the admin dashboard panel. */
+  showAdminPanel: boolean;
 
   setLoading: () => void;
-  setUser: (user: AuthUser) => void;
+  setUser: (user: AuthUser, showAdminPanel: boolean) => void;
   clear: () => void;
 }
 
@@ -21,8 +23,9 @@ interface AuthState {
 export const authStore = createStore<AuthState>()((set) => ({
   status: 'idle',
   user: null,
+  showAdminPanel: false,
 
   setLoading: () => set({ status: 'loading' }),
-  setUser: (user) => set({ status: 'authenticated', user }),
-  clear: () => set({ status: 'guest', user: null }),
+  setUser: (user, showAdminPanel) => set({ status: 'authenticated', user, showAdminPanel }),
+  clear: () => set({ status: 'guest', user: null, showAdminPanel: false }),
 }));

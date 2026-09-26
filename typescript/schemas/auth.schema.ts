@@ -14,10 +14,18 @@ export const AuthUserSchema = z.object({
 
 export type AuthUser = z.infer<typeof AuthUserSchema>;
 
+/** Login / OTP-verify response: the user plus admin-panel availability. */
+export const AuthSessionSchema = AuthUserSchema.extend({
+  showAdminPanel: z.boolean().catch(false),
+});
+
+export type AuthSession = z.infer<typeof AuthSessionSchema>;
+
 export const MeSchema = z.object({
   authenticated: z.boolean().catch(false),
   user: AuthUserSchema.nullable().catch(null),
   loading: z.boolean().catch(false),
+  showAdminPanel: z.boolean().catch(false),
 });
 
 export type Me = z.infer<typeof MeSchema>;

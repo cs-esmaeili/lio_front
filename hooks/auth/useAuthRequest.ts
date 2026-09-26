@@ -8,11 +8,11 @@ import { getMeCSR, loginCSR, logoutCSR, requestOtpCSR, verifyOtpCSR } from '@/se
 import {
   AuthEnvelopeSchema,
   AuthErrorBodySchema,
-  AuthUserSchema,
+  AuthSessionSchema,
   LogoutSchema,
   MeSchema,
   OtpRequestSchema,
-  type AuthUser,
+  type AuthSession,
   type Me,
   type OtpRequest,
 } from '@/typescript/schemas/auth.schema';
@@ -82,17 +82,17 @@ export function useAuthRequest() {
   );
 
   const verifyOtp = useCallback(
-    async (username: string, code: string): Promise<AuthUser> => {
+    async (username: string, code: string): Promise<AuthSession> => {
       const headers = await buildHeaders();
-      return parseAuthResponse(await verifyOtpCSR(username, code, headers), AuthUserSchema);
+      return parseAuthResponse(await verifyOtpCSR(username, code, headers), AuthSessionSchema);
     },
     [buildHeaders],
   );
 
   const login = useCallback(
-    async (username: string, password: string): Promise<AuthUser> => {
+    async (username: string, password: string): Promise<AuthSession> => {
       const headers = await buildHeaders();
-      return parseAuthResponse(await loginCSR(username, password, headers), AuthUserSchema);
+      return parseAuthResponse(await loginCSR(username, password, headers), AuthSessionSchema);
     },
     [buildHeaders],
   );

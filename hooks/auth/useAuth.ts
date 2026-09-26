@@ -16,6 +16,7 @@ let refreshInFlight: Promise<void> | null = null;
 export function useAuth() {
   const status = useStore(authStore, (state) => state.status);
   const user = useStore(authStore, (state) => state.user);
+  const showAdminPanel = useStore(authStore, (state) => state.showAdminPanel);
 
   const { getMe, logout: logoutRequest } = useAuthRequest();
 
@@ -25,7 +26,7 @@ export function useAuth() {
     authStore.getState().setLoading();
     refreshInFlight = getMe()
       .then((me) => {
-        if (me.authenticated && me.user) authStore.getState().setUser(me.user);
+        if (me.authenticated && me.user) authStore.getState().setUser(me.user, me.showAdminPanel);
         else authStore.getState().clear();
       })
       .catch(() => {
@@ -54,6 +55,7 @@ export function useAuth() {
     isLoading: status === 'idle' || status === 'loading',
     isLoggedIn: status === 'authenticated',
     user,
+    showAdminPanel,
     refresh,
     logout,
   } as const;

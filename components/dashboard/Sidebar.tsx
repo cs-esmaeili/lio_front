@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/auth/useAuth';
 import Icon from '../global/Icon';
-import { Home, Edit2, Wallet, ShoppingCart, Like, Location, MessageText1, Logout, Archive, Profile, UserEdit, TruckTime } from 'iconsax-reactjs';
+import { Home, Edit2, Wallet, ShoppingCart, Like, Location, MessageText1, Logout, Archive, Profile, UserEdit, TruckTime, Setting2 } from 'iconsax-reactjs';
 import PriceWithToman from '../global/PriceWithToman';
 import { usePersonalInfo } from '@/hooks/dashboard/usePersonalInfo';
 
@@ -17,6 +17,9 @@ const navItems = [
   { href: '/dashboard/address/', label: 'آدرس‌ها', icon: Location },
   { href: '/dashboard/ticket/', label: 'تیکت‌ها', icon: MessageText1 },
 ];
+
+/** Only shown when the backend reports `showAdminPanel` for the user. */
+const adminNavItem = { href: '/admin', label: 'داشبورد ادمین', icon: Setting2 };
 
 const navMap = {
   dashboard: { href: '/dashboard/', label: 'داشبورد', icon: Home },
@@ -34,9 +37,11 @@ type SidebarVariant = 'light' | 'dark';
 export function SidebarNavList({ onNavigate, variant = 'light' }: { onNavigate?: () => void; variant?: SidebarVariant }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, showAdminPanel } = useAuth();
   const isActive = (href: string) => pathname === href;
   const isDark = variant === 'dark';
+
+  const items = showAdminPanel ? [...navItems, adminNavItem] : navItems;
 
   const handleLogout = async () => {
     await logout();
@@ -46,7 +51,7 @@ export function SidebarNavList({ onNavigate, variant = 'light' }: { onNavigate?:
   return (
     <>
       <nav>
-        {navItems.map((item) => {
+        {items.map((item) => {
           const active = isActive(item.href);
           return (
             <Link key={item.href} href={item.href} onClick={onNavigate}>
