@@ -6,11 +6,13 @@ export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'guest';
 interface AuthState {
   status: AuthStatus;
   user: AuthUser | null;
+  /** Permissions granted to the signed-in user (`/auth/me`), e.g. `file:manage`. */
+  permissions: string[];
   /** Whether the signed-in user may open the admin dashboard panel. */
   showAdminPanel: boolean;
 
   setLoading: () => void;
-  setUser: (user: AuthUser, showAdminPanel: boolean) => void;
+  setUser: (user: AuthUser, showAdminPanel: boolean, permissions?: string[]) => void;
   clear: () => void;
 }
 
@@ -23,9 +25,11 @@ interface AuthState {
 export const authStore = createStore<AuthState>()((set) => ({
   status: 'idle',
   user: null,
+  permissions: [],
   showAdminPanel: false,
 
   setLoading: () => set({ status: 'loading' }),
-  setUser: (user, showAdminPanel) => set({ status: 'authenticated', user, showAdminPanel }),
-  clear: () => set({ status: 'guest', user: null, showAdminPanel: false }),
+  setUser: (user, showAdminPanel, permissions = []) =>
+    set({ status: 'authenticated', user, permissions, showAdminPanel }),
+  clear: () => set({ status: 'guest', user: null, permissions: [], showAdminPanel: false }),
 }));

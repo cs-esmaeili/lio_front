@@ -25,6 +25,7 @@ export const MeSchema = z.object({
   authenticated: z.boolean().catch(false),
   user: AuthUserSchema.nullable().catch(null),
   loading: z.boolean().catch(false),
+  permissions: z.array(z.string()).catch([]),
   showAdminPanel: z.boolean().catch(false),
 });
 

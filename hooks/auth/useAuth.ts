@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useStore } from 'zustand';
 import { authStore } from '@/stores/authStore';
 import { useAuthRequest } from '@/hooks/auth/useAuthRequest';
+import { usePermissions } from '@/hooks/auth/usePermissions';
 
 /** Shared in-flight guard so concurrent mounts only trigger one `/auth/me`. */
 let refreshInFlight: Promise<void> | null = null;
@@ -17,6 +18,7 @@ export function useAuth() {
   const status = useStore(authStore, (state) => state.status);
   const user = useStore(authStore, (state) => state.user);
   const showAdminPanel = useStore(authStore, (state) => state.showAdminPanel);
+  const { permissions, hasPermission, hasAnyPermission, hasAllPermissions } = usePermissions();
 
   const { getMe, logout: logoutRequest } = useAuthRequest();
 
@@ -26,7 +28,7 @@ export function useAuth() {
     authStore.getState().setLoading();
     refreshInFlight = getMe()
       .then((me) => {
-        if (me.authenticated && me.user) authStore.getState().setUser(me.user, me.showAdminPanel);
+        if (me.authenticated && me.user) authStore.getState().setUser(me.user, me.showAdminPanel, me.permissions);
         else authStore.getState().clear();
       })
       .catch(() => {
@@ -55,6 +57,10 @@ export function useAuth() {
     isLoading: status === 'idle' || status === 'loading',
     isLoggedIn: status === 'authenticated',
     user,
+    permissions,
+    hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
     showAdminPanel,
     refresh,
     logout,
