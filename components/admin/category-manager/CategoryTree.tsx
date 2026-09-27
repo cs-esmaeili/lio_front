@@ -13,6 +13,7 @@ interface CategoryTreeProps {
   onAddChild: (category: CategoryTreeNode) => void;
   onEdit: (category: CategoryTreeNode) => void;
   onDelete: (category: CategoryTreeNode) => void;
+  onManageAttributes: (category: CategoryTreeNode) => void;
 }
 
 /** Presentational hierarchical list of categories; expansion is owned by the caller. */
@@ -26,6 +27,7 @@ export default function CategoryTree({
   onAddChild,
   onEdit,
   onDelete,
+  onManageAttributes,
 }: CategoryTreeProps) {
   return (
     <ul className='flex flex-col gap-0.5'>
@@ -41,6 +43,7 @@ export default function CategoryTree({
           onAddChild={onAddChild}
           onEdit={onEdit}
           onDelete={onDelete}
+          onManageAttributes={onManageAttributes}
         />
       ))}
     </ul>

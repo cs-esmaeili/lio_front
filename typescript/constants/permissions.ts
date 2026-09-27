@@ -22,6 +22,14 @@ export const PERMISSIONS = {
   CATEGORY_READ: 'category:read',
   /** Create, update and delete product categories. */
   CATEGORY_MANAGE: 'category:manage',
+  /** List and view products, their attributes and variants. */
+  PRODUCT_READ: 'product:read',
+  /** Create, update and delete products and their variants. */
+  PRODUCT_MANAGE: 'product:manage',
+  /** List and view product attributes and their values. */
+  ATTRIBUTE_READ: 'attribute:read',
+  /** Create, update and delete product attributes and their values. */
+  ATTRIBUTE_MANAGE: 'attribute:manage',
 } as const;
 
 /** Any of these unlocks the management actions in the file manager. */
