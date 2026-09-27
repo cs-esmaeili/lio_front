@@ -394,6 +394,18 @@ Black / Heavy	900 */
   font-family: var(--font-dastnevis);
 }
 
+/* --- Scroll Containers --- */
+
+/* Keeps the vertical scrollbar on the right edge even in the RTL layout,
+   while the content inside stays RTL. */
+@utility scrollbar-right {
+  direction: ltr;
+
+  & > * {
+    direction: rtl;
+  }
+}
+
 
 
 /* ============================================================

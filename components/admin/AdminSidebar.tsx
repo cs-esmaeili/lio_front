@@ -136,7 +136,7 @@ export function AdminSidebar() {
       <Separator className='bg-gray-1' />
 
       {/* Navigation */}
-      <nav className='flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4'>
+      <nav className='scrollbar-right flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4'>
         {sections.map((section, index) => (
           <div key={section.title} className='flex flex-col gap-1'>
             {index > 0 && <Separator className='my-2 bg-gray-1' />}
