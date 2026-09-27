@@ -85,7 +85,7 @@ export default function CreateFolderModal({ open, onOpenChange, parentPath, onCr
           }}
         />
 
-        {error && <p className='text-xs text-red-500'>{error}</p>}
+        {error && <p className='text-xs text-destructive'>{error}</p>}
 
         <p className='text-caption text-secondary-3'>
           مسیر: <span dir='ltr' className='font-medium text-secondary-1'>{parentPath ? `${parentPath}/${name.trim() || '...'}` : name.trim() || '...'}</span>

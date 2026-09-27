@@ -59,7 +59,7 @@ export default function AdminSettingsPage() {
   return (
     <div className='flex flex-col gap-6'>
       {/* Header */}
-      <div className='flex flex-col gap-4 rounded-2xl border border-gray-1 bg-white p-6 md:flex-row md:items-center md:justify-between md:p-8'>
+      <div className='flex flex-col gap-4 rounded-2xl border border-gray-1 bg-background p-6 md:flex-row md:items-center md:justify-between md:p-8'>
         <div className='flex flex-col gap-2'>
           <h1 className='text-xl font-bold text-secondary-black-3 md:text-2xl'>تنظیمات سایت</h1>
           <p className='text-regular text-secondary-2'>
@@ -105,7 +105,7 @@ export default function AdminSettingsPage() {
           ))}
         </div>
       ) : error && settings.length === 0 ? (
-        <div className='flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-2 bg-white py-16 text-center'>
+        <div className='flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-2 bg-background py-16 text-center'>
           <CircleAlert className='text-destructive' size={32} aria-hidden='true' />
           <p className='text-regular text-secondary-1'>{error}</p>
           <Button type='button' variant='outline' size='sm' className='rounded-lg' onClick={() => void refetch()}>
@@ -113,7 +113,7 @@ export default function AdminSettingsPage() {
           </Button>
         </div>
       ) : visibleSettings.length === 0 ? (
-        <div className='flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-2 bg-white py-16 text-center'>
+        <div className='flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-2 bg-background py-16 text-center'>
           <Settings2 className='text-secondary-3' size={36} aria-hidden='true' />
           <p className='text-regular text-secondary-2'>
             {search.trim() ? 'تنظیمی با این جستجو پیدا نشد.' : 'هنوز تنظیمی ثبت نشده است.'}

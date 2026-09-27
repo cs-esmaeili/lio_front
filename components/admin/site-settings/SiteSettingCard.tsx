@@ -19,7 +19,7 @@ export default function SiteSettingCard({ setting, deleting = false, onEdit, onD
   const { entries, rest } = summarizeSetting(setting);
 
   return (
-    <div className={cn('flex flex-col gap-3 rounded-xl border border-gray-1 bg-white p-4 transition-colors hover:border-primary-3', deleting && 'pointer-events-none opacity-60')}>
+    <div className={cn('flex flex-col gap-3 rounded-xl border border-gray-1 bg-background p-4 transition-colors hover:border-primary-3', deleting && 'pointer-events-none opacity-60')}>
       {/* Header */}
       <div className='flex items-start justify-between gap-2'>
         <div className='flex min-w-0 flex-col gap-1.5'>
@@ -30,7 +30,7 @@ export default function SiteSettingCard({ setting, deleting = false, onEdit, onD
           <span
             className={cn(
               'inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium',
-              setting.isPrivate ? 'bg-amber-50 text-amber-700' : 'bg-primary-4 text-primary-1',
+              setting.isPrivate ? 'bg-gray-1 text-secondary-1' : 'bg-primary-4 text-primary-1',
             )}>
             {setting.isPrivate ? <Lock size={11} aria-hidden='true' /> : <Globe size={11} aria-hidden='true' />}
             {setting.isPrivate ? 'خصوصی' : 'عمومی'}

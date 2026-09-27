@@ -29,7 +29,7 @@ export default function ModalHeader({
         <div
             className={`
                 flex items-center justify-between
-                border-b border-gray-200
+                border-b border-gray-2
                 px-6 py-5
                 ${className}
             `}

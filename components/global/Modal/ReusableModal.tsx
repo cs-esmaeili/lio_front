@@ -70,7 +70,7 @@ export default function ReusableModal({
             >
                 {/* Header */}
 
-                <DialogHeader className="border-b border-gray-200 px-6 py-5">
+                <DialogHeader className="border-b border-gray-2 px-6 py-5">
 
                     <div className="flex items-center justify-between">
 
@@ -105,7 +105,7 @@ export default function ReusableModal({
                 {/* Footer */}
 
                 {footer && (
-                    <div className="border-t border-gray-200 px-6 py-4">
+                    <div className="border-t border-gray-2 px-6 py-4">
                         {footer}
                     </div>
                 )}

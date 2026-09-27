@@ -18,7 +18,7 @@ export function AdminTopbar() {
   };
 
   return (
-    <header className='sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-gray-1 bg-white/90 px-4 backdrop-blur md:px-6'>
+    <header className='sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-gray-1 bg-background/90 px-4 backdrop-blur md:px-6'>
       <div className='flex flex-col'>
         <span className='text-sm font-semibold text-secondary-black-3'>داشبورد</span>
         <span className='text-caption text-secondary-2'>مدیریت فروشگاه</span>
