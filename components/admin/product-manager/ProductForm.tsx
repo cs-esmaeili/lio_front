@@ -18,7 +18,7 @@ import ProductBasicTab from './ProductBasicTab';
 import ProductImagesTab from './ProductImagesTab';
 import ProductSpecsTab from './ProductSpecsTab';
 import ProductVariantsTab from './ProductVariantsTab';
-import { emptyFormState, pruneFormState, toFormState, toSavePayload, type ProductFormState } from './product-manager.model';
+import { buildCombinations, emptyFormState, pruneFormState, toFormState, toSavePayload, type ProductFormState } from './product-manager.model';
 
 interface ProductFormProps {
   mode: 'create' | 'edit';
@@ -67,6 +67,10 @@ export default function ProductForm({ mode, product, onSaved, onCancel }: Produc
     if (!state.name.trim()) return 'نام محصول را وارد کنید.';
     if (!PRODUCT_SLUG_PATTERN.test(state.slug.trim())) return 'اسلاگ محصول باید فقط شامل حروف انگلیسی کوچک، عدد و «-» باشد.';
     if (state.categoryIds.length === 0) return 'حداقل یک دسته‌بندی برای محصول انتخاب کنید.';
+
+    if (buildCombinations(state.variantAxes).filter((combination) => state.variants[combination.key]?.included ?? true).length === 0) {
+      return 'حداقل یک ترکیب تنوع باید فعال باشد.';
+    }
 
     for (const attribute of availableAttributes) {
       if (attribute.usage === 'SPEC' && attribute.isRequired && (state.specValues[attribute.id]?.length ?? 0) === 0) {
@@ -148,6 +152,8 @@ export default function ProductForm({ mode, product, onSaved, onCancel }: Produc
               onChange={update}
               canManageValues={canManageAttributes}
               onManageValues={manageValues}
+              onRefreshAttributes={() => void refetchAttributes()}
+              refreshing={attributesLoading}
             />
           </TabsContent>
         </div>

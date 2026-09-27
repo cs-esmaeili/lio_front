@@ -21,6 +21,8 @@ export interface VariantDraft {
   compareAtPrice: string;
   stock: string;
   isDefault: boolean;
+  /** Whether this combination is sold. Excluded ones are kept so they can be restored. */
+  included: boolean;
 }
 
 /** attributeId -> selected value ids (spec attributes; single or multi per attribute). */
@@ -46,8 +48,8 @@ export interface VariantCombination {
   values: Array<{ attributeId: number; attributeValueId: number }>;
 }
 
-export function emptyVariantDraft(isDefault = false): VariantDraft {
-  return { sku: '', price: '', compareAtPrice: '', stock: '0', isDefault };
+export function emptyVariantDraft(isDefault = false, included = true): VariantDraft {
+  return { sku: '', price: '', compareAtPrice: '', stock: '0', isDefault, included };
 }
 
 export function emptyFormState(): ProductFormState {
@@ -87,6 +89,21 @@ export function buildCombinations(axes: AxisSelection): VariantCombination[] {
   return combinations.map((values) => ({ key: variantCombinationKey(values), values }));
 }
 
+/** Guarantees exactly one default variant, and only among the included ones. */
+function ensureSingleDefault(variants: VariantDrafts): void {
+  const keys = Object.keys(variants);
+  const includedKeys = keys.filter((key) => variants[key].included);
+
+  if (includedKeys.length === 0) {
+    for (const key of keys) variants[key].isDefault = false;
+    return;
+  }
+
+  const currentDefault = includedKeys.find((key) => variants[key].isDefault);
+  const defaultKey = currentDefault ?? includedKeys[0];
+  for (const key of keys) variants[key].isDefault = key === defaultKey;
+}
+
 /** Turns a stored product into the form model. */
 export function toFormState(product: AdminProduct): ProductFormState {
   const specValues: SpecSelection = {};
@@ -99,16 +116,24 @@ export function toFormState(product: AdminProduct): ProductFormState {
     variantAxes[axis.attributeId] = [...axis.valueIds];
   }
 
+  // Build every possible combination; ones that were not saved stay excluded so
+  // the user can restore them from the editor.
+  const savedByKey = new Map(product.variants.map((variant) => [variantCombinationKey(variant.values), variant]));
   const variants: VariantDrafts = {};
-  for (const variant of product.variants) {
-    variants[variantCombinationKey(variant.values)] = {
-      sku: variant.sku,
-      price: String(variant.price),
-      compareAtPrice: variant.compareAtPrice === null ? '' : String(variant.compareAtPrice),
-      stock: String(variant.stock),
-      isDefault: variant.isDefault,
-    };
+  for (const combination of buildCombinations(variantAxes)) {
+    const saved = savedByKey.get(combination.key);
+    variants[combination.key] = saved
+      ? {
+          sku: saved.sku,
+          price: String(saved.price),
+          compareAtPrice: saved.compareAtPrice === null ? '' : String(saved.compareAtPrice),
+          stock: String(saved.stock),
+          isDefault: saved.isDefault,
+          included: true,
+        }
+      : emptyVariantDraft(false, false);
   }
+  ensureSingleDefault(variants);
 
   return {
     name: product.name,
@@ -131,13 +156,11 @@ export function toFormState(product: AdminProduct): ProductFormState {
 export function syncVariantDrafts(combinations: VariantCombination[], current: VariantDrafts): VariantDrafts {
   const next: VariantDrafts = {};
   combinations.forEach((combination, index) => {
-    next[combination.key] = current[combination.key] ?? emptyVariantDraft(index === 0);
+    const existing = current[combination.key];
+    next[combination.key] = existing ? { ...existing } : emptyVariantDraft(index === 0, true);
   });
 
-  if (!Object.values(next).some((draft) => draft.isDefault) && combinations.length > 0) {
-    next[combinations[0].key].isDefault = true;
-  }
-
+  ensureSingleDefault(next);
   return next;
 }
 
@@ -147,13 +170,11 @@ export function toSavePayload(state: ProductFormState): SaveProductPayload {
     valueIds.map((valueId) => ({ attributeId: Number(attributeId), attributeValueId: valueId })),
   );
 
-  const variantAxes = Object.entries(state.variantAxes)
-    .map(([attributeId, valueIds]) => ({ attributeId: Number(attributeId), valueIds }))
-    .filter((axis) => axis.valueIds.length > 0);
-
   const combinations = buildCombinations(state.variantAxes);
-  const variants: ProductVariantInput[] = combinations.map((combination, index) => {
-    const draft = state.variants[combination.key] ?? emptyVariantDraft(index === 0);
+  const includedCombinations = combinations.filter((combination) => state.variants[combination.key]?.included ?? true);
+
+  const variants: ProductVariantInput[] = includedCombinations.map((combination) => {
+    const draft = state.variants[combination.key] ?? emptyVariantDraft(false, true);
     const price = Number(draft.price);
     const compareAtPrice = draft.compareAtPrice.trim() === '' ? null : Number(draft.compareAtPrice);
 
@@ -170,6 +191,18 @@ export function toSavePayload(state: ProductFormState): SaveProductPayload {
   if (variants.length > 0 && !variants.some((variant) => variant.isDefault)) {
     variants[0].isDefault = true;
   }
+
+  // Only persist axis values that a sold combination actually uses, so removed
+  // combinations do not leave dangling options on the public product page.
+  const usedValues = new Map<number, Set<number>>();
+  for (const combination of includedCombinations) {
+    for (const value of combination.values) {
+      const set = usedValues.get(value.attributeId) ?? new Set<number>();
+      set.add(value.attributeValueId);
+      usedValues.set(value.attributeId, set);
+    }
+  }
+  const variantAxes = Array.from(usedValues, ([attributeId, valueIds]) => ({ attributeId, valueIds: Array.from(valueIds) }));
 
   return {
     name: state.name.trim(),
