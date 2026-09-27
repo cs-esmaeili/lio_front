@@ -6,11 +6,13 @@ import { CircleAlert, Plus, RefreshCw, Search, Settings2 } from 'lucide-react';
 import SiteSettingCard from '@/components/admin/site-settings/SiteSettingCard';
 import SiteSettingEditorModal from '@/components/admin/site-settings/SiteSettingEditorModal';
 import ConfirmDeleteSettingModal from '@/components/admin/site-settings/ConfirmDeleteSettingModal';
+import PermissionGate from '@/components/global/PermissionGate';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { Spinner } from '@/components/shadcn/spinner';
 import { useSiteSettingsList } from '@/hooks/site-settings/useSiteSettingsList';
 import { useDeleteSiteSetting } from '@/hooks/site-settings/useDeleteSiteSetting';
+import { PERMISSIONS } from '@/typescript/constants/permissions';
 import type { SiteSetting } from '@/typescript/schemas/site-setting.schema';
 
 type EditorState = { mode: 'create' | 'edit'; setting: SiteSetting | null };
@@ -57,6 +59,7 @@ export default function AdminSettingsPage() {
   const editorKey = editor ? `${editor.mode}:${editor.setting?.key ?? 'new'}` : 'closed';
 
   return (
+    <PermissionGate allOf={[PERMISSIONS.SITE_MANAGE]}>
     <div className='flex flex-col gap-6'>
       {/* Header */}
       <div className='flex flex-col gap-4 rounded-2xl border border-gray-1 bg-custom-white p-6 md:flex-row md:items-center md:justify-between md:p-8'>
@@ -161,5 +164,6 @@ export default function AdminSettingsPage() {
         onConfirm={() => void handleConfirmDelete()}
       />
     </div>
+    </PermissionGate>
   );
 }

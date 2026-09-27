@@ -20,7 +20,7 @@ export interface FileManagerDialogProps {
   multiple?: boolean;
   /** `accept` filter — matching files only can be selected. */
   accept?: string;
-  /** Show management actions (upload / create folder / delete). Default `true`. */
+  /** Show management actions (upload / create folder / delete). Defaults to the user's write permissions. */
   canManage?: boolean;
   /** Files selection when the user confirms. */
   onSelect?: (files: SelectedFile[]) => void;
@@ -51,7 +51,7 @@ export default function FileManagerDialog({
   selectable,
   multiple = false,
   accept,
-  canManage = true,
+  canManage,
   onSelect,
   onSelectionChange,
   onUploaded,

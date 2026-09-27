@@ -5,7 +5,9 @@ import { CloudUpload } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Progress } from '@/components/shadcn/progress';
+import { usePermissions } from '@/hooks/auth/usePermissions';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+import { FILE_WRITE_PERMISSIONS } from '@/typescript/constants/permissions';
 import { useFileList } from '@/hooks/file-manager/useFileList';
 import { useUploadFiles } from '@/hooks/file-manager/useUploadFiles';
 import { useDeleteFile } from '@/hooks/file-manager/useDeleteFile';
@@ -44,7 +46,7 @@ export default function FileManagerBrowser({
   selectable,
   multiple = false,
   accept,
-  canManage = true,
+  canManage,
   onSelectionChange,
   onUploaded,
   onOpenFile,
@@ -58,6 +60,7 @@ export default function FileManagerBrowser({
   const [deletingKey, setDeletingKey] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
+  const { hasAnyPermission } = usePermissions();
   const { entries, loading, error, refetch } = useFileList(path);
   const { upload, loading: uploading, progress } = useUploadFiles();
   const { deleteFile, loading: deletingFile } = useDeleteFile();
@@ -65,6 +68,9 @@ export default function FileManagerBrowser({
   const { copy } = useCopyToClipboard({ successMessage: 'نشانی فایل کپی شد' });
 
   const canSelect = selectable ?? Boolean(onSelectionChange);
+  // Management actions (upload / create folder / delete) require a write
+  // permission; callers can override explicitly with the `canManage` prop.
+  const canManageEffective = canManage ?? hasAnyPermission([...FILE_WRITE_PERMISSIONS]);
   const committing = deletingFile || deletingFolder;
 
   const selectedKeys = useMemo(() => new Set(selection.map((file) => `file:${file.path}`)), [selection]);
@@ -153,13 +159,13 @@ export default function FileManagerBrowser({
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragActive(false);
-    if (!canManage || uploading) return;
+    if (!canManageEffective || uploading) return;
 
     const files = Array.from(event.dataTransfer.files ?? []);
     if (files.length) void handleUpload(files);
   };
 
-  const allowDrag = canManage;
+  const allowDrag = canManageEffective;
 
   // --------------------------------------------------------
   //  Derived
@@ -191,7 +197,7 @@ export default function FileManagerBrowser({
         <FileManagerBreadcrumb path={path} onNavigate={handleNavigate} disabled={loading} />
 
         <FileManagerToolbar
-          canManage={canManage}
+          canManage={canManageEffective}
           search={search}
           onSearchChange={setSearch}
           onFilesSelected={(files) => void handleUpload(files)}
@@ -230,7 +236,7 @@ export default function FileManagerBrowser({
           entries={visibleEntries}
           selectedKeys={selectedKeys}
           selectable={canSelect}
-          canManage={canManage}
+          canManage={canManageEffective}
           acceptingMatch={acceptingMatch}
           loading={loading}
           error={error}
@@ -254,7 +260,7 @@ export default function FileManagerBrowser({
       </div>
 
       {/* Modals */}
-      {canManage && (
+      {canManageEffective && (
         <>
           <CreateFolderModal
             open={createFolderOpen}

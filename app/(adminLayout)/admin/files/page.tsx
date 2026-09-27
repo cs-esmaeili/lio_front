@@ -6,26 +6,35 @@ import { Copy, ExternalLink } from 'lucide-react';
 import FileManagerBrowser from '@/components/admin/file-manager/FileManagerBrowser';
 import FileTypeIcon from '@/components/admin/file-manager/FileTypeIcon';
 import { formatFileSize, type SelectedFile } from '@/components/admin/file-manager/file-manager.model';
+import PermissionGate from '@/components/global/PermissionGate';
 import { Button } from '@/components/shadcn/button';
+import { usePermissions } from '@/hooks/auth/usePermissions';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+import { FILE_WRITE_PERMISSIONS, PERMISSIONS } from '@/typescript/constants/permissions';
 
 export default function AdminFilesPage() {
   const [selection, setSelection] = useState<SelectedFile[]>([]);
   const { copy } = useCopyToClipboard({ successMessage: 'نشانی فایل کپی شد' });
+  const { hasAnyPermission } = usePermissions();
+
+  const canManage = hasAnyPermission([...FILE_WRITE_PERMISSIONS]);
 
   return (
+    <PermissionGate allOf={[PERMISSIONS.FILE_READ]}>
     <div className='flex flex-col gap-6'>
       <div className='rounded-2xl border border-gray-1 bg-custom-white p-6 md:p-8'>
-        <h1 className='mb-2 text-xl font-bold text-secondary-black-3 md:text-2xl'>مدیریت فایل‌ها</h1>
+        <h1 className='mb-2 text-xl font-bold text-secondary-black-3 md:text-2xl'>{canManage ? 'مدیریت فایل‌ها' : 'فایل‌ها'}</h1>
         <p className='text-regular text-secondary-2'>
-          فایل‌ها و پوشه‌ها را آپلود، مرور و مدیریت کنید. این بخش با پرمیشن <span dir='ltr'>file:manage</span> در دسترس است.
+          {canManage
+            ? 'فایل‌ها و پوشه‌ها را آپلود، مرور و مدیریت کنید.'
+            : 'فایل‌ها را مرور و انتخاب کنید. برای آپلود یا حذف به پرمیشن‌های مدیریتی نیاز دارید.'}
         </p>
       </div>
 
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-[1fr_20rem]'>
         <div className='overflow-hidden rounded-2xl border border-gray-1 bg-custom-white'>
           <FileManagerBrowser
-            canManage
+            canManage={canManage}
             selectable
             multiple
             className='h-[68vh]'
@@ -89,5 +98,6 @@ export default function AdminFilesPage() {
         </aside>
       </div>
     </div>
+    </PermissionGate>
   );
 }

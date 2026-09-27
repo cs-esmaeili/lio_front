@@ -7,6 +7,7 @@ import Icon from '@/components/global/Icon';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Separator } from '@/components/shadcn/separator';
 import { useAuth } from '@/hooks/auth/useAuth';
+import { PERMISSIONS } from '@/typescript/constants/permissions';
 
 type NavItem = {
   href: string;
@@ -14,6 +15,10 @@ type NavItem = {
   icon: typeof Home;
   /** Not implemented yet — rendered as a disabled placeholder. */
   soon?: boolean;
+  /** Visible only when the user has at least one of these permissions. */
+  anyOf?: string[];
+  /** Visible only when the user has all of these permissions. */
+  allOf?: string[];
 };
 
 type NavSection = {
@@ -32,24 +37,37 @@ const navSections: NavSection[] = [
       { href: '/admin/products', label: 'محصولات', icon: Box1, soon: true },
       { href: '/admin/orders', label: 'سفارشات', icon: ShoppingCart, soon: true },
       { href: '/admin/users', label: 'کاربران', icon: Profile, soon: true },
-      { href: '/admin/files', label: 'فایل‌ها', icon: Folder2 },
+      { href: '/admin/files', label: 'فایل‌ها', icon: Folder2, allOf: [PERMISSIONS.FILE_READ] },
     ],
   },
   {
     title: 'سیستم',
-    items: [{ href: '/admin/settings', label: 'تنظیمات', icon: Setting2 }],
+    items: [{ href: '/admin/settings', label: 'تنظیمات', icon: Setting2, allOf: [PERMISSIONS.SITE_MANAGE] }],
   },
 ];
 
 /**
- * Admin panel sidebar. Visual-only for now — sections/items will later be
- * driven by the user's permissions.
+ * Admin panel sidebar. Items are filtered by the permissions loaded from
+ * `/auth/me` (the auth store), so users only see what they can open.
  */
 export function AdminSidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, hasAnyPermission, hasAllPermissions } = useAuth();
 
   const initials = (user?.name || user?.username || 'م').charAt(0);
+
+  // Items are filtered by the permissions loaded from `/auth/me`; a section
+  // with nothing left to show is dropped entirely.
+  const sections = navSections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter(
+        (item) =>
+          (!item.anyOf?.length || hasAnyPermission(item.anyOf)) &&
+          (!item.allOf?.length || hasAllPermissions(item.allOf)),
+      ),
+    }))
+    .filter((section) => section.items.length > 0);
 
   return (
     <aside className='hidden md:flex w-72 shrink-0 flex-col h-screen sticky top-0 bg-custom-white border-l border-gray-1'>
@@ -89,7 +107,7 @@ export function AdminSidebar() {
 
       {/* Navigation */}
       <nav className='flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4'>
-        {navSections.map((section, index) => (
+        {sections.map((section, index) => (
           <div key={section.title} className='flex flex-col gap-1'>
             {index > 0 && <Separator className='my-2 bg-gray-1' />}
             <span className='px-2 pb-1 text-caption font-medium text-secondary-3'>{section.title}</span>
