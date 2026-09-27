@@ -45,6 +45,12 @@ export function getSectionByLocationCSR<T>(location: string, schema: z.ZodType<T
   return parseResponse(http.get(`${csrPrefixUrl}/page-sections/section?location=${query}`), schema);
 }
 
+/** GET /page-sections/page?entityType= — read a page with all of its sections. */
+export function getPageSectionsCSR<T>(entityType: string, schema: z.ZodType<T>): Promise<T> {
+  const query = encodeURIComponent(entityType);
+  return parseResponse(http.get(`${csrPrefixUrl}/page-sections/page?entityType=${query}`), schema);
+}
+
 /** GET /admin/page-sections/{id} — read one section by id. */
 export function getSectionByIdCSR<T>(sectionId: number, schema: z.ZodType<T>): Promise<T> {
   return parseResponse(http.get(`${csrPrefixUrl}/admin/page-sections/${sectionId}`), schema);

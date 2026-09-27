@@ -45,3 +45,80 @@ export interface SliderSlideInput {
   url?: string | null;
   sortOrder?: number;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  BANNER sections                                                           */
+/* -------------------------------------------------------------------------- */
+
+/** A single banner (`data.banners[]`). */
+export const BannerItemSchema = z.object({
+  id: z.number(),
+  sortOrder: z.number().catch(0),
+  title: z.string().catch(''),
+  subtitle: z.string().nullable().catch(null),
+  buttonTitle: z.string().nullable().catch(null),
+  buttonUrl: z.string().nullable().catch(null),
+  desktopFileId: z.number(),
+  tabletFileId: z.number(),
+  mobileFileId: z.number(),
+  desktopFileUrl: z.string().nullable().catch(null),
+  tabletFileUrl: z.string().nullable().catch(null),
+  mobileFileUrl: z.string().nullable().catch(null),
+});
+
+/** A BANNER page section with its banners. */
+export const BannerSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    banners: z.array(BannerItemSchema).catch([]),
+  }),
+});
+
+/** `GET /page-sections/page?entityType=HOME` — every home section, data untyped. */
+export const HomeSectionsPageSchema = z.object({
+  page: z.object({
+    id: z.number(),
+    entityType: z.string(),
+    entityId: z.number().nullable().catch(null),
+    slug: z.string().nullable().catch(null),
+  }),
+  sections: z
+    .array(
+      z.object({
+        id: z.number(),
+        pageId: z.number().nullable().catch(null),
+        type: z.string(),
+        location: z.string(),
+        title: z.string().nullable().catch(null),
+        link: z.string().nullable().catch(null),
+        sortOrder: z.number().catch(0),
+        status: z.string().catch('ACTIVE'),
+        data: z.unknown(),
+      }),
+    )
+    .catch([]),
+});
+
+export type BannerItem = z.infer<typeof BannerItemSchema>;
+export type BannerSection = z.infer<typeof BannerSectionSchema>;
+export type HomeSectionsPage = z.infer<typeof HomeSectionsPageSchema>;
+
+/** Payload for creating/updating a banner. `id` is required when updating. */
+export interface BannerItemInput {
+  id?: number;
+  title: string;
+  subtitle?: string | null;
+  buttonTitle?: string | null;
+  buttonUrl?: string | null;
+  desktopFileId: number;
+  tabletFileId: number;
+  mobileFileId: number;
+  sortOrder?: number;
+}
