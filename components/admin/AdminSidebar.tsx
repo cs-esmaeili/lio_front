@@ -37,7 +37,7 @@ const navSections: NavSection[] = [
   },
   {
     title: 'سیستم',
-    items: [{ href: '/admin/settings', label: 'تنظیمات', icon: Setting2, soon: true }],
+    items: [{ href: '/admin/settings', label: 'تنظیمات', icon: Setting2 }],
   },
 ];
 
