@@ -1,0 +1,136 @@
+'use client';
+
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+import CategoryPickerField from '@/components/admin/category-manager/CategoryPickerField';
+import ReusableModal from '@/components/global/Modal/ReusableModal';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Spinner } from '@/components/shadcn/spinner';
+import { useCategoryList } from '@/hooks/category/useCategoryList';
+import { useCreateHeaderItem } from '@/hooks/page-sections/useCreateHeaderItem';
+import { useUpdateHeaderItem } from '@/hooks/page-sections/useUpdateHeaderItem';
+import type { HeaderItem, HeaderItemType } from '@/typescript/schemas/page-section.schema';
+
+interface HeaderItemFormModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  sectionId: number;
+  mode: 'create' | 'edit';
+  initial: HeaderItem | null;
+  onSaved: () => void;
+}
+
+export default function HeaderItemFormModal({ open, onOpenChange, sectionId, mode, initial, onSaved }: HeaderItemFormModalProps) {
+  const { createHeaderItem, loading: creating } = useCreateHeaderItem();
+  const { updateHeaderItem, loading: updating } = useUpdateHeaderItem();
+  const submitting = creating || updating;
+
+  const { categories } = useCategoryList();
+
+  const [type, setType] = useState<HeaderItemType>(initial?.type ?? 'LINK');
+  const [label, setLabel] = useState(initial?.type === 'LINK' ? (initial.label ?? '') : '');
+  const [url, setUrl] = useState(initial?.type === 'LINK' ? (initial.url ?? '') : '');
+  const [categoryId, setCategoryId] = useState<number | null>(initial?.categoryId ?? null);
+  const [error, setError] = useState<string | null>(null);
+
+  const selectedCategory = categoryId !== null ? (categories.find((category) => category.id === categoryId) ?? null) : null;
+
+  // --------------------------------------------------------
+
+  const handleTypeChange = (value: HeaderItemType) => {
+    setType(value);
+    if (error) setError(null);
+  };
+
+  const handleSubmit = async () => {
+    if (type === 'LINK') {
+      if (!label.trim() || !url.trim()) {
+        setError('برای آیتم لینک، عنوان و آدرس الزامی است.');
+        return;
+      }
+    } else if (categoryId === null) {
+      setError('برای آیتم دسته‌بندی، انتخاب دسته‌بندی الزامی است.');
+      return;
+    }
+
+    const payload =
+      type === 'LINK'
+        ? { type, label: label.trim(), url: url.trim(), categoryId: null }
+        : { type, label: null, url: null, categoryId };
+
+    const saved =
+      mode === 'edit' && initial
+        ? await updateHeaderItem(sectionId, { id: initial.id, ...payload })
+        : await createHeaderItem(sectionId, payload);
+    if (!saved) return;
+
+    toast.success(mode === 'edit' ? 'آیتم هدر ذخیره شد.' : 'آیتم هدر ایجاد شد.');
+    onSaved();
+    onOpenChange(false);
+  };
+
+  // --------------------------------------------------------
+
+  const footer = (
+    <div className='flex flex-row items-center justify-end gap-3'>
+      <Button type='button' variant='outline' className='h-11 rounded-xl border-gray-2' disabled={submitting} onClick={() => onOpenChange(false)}>
+        انصراف
+      </Button>
+
+      <Button type='button' className='h-11 rounded-xl px-6' disabled={submitting} onClick={() => void handleSubmit()}>
+        {submitting && <Spinner />}
+        {mode === 'edit' ? 'ذخیره تغییرات' : 'افزودن آیتم'}
+      </Button>
+    </div>
+  );
+
+  return (
+    <ReusableModal open={open} onOpenChange={onOpenChange} title={mode === 'edit' ? 'ویرایش آیتم هدر' : 'افزودن آیتم هدر'} footer={footer} size='md'>
+      <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-2'>
+          <Label className='text-sm text-secondary-1'>نوع آیتم</Label>
+          <Select value={type} onValueChange={(value) => handleTypeChange(value as HeaderItemType)}>
+            <SelectTrigger className='!h-11 w-full' dir='rtl'>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position='popper' dir='rtl' className='z-50'>
+              <SelectItem value='LINK'>لینک</SelectItem>
+              <SelectItem value='CATEGORY'>دسته‌بندی</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {type === 'LINK' ? (
+          <>
+            <div className='flex flex-col gap-2'>
+              <label className='text-sm text-secondary-1'>عنوان</label>
+              <Input value={label} placeholder='مثلا تماس با ما' className='h-11' onChange={(event) => setLabel(event.target.value)} />
+            </div>
+
+            <div className='flex flex-col gap-2'>
+              <label className='text-sm text-secondary-1'>آدرس</label>
+              <Input dir='ltr' value={url} placeholder='/contact' className='h-11' onChange={(event) => setUrl(event.target.value)} />
+            </div>
+          </>
+        ) : (
+          <CategoryPickerField
+            label='دسته‌بندی'
+            value={selectedCategory}
+            onChange={(category) => {
+              setCategoryId(category?.id ?? null);
+              if (error) setError(null);
+            }}
+            categories={categories}
+            pickerTitle='انتخاب دسته‌بندی هدر'
+          />
+        )}
+
+        {error && <p className='text-sm text-custom-red'>{error}</p>}
+      </div>
+    </ReusableModal>
+  );
+}

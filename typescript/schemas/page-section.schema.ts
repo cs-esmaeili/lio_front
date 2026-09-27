@@ -156,3 +156,52 @@ export interface IntroductionInput {
   tabletFileId?: number | null;
   mobileFileId?: number | null;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  HEADER section                                                            */
+/* -------------------------------------------------------------------------- */
+
+export const HEADER_ITEM_TYPES = ['LINK', 'CATEGORY'] as const;
+
+/** A header menu item (`data.items[]`). CATEGORY items resolve to a category. */
+export const HeaderItemSchema = z.object({
+  id: z.number(),
+  type: z.enum(HEADER_ITEM_TYPES).catch('LINK'),
+  label: z.string().catch(''),
+  url: z.string().nullable().catch(null),
+  categoryId: z.number().nullable().catch(null),
+});
+
+export const HeaderSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    logo: z.object({
+      small: z.string().nullable().catch(null),
+      large: z.string().nullable().catch(null),
+    }),
+    supportPhone: z.string().nullable().catch(null),
+    slogan: z.string().nullable().catch(null),
+    items: z.array(HeaderItemSchema).catch([]),
+  }),
+});
+
+export type HeaderItemType = (typeof HEADER_ITEM_TYPES)[number];
+export type HeaderItem = z.infer<typeof HeaderItemSchema>;
+export type HeaderSection = z.infer<typeof HeaderSectionSchema>;
+
+/** Payload for creating/updating a header item. `id` is required when updating. */
+export interface HeaderItemInput {
+  id?: number;
+  type: HeaderItemType;
+  label?: string | null;
+  url?: string | null;
+  categoryId?: number | null;
+  sortOrder?: number;
+}
