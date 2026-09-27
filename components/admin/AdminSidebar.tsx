@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Box1, Category, DocumentText, Folder2, Gallery, Home, Profile, RowHorizontal, Setting2, ShoppingCart, SliderHorizontal } from 'iconsax-reactjs';
+import { Box1, Category, DocumentText, Folder2, Gallery, Home, Profile, RowHorizontal, RowVertical, Setting2, ShoppingCart, SliderHorizontal } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Separator } from '@/components/shadcn/separator';
@@ -53,6 +53,7 @@ const navSections: NavSection[] = [
       { href: '/admin/sections/banner', label: 'بنرها', icon: Gallery, allOf: [PERMISSIONS.PAGE_MANAGE] },
       { href: '/admin/sections/introduction', label: 'معرفی', icon: DocumentText, allOf: [PERMISSIONS.PAGE_MANAGE] },
       { href: '/admin/sections/header', label: 'هدر', icon: RowHorizontal, allOf: [PERMISSIONS.PAGE_MANAGE] },
+      { href: '/admin/sections/footer', label: 'فوتر', icon: RowVertical, allOf: [PERMISSIONS.PAGE_MANAGE] },
     ],
   },
   {

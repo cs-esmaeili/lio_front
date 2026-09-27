@@ -205,3 +205,78 @@ export interface HeaderItemInput {
   categoryId?: number | null;
   sortOrder?: number;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  FOOTER section                                                            */
+/* -------------------------------------------------------------------------- */
+
+export const FOOTER_ITEM_TYPES = ['LINK', 'CATEGORY'] as const;
+
+/** A footer link item (`data.links[]`). */
+export const FooterLinkItemSchema = z.object({
+  id: z.number(),
+  label: z.string().catch(''),
+  url: z.string().nullable().catch(null),
+  description: z.string().nullable().catch(null),
+  fileId: z.number().nullable().catch(null),
+  fileUrl: z.string().nullable().catch(null),
+});
+
+/** A footer category item (`data.categories[]`). */
+export const FooterCategoryItemSchema = z.object({
+  id: z.number(),
+  categoryId: z.number(),
+  name: z.string().catch(''),
+  url: z.string().nullable().catch(null),
+});
+
+export const FooterSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    logo: z.object({
+      small: z.string().nullable().catch(null),
+      large: z.string().nullable().catch(null),
+    }),
+    description: z.string().nullable().catch(null),
+    slogan: z.string().nullable().catch(null),
+    supportPhone: z.string().nullable().catch(null),
+    links: z.array(FooterLinkItemSchema).catch([]),
+    categories: z.array(FooterCategoryItemSchema).catch([]),
+  }),
+});
+
+export type FooterItemType = (typeof FOOTER_ITEM_TYPES)[number];
+export type FooterLinkItem = z.infer<typeof FooterLinkItemSchema>;
+export type FooterCategoryItem = z.infer<typeof FooterCategoryItemSchema>;
+export type FooterSection = z.infer<typeof FooterSectionSchema>;
+
+/** Payload for creating/updating a footer item. `id` is required when updating. */
+export interface FooterItemInput {
+  id?: number;
+  type: FooterItemType;
+  label?: string | null;
+  url?: string | null;
+  description?: string | null;
+  fileId?: number | null;
+  categoryId?: number | null;
+  sortOrder?: number;
+}
+
+/** Normalized shape the footer editor form starts from (link or category item). */
+export interface FooterEditorInit {
+  id: number;
+  type: FooterItemType;
+  label: string;
+  url: string | null;
+  description: string | null;
+  fileId: number | null;
+  fileUrl: string | null;
+  categoryId: number | null;
+}
