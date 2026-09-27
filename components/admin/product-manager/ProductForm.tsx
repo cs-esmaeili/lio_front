@@ -4,12 +4,16 @@ import { useState } from 'react';
 import { Save } from 'lucide-react';
 import { toast } from 'sonner';
 
+import AttributeValuesModal from '@/components/admin/attribute-manager/AttributeValuesModal';
 import { Button } from '@/components/shadcn/button';
 import { Spinner } from '@/components/shadcn/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { usePermissions } from '@/hooks/auth/usePermissions';
 import { useAvailableAttributes } from '@/hooks/product/useAvailableAttributes';
 import { useProductMutations } from '@/hooks/product/useProductMutations';
-import { PRODUCT_SLUG_PATTERN, type AdminProduct } from '@/typescript/schemas/products/admin-product.schema';
+import { PERMISSIONS } from '@/typescript/constants/permissions';
+import type { AdminAttribute } from '@/typescript/schemas/attribute.schema';
+import { PRODUCT_SLUG_PATTERN, type AdminProduct, type AdminAvailableAttribute } from '@/typescript/schemas/products/admin-product.schema';
 import ProductBasicTab from './ProductBasicTab';
 import ProductImagesTab from './ProductImagesTab';
 import ProductSpecsTab from './ProductSpecsTab';
@@ -27,22 +31,32 @@ interface ProductFormProps {
 /** Full-page product editor: basic info, images, spec attributes and variant matrix. */
 export default function ProductForm({ mode, product, onSaved, onCancel }: ProductFormProps) {
   const { createProduct, updateProduct, saving } = useProductMutations();
+  const { hasPermission } = usePermissions();
+  const canManageAttributes = hasPermission(PERMISSIONS.ATTRIBUTE_MANAGE);
 
   const [state, setState] = useState<ProductFormState>(() => (product ? toFormState(product) : emptyFormState()));
   const [slugTouched, setSlugTouched] = useState(Boolean(product));
   const [error, setError] = useState<string | null>(null);
+  const [valuesTarget, setValuesTarget] = useState<AdminAttribute | null>(null);
 
-  const { attributes: availableAttributes, loadedKey, loading: attributesLoading } = useAvailableAttributes(state.categoryIds);
+  const { attributes: availableAttributes, loadedKey, loading: attributesLoading, refetch: refetchAttributes } = useAvailableAttributes(state.categoryIds);
 
   // Drop attributes/values the selected categories no longer expose. Runs during
   // render (not in an effect) once the attributes for the current categories
-  // have actually loaded, so a still-loading list never wipes the form.
-  const attributesKey = state.categoryIds.join(',');
-  const [prunedKey, setPrunedKey] = useState<string | null>(null);
-  if (!attributesLoading && loadedKey === attributesKey && prunedKey !== attributesKey) {
-    setPrunedKey(attributesKey);
+  // have actually loaded, so a still-loading list never wipes the form. The
+  // signature includes value ids so a value added/removed inline also prunes.
+  const categoryKey = state.categoryIds.join(',');
+  const attributesSignature = availableAttributes
+    .map((attribute) => `${attribute.id}:${attribute.values.map((value) => value.id).sort((a, b) => a - b).join('.')}`)
+    .sort()
+    .join(',');
+  const [prunedSignature, setPrunedSignature] = useState<string | null>(null);
+  if (!attributesLoading && loadedKey === categoryKey && prunedSignature !== attributesSignature) {
+    setPrunedSignature(attributesSignature);
     setState((prev) => pruneFormState(prev, availableAttributes));
   }
+
+  const manageValues = (attribute: AdminAvailableAttribute) => setValuesTarget(attribute);
 
   const update = (patch: Partial<ProductFormState>) => {
     setState((prev) => ({ ...prev, ...patch }));
@@ -82,7 +96,7 @@ export default function ProductForm({ mode, product, onSaved, onCancel }: Produc
 
   return (
     <div className='flex flex-col gap-6 pb-24'>
-      <Tabs defaultValue='basic' className='flex flex-col gap-5'>
+      <Tabs defaultValue='basic' dir='rtl' className='flex flex-col gap-5'>
         <div className='flex flex-col gap-4 rounded-2xl border border-gray-1 bg-custom-white p-4 md:flex-row md:items-center md:justify-between md:p-5'>
           <TabsList variant='line' className='w-full justify-start overflow-x-auto md:w-auto'>
             <TabsTrigger value='basic'>اطلاعات پایه</TabsTrigger>
@@ -116,14 +130,40 @@ export default function ProductForm({ mode, product, onSaved, onCancel }: Produc
           </TabsContent>
 
           <TabsContent value='specs'>
-            <ProductSpecsTab state={state} disabled={disabled} attributes={availableAttributes} onChange={update} />
+            <ProductSpecsTab
+              state={state}
+              disabled={disabled}
+              attributes={availableAttributes}
+              onChange={update}
+              canManageValues={canManageAttributes}
+              onManageValues={manageValues}
+            />
           </TabsContent>
 
           <TabsContent value='variants'>
-            <ProductVariantsTab state={state} disabled={disabled} attributes={availableAttributes} onChange={update} />
+            <ProductVariantsTab
+              state={state}
+              disabled={disabled}
+              attributes={availableAttributes}
+              onChange={update}
+              canManageValues={canManageAttributes}
+              onManageValues={manageValues}
+            />
           </TabsContent>
         </div>
       </Tabs>
+
+      <AttributeValuesModal
+        open={valuesTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setValuesTarget(null);
+        }}
+        attribute={valuesTarget}
+        onChanged={(updated) => {
+          setValuesTarget(updated);
+          void refetchAttributes();
+        }}
+      />
     </div>
   );
 }

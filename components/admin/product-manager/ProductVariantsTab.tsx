@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ListChecks } from 'lucide-react';
 
 import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
@@ -14,6 +15,9 @@ interface ProductVariantsTabProps {
   disabled: boolean;
   attributes: AdminAvailableAttribute[];
   onChange: (patch: Partial<ProductFormState>) => void;
+  /** Whether the user may add/remove an attribute's values from here. */
+  canManageValues: boolean;
+  onManageValues: (attribute: AdminAvailableAttribute) => void;
 }
 
 function valueLabel(attributes: AdminAvailableAttribute[], attributeId: number, valueId: number): { attribute: string; value: string } {
@@ -22,7 +26,7 @@ function valueLabel(attributes: AdminAvailableAttribute[], attributeId: number, 
   return { attribute: attribute?.title ?? '', value: value?.value ?? '' };
 }
 
-export default function ProductVariantsTab({ state, disabled, attributes, onChange }: ProductVariantsTabProps) {
+export default function ProductVariantsTab({ state, disabled, attributes, onChange, canManageValues, onManageValues }: ProductVariantsTabProps) {
   const variantAttributes = attributes.filter((attribute) => attribute.usage === 'VARIANT');
   const combinations = buildCombinations(state.variantAxes);
 
@@ -56,9 +60,23 @@ export default function ProductVariantsTab({ state, disabled, attributes, onChan
           const selected = state.variantAxes[attribute.id] ?? [];
           return (
             <div key={attribute.id} className='flex flex-col gap-3 rounded-xl border border-gray-1 p-4'>
-              <div className='flex items-center gap-2'>
+              <div className='flex flex-wrap items-center gap-2'>
                 <span className='text-sm font-medium text-secondary-black-3'>{attribute.title}</span>
                 <span className='text-caption text-secondary-3'>مقادیر سازنده تنوع را انتخاب کنید</span>
+
+                {canManageValues && (
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='sm'
+                    className='ms-auto h-8 rounded-lg text-primary-1 hover:bg-primary-4'
+                    title='افزودن یا حذف مقادیر این ویژگی'
+                    disabled={disabled}
+                    onClick={() => onManageValues(attribute)}>
+                    <ListChecks />
+                    مقادیر
+                  </Button>
+                )}
               </div>
               <div className='flex flex-wrap gap-x-6 gap-y-2'>
                 {attribute.values.map((value) => (

@@ -1,5 +1,8 @@
 'use client';
 
+import { ListChecks } from 'lucide-react';
+
+import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import type { AdminAvailableAttribute } from '@/typescript/schemas/products/admin-product.schema';
 import type { ProductFormState } from './product-manager.model';
@@ -9,9 +12,12 @@ interface ProductSpecsTabProps {
   disabled: boolean;
   attributes: AdminAvailableAttribute[];
   onChange: (patch: Partial<ProductFormState>) => void;
+  /** Whether the user may add/remove an attribute's values from here. */
+  canManageValues: boolean;
+  onManageValues: (attribute: AdminAvailableAttribute) => void;
 }
 
-export default function ProductSpecsTab({ state, disabled, attributes, onChange }: ProductSpecsTabProps) {
+export default function ProductSpecsTab({ state, disabled, attributes, onChange, canManageValues, onManageValues }: ProductSpecsTabProps) {
   const specAttributes = attributes.filter((attribute) => attribute.usage === 'SPEC');
 
   const toggleValue = (attribute: AdminAvailableAttribute, valueId: number, checked: boolean) => {
@@ -44,10 +50,24 @@ export default function ProductSpecsTab({ state, disabled, attributes, onChange 
 
         return (
           <div key={attribute.id} className='flex flex-col gap-3 rounded-xl border border-gray-1 p-4'>
-            <div className='flex items-center gap-2'>
+            <div className='flex flex-wrap items-center gap-2'>
               <span className='text-sm font-medium text-secondary-black-3'>{attribute.title}</span>
               {attribute.isRequired && <span className='rounded-full bg-primary-4 px-2 py-0.5 text-caption text-primary-1'>اجباری</span>}
               <span className='text-caption text-secondary-3'>{attribute.isMultiSelect ? 'چند انتخابی' : 'تک انتخابی'}</span>
+
+              {canManageValues && (
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='sm'
+                  className='ms-auto h-8 rounded-lg text-primary-1 hover:bg-primary-4'
+                  title='افزودن یا حذف مقادیر این ویژگی'
+                  disabled={disabled}
+                  onClick={() => onManageValues(attribute)}>
+                  <ListChecks />
+                  مقادیر
+                </Button>
+              )}
             </div>
 
             <div className='flex flex-wrap gap-x-6 gap-y-2'>
