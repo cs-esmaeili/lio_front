@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { ChevronsDownUp, ChevronsUpDown, CircleAlert, Layers, Plus, RefreshCw, Search } from 'lucide-react';
 
 import CategoryEditorModal from '@/components/admin/category-manager/CategoryEditorModal';
+import CategoryAttributesDialog from '@/components/admin/category-manager/CategoryAttributesDialog';
 import CategoryTree from '@/components/admin/category-manager/CategoryTree';
 import ConfirmDeleteCategoryModal from '@/components/admin/category-manager/ConfirmDeleteCategoryModal';
 import { buildCategoryTree, filterCategoryTree, type CategoryTreeNode } from '@/components/admin/category-manager/category-manager.model';
@@ -35,6 +36,7 @@ export default function AdminCategoriesPage() {
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
   const [editor, setEditor] = useState<EditorState | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminCategory | null>(null);
+  const [attributesTarget, setAttributesTarget] = useState<AdminCategory | null>(null);
 
   const tree = useMemo(() => buildCategoryTree(categories), [categories]);
   const visibleTree = useMemo(() => filterCategoryTree(tree, search), [tree, search]);
@@ -181,6 +183,7 @@ export default function AdminCategoriesPage() {
               onAddChild={openCreateChild}
               onEdit={openEdit}
               onDelete={setDeleteTarget}
+              onManageAttributes={setAttributesTarget}
             />
           </div>
         )}
@@ -207,6 +210,14 @@ export default function AdminCategoriesPage() {
           category={deleteTarget}
           loading={deleting}
           onConfirm={() => void handleConfirmDelete()}
+        />
+
+        <CategoryAttributesDialog
+          open={attributesTarget !== null}
+          onOpenChange={(open) => {
+            if (!open) setAttributesTarget(null);
+          }}
+          category={attributesTarget}
         />
       </div>
     </PermissionGate>

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { AttributeUsageSchema, FilterTypeSchema } from '@/typescript/schemas/attribute.schema';
+
 /* -------------------------------------------------------------------------- */
 /*  Category contract — /admin/categories                                     */
 /* -------------------------------------------------------------------------- */
@@ -36,3 +38,24 @@ export const CategoryOkSchema = z.object({
 
 /** Slugs travel in public URLs, so they must be a lowercase dashed segment. */
 export const CATEGORY_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/* -------------------------------------------------------------------------- */
+/*  Category ↔ attribute assignment — /admin/categories/{id}/attributes       */
+/* -------------------------------------------------------------------------- */
+
+export const AdminCategoryAttributeSchema = z.object({
+  attributeId: z.number(),
+  name: z.string(),
+  title: z.string(),
+  usage: AttributeUsageSchema,
+  filterType: FilterTypeSchema,
+  isMultiSelect: z.boolean().catch(true),
+  isRequired: z.boolean().catch(false),
+  isFilterable: z.boolean().catch(false),
+  sortOrder: z.number().catch(0),
+});
+export type AdminCategoryAttribute = z.infer<typeof AdminCategoryAttributeSchema>;
+
+export const AdminCategoryAttributeListResponseSchema = z.object({
+  attributes: z.array(AdminCategoryAttributeSchema),
+});

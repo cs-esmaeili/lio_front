@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronLeft, FolderTree, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronLeft, FolderTree, ListChecks, Pencil, Plus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/shadcn/button';
 import type { CategoryTreeNode } from './category-manager.model';
@@ -17,6 +17,7 @@ interface CategoryTreeItemProps {
   onAddChild: (category: CategoryTreeNode) => void;
   onEdit: (category: CategoryTreeNode) => void;
   onDelete: (category: CategoryTreeNode) => void;
+  onManageAttributes: (category: CategoryTreeNode) => void;
 }
 
 /**
@@ -33,6 +34,7 @@ export default function CategoryTreeItem({
   onAddChild,
   onEdit,
   onDelete,
+  onManageAttributes,
 }: CategoryTreeItemProps) {
   const hasChildren = node.children.length > 0;
   const expanded = forceExpand || expandedIds.has(node.id);
@@ -101,6 +103,17 @@ export default function CategoryTreeItem({
               variant='ghost'
               size='icon-sm'
               className='text-secondary-2 hover:text-primary-1'
+              title='ویژگی‌ها'
+              disabled={busy}
+              onClick={() => onManageAttributes(node)}>
+              <ListChecks />
+            </Button>
+
+            <Button
+              type='button'
+              variant='ghost'
+              size='icon-sm'
+              className='text-secondary-2 hover:text-primary-1'
               title='افزودن زیردسته'
               disabled={busy}
               onClick={() => onAddChild(node)}>
@@ -146,6 +159,7 @@ export default function CategoryTreeItem({
               onAddChild={onAddChild}
               onEdit={onEdit}
               onDelete={onDelete}
+              onManageAttributes={onManageAttributes}
             />
           ))}
         </ul>

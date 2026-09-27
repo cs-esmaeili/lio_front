@@ -4,10 +4,12 @@ import { z } from 'zod';
 import http from '@/services/core/clientService';
 import { ApiError } from '@/utils/api-error';
 import {
+  AdminCategoryAttributeListResponseSchema,
   AdminCategoryListResponseSchema,
   AdminCategorySchema,
   CategoryOkSchema,
   type AdminCategory,
+  type AdminCategoryAttribute,
 } from '@/typescript/schemas/category.schema';
 
 const csrPrefixUrl = `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT}`;
@@ -68,3 +70,27 @@ export const updateCategoryCSR = (id: number, payload: Partial<CategoryPayload>)
 /** DELETE /admin/categories/{id} — delete a leaf category. */
 export const deleteCategoryCSR = (id: number): Promise<{ ok: boolean }> =>
   parseResponse(http.delete(`${csrPrefixUrl}/admin/categories/${id}`), CategoryOkSchema);
+
+/* -------------------------------------------------------------------------- */
+/*  Category attributes — /admin/categories/{id}/attributes                    */
+/* -------------------------------------------------------------------------- */
+
+export interface CategoryAttributePayload {
+  attributeId: number;
+  isRequired: boolean;
+  isFilterable: boolean;
+  sortOrder: number;
+}
+
+/** GET /admin/categories/{id}/attributes — attributes assigned to a category. */
+export const listCategoryAttributesCSR = (categoryId: number): Promise<AdminCategoryAttribute[]> =>
+  parseResponse(http.get(`${csrPrefixUrl}/admin/categories/${categoryId}/attributes`), AdminCategoryAttributeListResponseSchema).then(
+    (result) => result.attributes,
+  );
+
+/** PUT /admin/categories/{id}/attributes — replace the whole assignment. */
+export const setCategoryAttributesCSR = (categoryId: number, attributes: CategoryAttributePayload[]): Promise<AdminCategoryAttribute[]> =>
+  parseResponse(
+    http.put(`${csrPrefixUrl}/admin/categories/${categoryId}/attributes`, { attributes }),
+    AdminCategoryAttributeListResponseSchema,
+  ).then((result) => result.attributes);
