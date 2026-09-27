@@ -48,7 +48,7 @@ const navSections: NavSection[] = [
         anyOf: [PERMISSIONS.ATTRIBUTE_READ, PERMISSIONS.ATTRIBUTE_MANAGE],
       },
       { href: '/admin/orders', label: 'سفارشات', icon: ShoppingCart, soon: true },
-      { href: '/admin/users', label: 'کاربران', icon: Profile, soon: true },
+      { href: '/admin/users', label: 'کاربران', icon: Profile, allOf: [PERMISSIONS.USER_READ] },
       { href: '/admin/files', label: 'فایل‌ها', icon: Folder2, allOf: [PERMISSIONS.FILE_READ] },
     ],
   },

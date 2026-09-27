@@ -30,6 +30,14 @@ export const PERMISSIONS = {
   ATTRIBUTE_READ: 'attribute:read',
   /** Create, update and delete product attributes and their values. */
   ATTRIBUTE_MANAGE: 'attribute:manage',
+  /** View users. */
+  USER_READ: 'user:read',
+  /** Update user status. */
+  USER_MANAGE: 'user:manage',
+  /** Assign or remove roles on users. */
+  USER_ROLE_MANAGE: 'user:role:manage',
+  /** List roles. */
+  ROLE_READ: 'role:read',
 } as const;
 
 /** Any of these unlocks the management actions in the file manager. */
