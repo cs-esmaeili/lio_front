@@ -53,7 +53,7 @@ export default function BannerCard({ banner, index, deleting = false, onEdit, on
         </span>
 
         {deleting && (
-          <div className='absolute inset-0 grid place-content-center bg-background/60'>
+          <div className='absolute inset-0 grid place-content-center bg-custom-white/60'>
             <Spinner className='text-primary-1' />
           </div>
         )}
