@@ -175,7 +175,7 @@ export default function FileManagerBrowser({
 
   return (
     <div
-      className={`flex flex-col bg-background ${className}`}
+      className={`flex flex-col bg-custom-white ${className}`}
       onDragOver={(event) => {
         if (!allowDrag) return;
         event.preventDefault();

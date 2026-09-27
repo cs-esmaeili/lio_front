@@ -38,8 +38,8 @@ export default function ConfirmDeleteModal({ open, onOpenChange, target, loading
   return (
     <ReusableModal open={open} onOpenChange={onOpenChange} title='تایید حذف' footer={footer} size='sm'>
       <div className='flex items-start gap-3'>
-        <div className='grid size-10 shrink-0 place-content-center rounded-full bg-destructive/10'>
-          <CircleAlert className='text-destructive' size={20} aria-hidden='true' />
+        <div className='grid size-10 shrink-0 place-content-center rounded-full bg-custom-red/10'>
+          <CircleAlert className='text-custom-red' size={20} aria-hidden='true' />
         </div>
 
         <div className='flex min-w-0 flex-col gap-1.5'>
@@ -47,7 +47,7 @@ export default function ConfirmDeleteModal({ open, onOpenChange, target, loading
             آیا از حذف {isFolder ? 'پوشه' : 'فایل'} <span className='font-bold text-secondary-black-3'>«{target?.name}»</span> مطمئن هستید؟
           </p>
 
-          {isFolder && <p className='text-caption text-destructive'>تمام فایل‌ها و پوشه‌های داخل آن نیز حذف می‌شوند.</p>}
+          {isFolder && <p className='text-caption text-custom-red'>تمام فایل‌ها و پوشه‌های داخل آن نیز حذف می‌شوند.</p>}
         </div>
       </div>
     </ReusableModal>

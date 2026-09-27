@@ -52,7 +52,7 @@ export function AdminSidebar() {
   const initials = (user?.name || user?.username || 'م').charAt(0);
 
   return (
-    <aside className='hidden md:flex w-72 shrink-0 flex-col h-screen sticky top-0 bg-background border-l border-gray-1'>
+    <aside className='hidden md:flex w-72 shrink-0 flex-col h-screen sticky top-0 bg-custom-white border-l border-gray-1'>
       {/* Brand */}
       <div className='flex h-16 items-center gap-3 border-b border-gray-1 px-5'>
         <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-primary-4'>

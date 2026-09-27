@@ -45,7 +45,7 @@
      ============================================================ */
 
   /* Backgrounds */
-  --background: #FFFFFF;
+  --background: var(--custom-white);
   --card: var(--primary-4);
   --popover: var(--primary-4);
 
@@ -69,7 +69,8 @@
   --accent-foreground: var(--secondary-black-3);
 
   /* States */
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: var(--custom-red);
+  --success: var(--primary-0);
 
   /* Borders & Inputs */
   --border: var(--gray-2);
@@ -132,6 +133,8 @@
   --color-gray-2: var(--gray-2);
   --color-gray-3: var(--gray-3);
   --color-custom-purple: var(--custom-purple);
+  --color-custom-red: var(--custom-red);
+  --color-custom-green: var(--custom-green);
 
   /* Semantic (shadcn/ui) */
   --color-background: var(--background);
@@ -149,6 +152,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

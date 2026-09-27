@@ -15,7 +15,7 @@ export default function ModalFooter({
         <div
             className={`
                 flex items-center justify-end gap-3
-                border-t border-gray-200
+                border-t border-gray-2
                 px-6 py-4
                 ${className}
             `}

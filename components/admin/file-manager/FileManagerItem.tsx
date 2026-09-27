@@ -82,8 +82,8 @@ export default function FileManagerItem({
         }
       }}
       className={cn(
-        'group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-background transition-all outline-none',
-        'focus-visible:ring-3 focus-visible:ring-ring/50',
+        'group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-custom-white transition-all outline-none',
+        'focus-visible:ring-3 focus-visible:ring-primary-1/50',
         selected ? 'border-primary-1 ring-2 ring-primary-1/30' : 'border-gray-1 hover:border-primary-3 hover:shadow-sm',
         disabled && 'cursor-not-allowed opacity-45 hover:border-gray-1 hover:shadow-none',
         deleting && 'pointer-events-none opacity-50',
@@ -106,7 +106,7 @@ export default function FileManagerItem({
         )}
 
         {deleting && (
-          <div className='absolute inset-0 grid place-content-center bg-background/60'>
+          <div className='absolute inset-0 grid place-content-center bg-custom-white/60'>
             <Spinner className='text-primary-1' />
           </div>
         )}
@@ -116,7 +116,7 @@ export default function FileManagerItem({
           <span
             className={cn(
               'absolute top-2 end-2 grid size-6 place-content-center rounded-full border transition-colors',
-              selected ? 'border-primary-1 bg-primary-1 text-custom-white' : 'border-background bg-background/80 text-transparent',
+              selected ? 'border-primary-1 bg-primary-1 text-custom-white' : 'border-custom-white bg-custom-white/80 text-transparent',
               disabled && 'opacity-50',
             )}>
             <CircleCheck size={16} aria-hidden='true' />
@@ -141,7 +141,7 @@ export default function FileManagerItem({
             type='button'
             variant='ghost'
             size='icon-xs'
-            className='bg-background/85 text-secondary-2 hover:bg-background hover:text-primary-1'
+            className='bg-custom-white/85 text-secondary-2 hover:bg-custom-white hover:text-primary-1'
             title='کپی نشانی فایل'
             onClick={(event) => {
               event.stopPropagation();
@@ -157,7 +157,7 @@ export default function FileManagerItem({
             type='button'
             variant='ghost'
             size='icon-xs'
-            className='bg-background/85 text-secondary-2 hover:bg-destructive/10 hover:text-destructive'
+            className='bg-custom-white/85 text-secondary-2 hover:bg-custom-red/10 hover:text-custom-red'
             title='حذف'
             onClick={(event) => {
               event.stopPropagation();

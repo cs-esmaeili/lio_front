@@ -56,7 +56,7 @@ export default function FileManagerGrid({
   if (error && entries.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-gray-2 py-14 text-center'>
-        <CircleAlert className='text-destructive' size={32} aria-hidden='true' />
+        <CircleAlert className='text-custom-red' size={32} aria-hidden='true' />
         <p className='text-regular text-secondary-1'>{error}</p>
         <Button type='button' variant='outline' size='sm' className='rounded-lg' onClick={onRetry}>
           تلاش دوباره

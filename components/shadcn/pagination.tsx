@@ -87,14 +87,14 @@ function PaginationNext({
   return (
     <PaginationLink
       aria-label="Go to next page"
-      className={cn("bg-primary-2", className)}  
+      className={cn("bg-accent", className)}  
       {...props}
     >
       <Icon
         IconComponent={ArrowLeft2}
         size={40}
         variant="Linear"
-        className="size-5 text-gray-1"
+        className="size-5 text-primary-foreground"
       />
     </PaginationLink>
   );

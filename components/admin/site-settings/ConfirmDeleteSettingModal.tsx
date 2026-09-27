@@ -32,15 +32,15 @@ export default function ConfirmDeleteSettingModal({ open, onOpenChange, setting,
   return (
     <ReusableModal open={open} onOpenChange={onOpenChange} title='تایید حذف' footer={footer} size='sm'>
       <div className='flex items-start gap-3'>
-        <div className='grid size-10 shrink-0 place-content-center rounded-full bg-destructive/10'>
-          <CircleAlert className='text-destructive' size={20} aria-hidden='true' />
+        <div className='grid size-10 shrink-0 place-content-center rounded-full bg-custom-red/10'>
+          <CircleAlert className='text-custom-red' size={20} aria-hidden='true' />
         </div>
 
         <div className='flex min-w-0 flex-col gap-1.5'>
           <p className='text-regular text-secondary-1'>
             آیا از حذف تنظیم <span dir='ltr' className='font-bold text-secondary-black-3'>«{setting?.key}»</span> مطمئن هستید؟
           </p>
-          <p className='text-caption text-destructive'>این عملیات قابل بازگشت نیست.</p>
+          <p className='text-caption text-custom-red'>این عملیات قابل بازگشت نیست.</p>
         </div>
       </div>
     </ReusableModal>

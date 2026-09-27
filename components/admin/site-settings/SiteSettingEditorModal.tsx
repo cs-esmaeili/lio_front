@@ -191,7 +191,7 @@ export default function SiteSettingEditorModal({ open, onOpenChange, mode, initi
                     type='button'
                     variant='ghost'
                     size='icon-sm'
-                    className='text-secondary-2 hover:bg-destructive/10 hover:text-destructive'
+                    className='text-secondary-2 hover:bg-custom-red/10 hover:text-custom-red'
                     title='حذف فیلد'
                     disabled={fields.length === 1}
                     onClick={() => removeField(field.id)}>
@@ -231,7 +231,7 @@ export default function SiteSettingEditorModal({ open, onOpenChange, mode, initi
           </div>
         </div>
 
-        {error && <p className='text-sm text-destructive'>{error}</p>}
+        {error && <p className='text-sm text-custom-red'>{error}</p>}
       </div>
     </ReusableModal>
   );

@@ -19,7 +19,7 @@ export default function SiteSettingCard({ setting, deleting = false, onEdit, onD
   const { entries, rest } = summarizeSetting(setting);
 
   return (
-    <div className={cn('flex flex-col gap-3 rounded-xl border border-gray-1 bg-background p-4 transition-colors hover:border-primary-3', deleting && 'pointer-events-none opacity-60')}>
+    <div className={cn('flex flex-col gap-3 rounded-xl border border-gray-1 bg-custom-white p-4 transition-colors hover:border-primary-3', deleting && 'pointer-events-none opacity-60')}>
       {/* Header */}
       <div className='flex items-start justify-between gap-2'>
         <div className='flex min-w-0 flex-col gap-1.5'>
@@ -56,7 +56,7 @@ export default function SiteSettingCard({ setting, deleting = false, onEdit, onD
                 type='button'
                 variant='ghost'
                 size='icon-sm'
-                className='text-secondary-2 hover:bg-destructive/10 hover:text-destructive'
+                className='text-secondary-2 hover:bg-custom-red/10 hover:text-custom-red'
                 title='حذف'
                 onClick={() => onDelete(setting)}>
                 <Trash2 />
