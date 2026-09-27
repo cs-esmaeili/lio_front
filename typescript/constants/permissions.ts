@@ -18,6 +18,10 @@ export const PERMISSIONS = {
   SITE_MANAGE: 'site:manage',
   /** Manage page sections and their items. */
   PAGE_MANAGE: 'page:manage',
+  /** List and view product categories. */
+  CATEGORY_READ: 'category:read',
+  /** Create, update and delete product categories. */
+  CATEGORY_MANAGE: 'category:manage',
 } as const;
 
 /** Any of these unlocks the management actions in the file manager. */

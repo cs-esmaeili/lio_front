@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Box1, DocumentText, Folder2, Gallery, Home, Profile, Setting2, ShoppingCart, SliderHorizontal } from 'iconsax-reactjs';
+import { Box1, Category, DocumentText, Folder2, Gallery, Home, Profile, Setting2, ShoppingCart, SliderHorizontal } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Separator } from '@/components/shadcn/separator';
@@ -35,6 +35,12 @@ const navSections: NavSection[] = [
     title: 'مدیریت',
     items: [
       { href: '/admin/products', label: 'محصولات', icon: Box1, soon: true },
+      {
+        href: '/admin/categories',
+        label: 'دسته‌بندی‌ها',
+        icon: Category,
+        anyOf: [PERMISSIONS.CATEGORY_READ, PERMISSIONS.CATEGORY_MANAGE],
+      },
       { href: '/admin/orders', label: 'سفارشات', icon: ShoppingCart, soon: true },
       { href: '/admin/users', label: 'کاربران', icon: Profile, soon: true },
       { href: '/admin/files', label: 'فایل‌ها', icon: Folder2, allOf: [PERMISSIONS.FILE_READ] },
