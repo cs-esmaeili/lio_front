@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { CircleAlert, Layers, Pencil, Plus, RefreshCw, Search, Trash2 } from 'lucide-react';
+import { CircleAlert, Layers, ListChecks, Pencil, Plus, RefreshCw, Search, Trash2 } from 'lucide-react';
 
 import AttributeEditorModal from '@/components/admin/attribute-manager/AttributeEditorModal';
 import AttributeValuesModal from '@/components/admin/attribute-manager/AttributeValuesModal';
@@ -99,8 +99,10 @@ export default function AdminAttributesPage() {
               variant='outline'
               size='sm'
               className='h-8 rounded-lg border-gray-2'
+              title='مدیریت مقادیر'
               disabled={!canManage}
               onClick={() => setValuesTarget(attribute)}>
+              <ListChecks />
               {attribute.values.length.toLocaleString('fa-IR')} مقدار
             </Button>
           );

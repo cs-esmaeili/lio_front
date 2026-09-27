@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 
 import ReusableModal from '@/components/global/Modal/ReusableModal';
 import { Button } from '@/components/shadcn/button';
@@ -9,7 +10,7 @@ import { Label } from '@/components/shadcn/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { Spinner } from '@/components/shadcn/spinner';
 import { Switch } from '@/components/shadcn/switch';
-import { useAttributeMutations } from '@/hooks/attribute/useAttributeMutations';
+import { useSaveAttribute, type AttributeValueDraft } from '@/hooks/attribute/useSaveAttribute';
 import {
   ATTRIBUTE_NAME_PATTERN,
   ATTRIBUTE_USAGE_LABELS,
@@ -27,20 +28,41 @@ interface AttributeEditorModalProps {
   onSaved: (attribute: AdminAttribute) => void;
 }
 
+interface ValueRow extends AttributeValueDraft {
+  /** Stable React key: `id-<id>` for existing values, `new-<n>` for new ones. */
+  key: string;
+}
+
 const FILTER_TYPES: FilterType[] = ['CHECKBOX', 'RADIO', 'SELECT', 'RANGE', 'TOGGLE', 'SEARCH'];
 const USAGES: AttributeUsage[] = ['SPEC', 'VARIANT'];
 
 export default function AttributeEditorModal({ open, onOpenChange, mode, initial, onSaved }: AttributeEditorModalProps) {
-  const { createAttribute, updateAttribute, creating, updating } = useAttributeMutations();
+  const { saveAttribute, saving } = useSaveAttribute();
 
   const [name, setName] = useState(initial?.name ?? '');
   const [title, setTitle] = useState(initial?.title ?? '');
   const [usage, setUsage] = useState<AttributeUsage>(initial?.usage ?? 'SPEC');
   const [filterType, setFilterType] = useState<FilterType>(initial?.filterType ?? 'CHECKBOX');
   const [isMultiSelect, setIsMultiSelect] = useState(initial?.isMultiSelect ?? true);
+  const [values, setValues] = useState<ValueRow[]>(
+    () => (initial?.values ?? []).map((value) => ({ key: `id-${value.id}`, id: value.id, value: value.value })),
+  );
   const [error, setError] = useState<string | null>(null);
 
-  const loading = mode === 'create' ? creating : updating;
+  const nextKey = useRef(0);
+  const loading = saving;
+
+  const addValue = () => {
+    setValues((prev) => [...prev, { key: `new-${nextKey.current++}`, id: null, value: '' }]);
+    if (error) setError(null);
+  };
+
+  const removeValue = (key: string) => setValues((prev) => prev.filter((row) => row.key !== key));
+
+  const updateValue = (key: string, value: string) => {
+    setValues((prev) => prev.map((row) => (row.key === key ? { ...row, value } : row)));
+    if (error) setError(null);
+  };
 
   const handleSubmit = async () => {
     const trimmedName = name.trim();
@@ -59,8 +81,24 @@ export default function AttributeEditorModal({ open, onOpenChange, mode, initial
       return;
     }
 
-    const payload = { name: trimmedName, title: trimmedTitle, usage, filterType, isMultiSelect };
-    const saved = mode === 'create' ? await createAttribute(payload) : initial ? await updateAttribute(initial.id, payload) : null;
+    // Drop untouched new rows; reject an emptied existing value or duplicates.
+    const cleaned = values.map((row) => ({ ...row, value: row.value.trim() })).filter((row) => row.value !== '' || row.id !== null);
+    if (cleaned.some((row) => row.value === '')) {
+      setError('مقدار خالی مجاز نیست. مقدار آن را وارد یا ردیف را حذف کنید.');
+      return;
+    }
+    if (new Set(cleaned.map((row) => row.value)).size !== cleaned.length) {
+      setError('مقادیر تکراری هستند؛ هر مقدار باید یکتا باشد.');
+      return;
+    }
+
+    const saved = await saveAttribute({
+      mode,
+      id: initial?.id,
+      payload: { name: trimmedName, title: trimmedTitle, usage, filterType, isMultiSelect },
+      values: cleaned.map((row) => ({ id: row.id, value: row.value })),
+      originalValues: initial?.values ?? [],
+    });
 
     if (!saved) return;
     onSaved(saved);
@@ -156,6 +194,48 @@ export default function AttributeEditorModal({ open, onOpenChange, mode, initial
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        {/* Values */}
+        <div className='flex flex-col gap-3 rounded-xl border border-gray-1 p-4'>
+          <div className='flex items-center justify-between gap-3'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-secondary-black-3'>مقادیر ویژگی</span>
+              <span className='text-caption text-secondary-3'>مقدارهایی که برای این ویژگی قابل انتخاب‌اند.</span>
+            </div>
+            <Button type='button' variant='outline' size='sm' className='h-9 shrink-0 rounded-lg border-gray-2' disabled={loading} onClick={addValue}>
+              <Plus />
+              افزودن مقدار
+            </Button>
+          </div>
+
+          {values.length === 0 ? (
+            <p className='rounded-lg border border-dashed border-gray-2 py-4 text-center text-caption text-secondary-3'>هنوز مقداری اضافه نشده است.</p>
+          ) : (
+            <ul className='flex flex-col gap-2'>
+              {values.map((row) => (
+                <li key={row.key} className='flex items-center gap-2'>
+                  <Input
+                    value={row.value}
+                    placeholder='مثلا قرمز'
+                    className='h-10'
+                    disabled={loading}
+                    onChange={(event) => updateValue(row.key, event.target.value)}
+                  />
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon-sm'
+                    className='shrink-0 rounded-lg text-secondary-2 hover:bg-custom-red/10 hover:text-custom-red'
+                    title='حذف مقدار'
+                    disabled={loading}
+                    onClick={() => removeValue(row.key)}>
+                    <Trash2 />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className='flex items-center justify-between rounded-xl border border-gray-1 px-4 py-3'>
