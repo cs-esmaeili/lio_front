@@ -16,6 +16,8 @@ export const PERMISSIONS = {
   FILE_DELETE: 'file:delete',
   /** Create, update and delete site settings. */
   SITE_MANAGE: 'site:manage',
+  /** Manage page sections and their items. */
+  PAGE_MANAGE: 'page:manage',
 } as const;
 
 /** Any of these unlocks the management actions in the file manager. */
