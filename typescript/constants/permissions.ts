@@ -38,6 +38,12 @@ export const PERMISSIONS = {
   USER_ROLE_MANAGE: 'user:role:manage',
   /** List roles. */
   ROLE_READ: 'role:read',
+  /** Create, update and delete roles. */
+  ROLE_WRITE: 'role:write',
+  /** List permissions. */
+  PERMISSION_READ: 'permission:read',
+  /** Create, update and delete permissions. */
+  PERMISSION_WRITE: 'permission:write',
 } as const;
 
 /** Any of these unlocks the management actions in the file manager. */
