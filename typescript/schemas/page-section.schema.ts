@@ -280,3 +280,60 @@ export interface FooterEditorInit {
   fileUrl: string | null;
   categoryId: number | null;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  PRODUCT_LIST sections                                                     */
+/* -------------------------------------------------------------------------- */
+
+export const ProductListImageSchema = z.object({
+  id: z.number(),
+  url: z.string().nullable().catch(null),
+  isPrimary: z.boolean().catch(false),
+  isThumbnail: z.boolean().catch(false),
+  sortOrder: z.number().catch(0),
+});
+
+export const ProductListDefaultVariantSchema = z.object({
+  id: z.number(),
+  sku: z.string().catch(''),
+  price: z.number().catch(0),
+  compareAtPrice: z.number().nullable().catch(null),
+  stock: z.number().catch(0),
+});
+
+/** A product row inside `data.products[]`. */
+export const ProductListItemSchema = z.object({
+  id: z.number(),
+  sortOrder: z.number().catch(0),
+  productId: z.number(),
+  productName: z.string().catch(''),
+  productSlug: z.string().catch(''),
+  images: z.array(ProductListImageSchema).catch([]),
+  defaultVariant: ProductListDefaultVariantSchema.nullable().catch(null),
+});
+
+export const ProductListSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    products: z.array(ProductListItemSchema).catch([]),
+  }),
+});
+
+export type ProductListImage = z.infer<typeof ProductListImageSchema>;
+export type ProductListDefaultVariant = z.infer<typeof ProductListDefaultVariantSchema>;
+export type ProductListItem = z.infer<typeof ProductListItemSchema>;
+export type ProductListSection = z.infer<typeof ProductListSectionSchema>;
+
+/** Payload for creating/updating a product-list row. `id` is required when updating. */
+export interface ProductListItemInput {
+  id?: number;
+  productId: number;
+  sortOrder?: number;
+}
