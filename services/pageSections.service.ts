@@ -66,7 +66,12 @@ export function updateSectionItemCSR<T>(sectionId: number, body: SectionItemRequ
   return parseResponse(http.patch(`${csrPrefixUrl}/admin/page-sections/${sectionId}/data`, body), schema);
 }
 
-/** DELETE /admin/page-sections/{id}/data?itemId= — delete an item. */
-export function deleteSectionItemCSR<T>(sectionId: number, itemId: number, schema: z.ZodType<T>): Promise<T> {
-  return parseResponse(http.delete(`${csrPrefixUrl}/admin/page-sections/${sectionId}/data?itemId=${itemId}`), schema);
+/**
+ * DELETE /admin/page-sections/{id}/data — delete an item.
+ * `itemId` is required for list sections and omitted for singleton ones
+ * (INTRODUCTION).
+ */
+export function deleteSectionItemCSR<T>(sectionId: number, itemId: number | undefined, schema: z.ZodType<T>): Promise<T> {
+  const query = itemId === undefined ? '' : `?itemId=${itemId}`;
+  return parseResponse(http.delete(`${csrPrefixUrl}/admin/page-sections/${sectionId}/data${query}`), schema);
 }

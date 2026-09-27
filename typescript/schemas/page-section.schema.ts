@@ -122,3 +122,37 @@ export interface BannerItemInput {
   mobileFileId: number;
   sortOrder?: number;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  INTRODUCTION section (singleton)                                          */
+/* -------------------------------------------------------------------------- */
+
+export const IntroductionSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    titles: z.record(z.string(), z.string()).catch({}),
+    desktopFileId: z.number().nullable().catch(null),
+    tabletFileId: z.number().nullable().catch(null),
+    mobileFileId: z.number().nullable().catch(null),
+    desktopFileUrl: z.string().nullable().catch(null),
+    tabletFileUrl: z.string().nullable().catch(null),
+    mobileFileUrl: z.string().nullable().catch(null),
+  }),
+});
+
+export type IntroductionSection = z.infer<typeof IntroductionSectionSchema>;
+
+/** Payload for creating/updating the introduction (upsert). */
+export interface IntroductionInput {
+  titles: Record<string, string>;
+  desktopFileId: number;
+  tabletFileId?: number | null;
+  mobileFileId?: number | null;
+}
