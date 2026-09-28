@@ -25,7 +25,7 @@ export default function AdminOrderDetailPage() {
           <span className='text-secondary-2'>سفارش موردنظر یافت نشد.</span>
         </div>
       ) : (
-        <OrderDetail order={order} backHref='/admin/orders' />
+        <OrderDetail order={order} backHref='/admin/orders' isAdmin />
       )}
     </PermissionGate>
   );

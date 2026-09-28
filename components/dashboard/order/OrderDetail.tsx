@@ -17,9 +17,14 @@ interface OrderDetailProps {
   order: Order;
   /** Where the back button falls back to when there is no browser history. */
   backHref?: string;
+  /**
+   * Admin viewer: the recipient row is shown as the account name. The customer
+   * panel omits the recipient row entirely.
+   */
+  isAdmin?: boolean;
 }
 
-export default function OrderDetail({ order, backHref = '/dashboard/order/' }: OrderDetailProps) {
+export default function OrderDetail({ order, backHref = '/dashboard/order/', isAdmin = false }: OrderDetailProps) {
   const router = useRouter();
 
   const handleBack = () => {
@@ -31,10 +36,14 @@ export default function OrderDetail({ order, backHref = '/dashboard/order/' }: O
   };
 
   const receiverInfo = [
-    {
-      title: 'تحویل گیرنده:',
-      value: order.customer.name || '-',
-    },
+    ...(isAdmin
+      ? [
+          {
+            title: 'نام کاربر:',
+            value: order.customer.name || '-',
+          },
+        ]
+      : []),
     {
       title: 'شماره تماس:',
       value: order.customer.mobile || '-',

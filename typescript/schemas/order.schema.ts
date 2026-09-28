@@ -202,7 +202,7 @@ export const OrderSchema = ApiOrderDetailSchema.transform((order) => ({
   statusTitle: ORDER_STATUS_LABELS[order.status],
   payment: { isPaid: order.status === 'PAID' },
   shipping: {
-    method: '—',
+    method: 'با پست',
     deliveryDate: '',
     trackingCode: '-',
   },
