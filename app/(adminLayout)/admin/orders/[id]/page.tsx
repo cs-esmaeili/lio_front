@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 
+import OrderStatusActions from '@/components/admin/order-manager/OrderStatusActions';
 import OrderDetail from '@/components/dashboard/order/OrderDetail';
 import PermissionGate from '@/components/global/PermissionGate';
 import { useAdminOrder } from '@/hooks/order/useAdminOrder';
@@ -12,7 +13,7 @@ export default function AdminOrderDetailPage() {
   const raw = Array.isArray(params.id) ? params.id[0] : params.id;
   const id = raw ? Number(raw) : undefined;
 
-  const { order, loading } = useAdminOrder(Number.isFinite(id) ? id : undefined);
+  const { order, loading, refetch } = useAdminOrder(Number.isFinite(id) ? id : undefined);
 
   return (
     <PermissionGate allOf={[PERMISSIONS.ORDER_READ]}>
@@ -25,7 +26,10 @@ export default function AdminOrderDetailPage() {
           <span className='text-secondary-2'>سفارش موردنظر یافت نشد.</span>
         </div>
       ) : (
-        <OrderDetail order={order} backHref='/admin/orders' isAdmin />
+        <div className='flex flex-col gap-4'>
+          <OrderStatusActions order={order} onChanged={() => void refetch()} />
+          <OrderDetail order={order} backHref='/admin/orders' isAdmin />
+        </div>
       )}
     </PermissionGate>
   );

@@ -32,6 +32,8 @@ export const PERMISSIONS = {
   ATTRIBUTE_MANAGE: 'attribute:manage',
   /** View every order in the admin panel. */
   ORDER_READ: 'order:read',
+  /** Ship and complete orders in the admin panel. */
+  ORDER_MANAGE: 'order:manage',
   /** View users. */
   USER_READ: 'user:read',
   /** Update user status. */

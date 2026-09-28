@@ -4,7 +4,7 @@ import { z } from 'zod';
 /*  Orders contract — /profile/orders, /admin/orders                          */
 /* -------------------------------------------------------------------------- */
 
-export const ORDER_STATUSES = ['PENDING_PAYMENT', 'PAID', 'CANCELED', 'EXPIRED'] as const;
+export const ORDER_STATUSES = ['PENDING_PAYMENT', 'PAID', 'SHIPPED', 'COMPLETED', 'CANCELED', 'EXPIRED'] as const;
 
 export const OrderStatusSchema = z.enum(ORDER_STATUSES);
 
@@ -14,6 +14,8 @@ export type OrderStatus = z.infer<typeof OrderStatusSchema>;
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING_PAYMENT: 'در انتظار پرداخت',
   PAID: 'پرداخت شده',
+  SHIPPED: 'ارسال شده',
+  COMPLETED: 'اتمام',
   CANCELED: 'لغو شده',
   EXPIRED: 'منقضی شده',
 };
@@ -25,6 +27,8 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 export const ORDER_STATUS_TONES: Record<OrderStatus, number> = {
   PENDING_PAYMENT: -1,
   PAID: 2,
+  SHIPPED: 1,
+  COMPLETED: 0,
   CANCELED: 4,
   EXPIRED: 5,
 };
@@ -33,6 +37,8 @@ export const ORDER_STATUS_TONES: Record<OrderStatus, number> = {
 export const ORDER_STATUS_CLASSES: Record<OrderStatus, string> = {
   PENDING_PAYMENT: 'bg-primary-4 text-primary-1',
   PAID: 'bg-primary-0/15 text-primary-0',
+  SHIPPED: 'bg-primary-3 text-primary-1',
+  COMPLETED: 'bg-primary-4 text-primary-1',
   CANCELED: 'bg-custom-red/10 text-custom-red',
   EXPIRED: 'bg-gray-1 text-secondary-2',
 };
@@ -140,6 +146,9 @@ const ApiOrderPaymentSchema = z
 const ApiOrderDetailSchema = ApiOrderSummarySchema.extend({
   updatedAt: z.string().catch(''),
   canceledAt: z.string().nullable().catch(null),
+  trackingCode: z.string().nullable().catch(null),
+  shippedAt: z.string().nullable().catch(null),
+  completedAt: z.string().nullable().catch(null),
   expiresAt: z.string().catch(''),
   customer: ApiOrderCustomerSchema,
   shippingAddress: ApiOrderAddressSchema,
@@ -204,7 +213,7 @@ export const OrderSchema = ApiOrderDetailSchema.transform((order) => ({
   shipping: {
     method: 'با پست',
     deliveryDate: '',
-    trackingCode: '-',
+    trackingCode: order.trackingCode ?? '-',
   },
   customer: {
     name: [order.customer.firstName, order.customer.lastName].filter(Boolean).join(' '),

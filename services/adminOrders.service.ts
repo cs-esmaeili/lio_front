@@ -49,3 +49,18 @@ export const listOrdersCSR = (query: AdminOrdersQuery = {}): Promise<AdminOrders
 /** GET /admin/orders/{id} — a single order regardless of its owner. */
 export const getOrderCSR = (id: number): Promise<Order> =>
   parseResponse(http.get(`${csrPrefixUrl}/admin/orders/${id}`), OrderSchema);
+
+/* -------------------------------------------------------------------------- */
+/*  Fulfilment — PATCH /admin/orders/{id}/ship|complete (requires `order:manage`) */
+/* -------------------------------------------------------------------------- */
+
+/** Successful mutation envelope: `{ ok: true }`. */
+const OkSchema = z.object({ ok: z.boolean().catch(true) });
+
+/** PATCH /admin/orders/{id}/ship — mark a paid order shipped with a tracking code. */
+export const shipOrderCSR = (id: number, trackingCode: string): Promise<{ ok: boolean }> =>
+  parseResponse(http.patch(`${csrPrefixUrl}/admin/orders/${id}/ship`, { trackingCode }), OkSchema);
+
+/** PATCH /admin/orders/{id}/complete — mark a shipped order completed. */
+export const completeOrderCSR = (id: number): Promise<{ ok: boolean }> =>
+  parseResponse(http.patch(`${csrPrefixUrl}/admin/orders/${id}/complete`, {}), OkSchema);
