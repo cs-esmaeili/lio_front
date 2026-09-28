@@ -4,13 +4,11 @@ import Link from 'next/link';
 import Icon from '@/components/global/Icon';
 import { ArrowLeft2, InfoCircle, ChartCircle, House, TickCircle, Danger, CloseCircle, MoneyRecive, MoneyChange } from 'iconsax-reactjs';
 
-import type { Order } from '@/components/dashboard/order/order.model';
+import type { OrderSummary } from '@/typescript/schemas/order.schema';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 
 interface OrderCardProps {
-  order: Order;
-
-  onView: (order: Order) => void;
+  order: OrderSummary;
 }
 
 export default function OrderCard({ order }: OrderCardProps) {
@@ -166,7 +164,7 @@ export default function OrderCard({ order }: OrderCardProps) {
 
           <div className='flex items-center gap-1'>
             <span className='text-secondary-3'>مبلغ:</span>
-            <span className='font-medium text-secondary-1'>{formatPrice(order.price.totalPrice)}</span>
+            <span className='font-medium text-secondary-1'>{formatPrice(order.total)}</span>
             <div className='flex flex-col items-end text-secondary-3 text-[0.7rem] leading-2 relative top-[-0.05rem]'>
               <CurrencyLabel />
             </div>

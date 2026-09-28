@@ -1,179 +1,111 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import PageHeader from '@/components/dashboard/PageHeader';
 import OrderList from '@/components/dashboard/order/OrderList';
-import OrderViewModal from '@/components/dashboard/order/OrderViewModal';
-import type { Order, Pagination } from '@/components/dashboard/order/order.model';
-import { ORDER_STATUSES, type OrderStatusItem } from '@/components/dashboard/order/order.status';
+import { ORDER_STATUS_TABS } from '@/components/dashboard/order/order.status';
+import { Button } from '@/components/shadcn/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
-import { useOrdersList } from '@/hooks/useOrdersList';
+import { useMyOrders } from '@/hooks/order/useMyOrders';
+import type { OrderStatus } from '@/typescript/schemas/order.schema';
 
-function OrderContentWrapper({ children }: { children: React.ReactNode }) {
-  return <div className='flex h-full w-full rounded-md'>{children}</div>;
-}
+const PAGE_SIZE = 10;
 
 export default function OrderPage() {
-  const [activeTab, setActiveTab] = useState<number>(ORDER_STATUSES[0]?.id ?? 1);
+  const [activeTab, setActiveTab] = useState<string>(ORDER_STATUS_TABS[0]?.key ?? 'ALL');
+  const [page, setPage] = useState(1);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const status = activeTab === 'ALL' ? undefined : (activeTab as OrderStatus);
 
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-
-  const [ordersMap, setOrdersMap] = useState<Map<number, Order[]>>(new Map());
-  const [ordersCountMap, setOrdersCountMap] = useState<Map<number, number>>(new Map());
-
-  const [loadingTabs, setLoadingTabs] = useState<Map<number, boolean>>(new Map());
-
-  const { fetchOrders } = useOrdersList();
-
-  const loadedTabs = useRef<Set<number>>(new Set());
-
-  const loadOrders = useCallback(
-    async (tabId: number, statusCode: number, page: number = 1) => {
-      if (loadedTabs.current.has(tabId)) {
-        return;
-      }
-
-      if (loadingTabs.get(tabId)) {
-        return;
-      }
-
-      setLoadingTabs((prev) => {
-        const map = new Map(prev);
-        map.set(tabId, true);
-        return map;
-      });
-
-      try {
-        const result = await fetchOrders(statusCode, page);
-
-        setOrdersMap((prev) => {
-          const map = new Map(prev);
-
-          map.set(tabId, result.orders);
-
-          return map;
-        });
-
-        setOrdersCountMap((prev) => {
-          const map = new Map(prev);
-
-          map.set(tabId, result.pagination.total);
-
-          return map;
-        });
-
-        setPagination(result.pagination);
-
-        loadedTabs.current.add(tabId);
-      } finally {
-        setLoadingTabs((prev) => {
-          const map = new Map(prev);
-          map.set(tabId, false);
-          return map;
-        });
-      }
-    },
-    [fetchOrders, loadingTabs]
-  );
-
-  useEffect(() => {
-    if (!ORDER_STATUSES.length) return;
-
-    ORDER_STATUSES.forEach((status) => {
-      loadOrders(status.id, status.statusCode, 1);
-    });
-  }, [loadOrders]);
+  const { data, loading, error, refetch } = useMyOrders({ page, limit: PAGE_SIZE, status });
 
   const handleTabChange = (value: string) => {
-    const tabId = Number(value);
-
-    setActiveTab(tabId);
-
-    setCurrentPage(1);
-
-    const currentTab = ORDER_STATUSES.find((item) => item.id === tabId);
-
-    if (!currentTab) return;
-
-    loadOrders(currentTab.id, currentTab.statusCode, 1);
+    setActiveTab(value);
+    setPage(1);
   };
 
-  const handleView = (order: Order) => {
-    setSelectedOrder(order);
-
-    setIsViewModalOpen(true);
-  };
-
-  const currentOrders = ordersMap.get(activeTab) ?? [];
-
-  const isCurrentLoading = loadingTabs.get(activeTab) ?? false;
+  const canPrev = page > 1;
+  const canNext = page < (data.totalPages ?? 1);
 
   return (
-    <>
-      <div className='flex h-full flex-col gap-6 rounded-2xl border-2 border-gray-1 p-4'>
-        <Tabs value={String(activeTab)} onValueChange={handleTabChange} dir='rtl' className='flex flex-1 flex-col gap-6'>
-          <PageHeader
-            titleSlot={
-              <TabsList variant='line' className='flex !h-auto w-full justify-start gap-5'>
-                {ORDER_STATUSES.map((status: OrderStatusItem) => (
-                  <TabsTrigger
-                    key={status.id}
-                    value={String(status.id)}
-                    className='group flex-none text-regular text-gray-3 hover:text-primary-1 data-[state=active]:text-primary-1 after:bg-primary-1'>
-                    {status.title}
+    <div className='flex h-full flex-col gap-6 rounded-2xl border-2 border-gray-1 p-4'>
+      <Tabs value={activeTab} onValueChange={handleTabChange} dir='rtl' className='flex flex-1 flex-col gap-6'>
+        <PageHeader
+          titleSlot={
+            <TabsList variant='line' className='flex !h-auto w-full justify-start gap-5'>
+              {ORDER_STATUS_TABS.map((tab) => (
+                <TabsTrigger
+                  key={tab.key}
+                  value={tab.key}
+                  className='group flex-none text-regular text-gray-3 hover:text-primary-1 data-[state=active]:text-primary-1 after:bg-primary-1'>
+                  {tab.title}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          }
+        />
 
-                    {ordersCountMap.has(status.id) && (
-                      <span className='flex h-6 w-6 items-center justify-center rounded-sm bg-gray-1 text-xs text-gray-3 group-data-[state=active]:bg-primary-1 group-data-[state=active]:text-white'>
-                        {ordersCountMap.get(status.id)}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            }
-          />
+        <TabsContent value={activeTab} className='flex-1'>
+          <div className='flex h-full w-full flex-col gap-4'>
+            {loading && data.items.length === 0 ? (
+              <div className='flex h-full w-full min-h-64 flex-1 items-center justify-center'>
+                <div className='h-8 w-8 animate-spin rounded-full border-4 border-gray-1 border-t-primary-1' />
+              </div>
+            ) : error && data.items.length === 0 ? (
+              <div className='flex h-full w-full min-h-64 flex-1 flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed border-primary-1 text-center'>
+                <h5 className='text-gray-3'>{error}</h5>
+                <Button type='button' variant='outline' size='sm' className='rounded-lg' onClick={() => void refetch()}>
+                  تلاش دوباره
+                </Button>
+              </div>
+            ) : data.items.length === 0 ? (
+              <div className='flex h-full w-full min-h-64 flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed border-primary-1 text-center'>
+                <div className='relative mb-4 h-20 w-20'>
+                  <Image src='/icons/empty-data.svg' alt='No Orders' fill className='object-contain' />
+                </div>
 
-          {ORDER_STATUSES.map((status: OrderStatusItem) => {
-            const orders = ordersMap.get(status.id) ?? [];
+                <h5 className='text-gray-3'>هنوز سفارشی وجود ندارد</h5>
+              </div>
+            ) : (
+              <OrderList orders={data.items} />
+            )}
+          </div>
+        </TabsContent>
 
-            const isLoading = loadingTabs.get(status.id) ?? false;
+        {data.total > 0 && (
+          <div className='flex items-center justify-between'>
+            <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              className='h-9 rounded-lg border-gray-1'
+              disabled={!canPrev || loading}
+              onClick={() => setPage((current) => Math.max(1, current - 1))}>
+              <ChevronRight />
+              قبلی
+            </Button>
 
-            const isLoaded = loadedTabs.current.has(status.id);
+            <span className='text-caption text-secondary-2'>
+              صفحه {data.page.toLocaleString('fa-IR')} از {data.totalPages.toLocaleString('fa-IR')} — {data.total.toLocaleString('fa-IR')}{' '}
+              سفارش
+            </span>
 
-            return (
-              <TabsContent key={status.id} value={String(status.id)} className='flex-1'>
-                <OrderContentWrapper>
-                  {isLoading && orders.length === 0 ? (
-                    <div className='flex h-full w-full min-h-64 flex-1 flex-col items-center justify-center'>
-                      <div className='h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-primary-1' />
-                    </div>
-                  ) : orders.length === 0 && isLoaded ? (
-                    <div className='flex h-full w-full min-h-64 flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed border-primary-1 text-center'>
-                      <div className='relative mb-4 h-20 w-20'>
-                        <Image src='/icons/empty-data.svg' alt='No Orders' fill className='object-contain' />
-                      </div>
-
-                      <h5 className='text-gray-3'>هنوز سفارشی وجود ندارد</h5>
-
-                    </div>
-                  ) : (
-                    <OrderList orders={orders} onView={handleView} />
-                  )}
-                </OrderContentWrapper>
-              </TabsContent>
-            );
-          })}
-        </Tabs>
-      </div>
-
-      <OrderViewModal open={isViewModalOpen} onOpenChange={setIsViewModalOpen} order={selectedOrder} />
-    </>
+            <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              className='h-9 rounded-lg border-gray-1'
+              disabled={!canNext || loading}
+              onClick={() => setPage((current) => current + 1)}>
+              بعدی
+              <ChevronLeft />
+            </Button>
+          </div>
+        )}
+      </Tabs>
+    </div>
   );
 }

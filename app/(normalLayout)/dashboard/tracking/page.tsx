@@ -9,10 +9,9 @@ import { toast } from 'sonner';
 import PageHeader from '@/components/dashboard/PageHeader';
 import OrderList from '@/components/dashboard/order/OrderList';
 import OrderTrackingForm from '@/components/dashboard/order/OrderTrackingForm';
-import type { Order } from '@/components/dashboard/order/order.model';
+import type { OrderSummary } from '@/typescript/schemas/order.schema';
 import { orderByQ } from '@/services/order.service';
 import { isApiError, getApiErrorMessage } from '@/utils/api-error';
-import { mapOrder } from '@/components/dashboard/order/order.mapper';
 
 type SearchState = 'initial' | 'loading' | 'empty' | 'result';
 
@@ -20,7 +19,7 @@ function TrackingPage() {
   const searchParams = useSearchParams();
 
   const [searchState, setSearchState] = useState<SearchState>('initial');
-  const [searchedOrders, setSearchedOrders] = useState<Order[]>([]);
+  const [searchedOrders, setSearchedOrders] = useState<OrderSummary[]>([]);
 
   const pageInfo = {
     href: '/dashboard/tracking',
@@ -34,27 +33,14 @@ function TrackingPage() {
       setSearchedOrders([]);
 
       const response = await orderByQ(code);
-      const responseData = response.data?.data;
 
-      let apiOrders: any[] = [];
-
-      if (Array.isArray(responseData?.orders)) {
-        apiOrders = responseData.orders;
-      } else if (responseData?.order) {
-        apiOrders = [responseData.order];
-      } else if (responseData?.id) {
-        apiOrders = [responseData];
-      }
-
-      if (apiOrders.length === 0) {
+      if (response.items.length === 0) {
         setSearchedOrders([]);
         setSearchState('empty');
         return;
       }
 
-      const orders = apiOrders.map((apiOrder) => mapOrder(apiOrder));
-
-      setSearchedOrders(orders);
+      setSearchedOrders(response.items);
       setSearchState('result');
     } catch (error: unknown) {
       setSearchedOrders([]);

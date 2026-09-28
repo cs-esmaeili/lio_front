@@ -1,94 +1,60 @@
-import type { AxiosResponse } from "axios";
+import type { AxiosResponse } from 'axios';
+import { z } from 'zod';
 
-import http from "@/services/core/clientService";
-import { fetcher } from "@/services/core/SSRService";
+import http from '@/services/core/clientService';
+import { ApiError } from '@/utils/api-error';
+import { MyOrdersListSchema, OrderSchema, type MyOrdersList, type Order, type OrderStatus } from '@/typescript/schemas/order.schema';
 
+const csrPrefixUrl = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT!;
 
-const csrPrefixUrl =
-    process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT!;
+/* -------------------------------------------------------------------------- */
+/*  Response parsing                                                          */
+/* -------------------------------------------------------------------------- */
 
-const ssrPrefixUrl =
-    process.env.BACKEND_ENDPOINT_SSR!;
+/** Successful responses are wrapped in `{ statusCode, data, message }`. */
+function unwrap(body: unknown): unknown {
+  if (body && typeof body === 'object' && 'data' in body) {
+    return (body as { data: unknown }).data;
+  }
+  return body;
+}
 
-// Orders List
+async function parseResponse<T>(request: Promise<AxiosResponse>, schema: z.ZodType<T>): Promise<T> {
+  const response = await request;
 
-export const ordersListAll = (
-): Promise<AxiosResponse> => {
-    return http.get(
-        `${csrPrefixUrl}/profile/orders`
-    );
-};
+  const parsed = schema.safeParse(unwrap(response.data));
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ سرور نامعتبر است', parsed.error);
+  }
 
-export const orderByCode = (
-  code: string | number
-): Promise<AxiosResponse<any>> => {
-  return http.get(
-    `${csrPrefixUrl}/profile/orders/${code}`
-  );
-};
+  return parsed.data;
+}
 
-// export const orderByQ = (
-//   code: string | number
-// ): Promise<AxiosResponse<any>> => {
-//   return http.get(
-//     `${csrPrefixUrl}/profile/orders?q=${code}` // &search=true
-//   );
-// };
-export const orderByQ = (
-    code: string | number,
-): Promise<AxiosResponse> => {
-    return http.get(
-        `${csrPrefixUrl}/profile/orders?q=${code}`,
-    );
-};
+/* -------------------------------------------------------------------------- */
+/*  Customer orders — /profile/orders                                         */
+/* -------------------------------------------------------------------------- */
 
-export const ordersList = (
-    statusCode: number,
-    page: number = 1
-): Promise<AxiosResponse> => {
-    return http.get(
-        `${csrPrefixUrl}/profile/orders?active_tab=${statusCode}&page=${page}`
-    );
-};
+export interface MyOrdersQuery {
+  page?: number;
+  limit?: number;
+  status?: OrderStatus;
+  search?: string;
+}
 
-// Order Detail
+/** GET /profile/orders — the authenticated user's orders (scoped server-side). */
+export const listMyOrdersCSR = (query: MyOrdersQuery = {}): Promise<MyOrdersList> =>
+  parseResponse(http.get(`${csrPrefixUrl}/profile/orders`, { params: query }), MyOrdersListSchema);
 
-export const orderDetail = (
-    id: string | number
-): Promise<AxiosResponse> => {
-    return http.get(
-        `${csrPrefixUrl}/profile/orders/${id}`
-    );
-};
+/** GET /profile/orders/{orderNumber} — one of the authenticated user's orders. */
+export const getMyOrderCSR = (orderNumber: string | number): Promise<Order> =>
+  parseResponse(http.get(`${csrPrefixUrl}/profile/orders/${encodeURIComponent(String(orderNumber))}`), OrderSchema);
 
+/* -------------------------------------------------------------------------- */
+/*  Back-compat helpers                                                       */
+/* -------------------------------------------------------------------------- */
 
-// SSR - Orders List
+/** Every order of the current user (used by the ticket form order picker). */
+export const ordersListAll = (): Promise<MyOrdersList> => listMyOrdersCSR();
 
-export const ordersListSSR = async (
-    statusCode: number,
-    page: number = 1
-) => {
-    return fetcher(
-        `${ssrPrefixUrl}/profile/orders?active_tab=${statusCode}&page=${page}`,
-        {
-            next: {
-                revalidate: 60,
-            },
-        }
-    );
-};
-
-// SSR - Order Detail
-
-export const orderDetailSSR = async (
-    id: string | number
-) => {
-    return fetcher(
-        `${ssrPrefixUrl}/profile/orders/${id}`,
-        {
-            next: {
-                revalidate: 60,
-            },
-        }
-    );
-};
+/** Search the current user's orders by order number (tracking page). */
+export const orderByQ = (code: string | number): Promise<MyOrdersList> => listMyOrdersCSR({ search: String(code), limit: 20 });

@@ -5,7 +5,7 @@ import { Button } from "@/components/shadcn/button";
 
 import OrderDetail from "@/components/dashboard/order/OrderDetail";
 
-import type { Order } from "@/components/dashboard/order/order.model";
+import type { Order } from '@/typescript/schemas/order.schema';
 
 
 

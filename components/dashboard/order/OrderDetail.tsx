@@ -8,23 +8,25 @@ import OrderItem from '@/components/dashboard/order/OrderItem';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Icon from '@/components/global/Icon';
 
-import type { Order } from '@/components/dashboard/order/order.model';
+import type { Order } from '@/typescript/schemas/order.schema';
 import { ArrowSquareRight } from 'iconsax-reactjs';
 
 import { useRouter } from 'next/navigation';
 
 interface OrderDetailProps {
   order: Order;
+  /** Where the back button falls back to when there is no browser history. */
+  backHref?: string;
 }
 
-export default function OrderDetail({ order }: OrderDetailProps) {
+export default function OrderDetail({ order, backHref = '/dashboard/order/' }: OrderDetailProps) {
   const router = useRouter();
 
   const handleBack = () => {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.push('/dashboard/order/');
+      router.push(backHref);
     }
   };
 

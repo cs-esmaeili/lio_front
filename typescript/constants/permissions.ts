@@ -30,6 +30,8 @@ export const PERMISSIONS = {
   ATTRIBUTE_READ: 'attribute:read',
   /** Create, update and delete product attributes and their values. */
   ATTRIBUTE_MANAGE: 'attribute:manage',
+  /** View every order in the admin panel. */
+  ORDER_READ: 'order:read',
   /** View users. */
   USER_READ: 'user:read',
   /** Update user status. */

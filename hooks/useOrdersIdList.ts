@@ -5,15 +5,13 @@ import { toast } from 'sonner';
 import { ordersListAll } from '@/services/order.service';
 import { isApiError, getApiErrorMessage } from '@/utils/api-error';
 
-// import type { Order } from '@/components/dashboard/order/order.model';
-
-export interface Order {
-  id: number;
+export interface OrderOption {
+  id: string;
   label: string;
 }
 
 export function useOrdersIdList() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderOption[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -23,14 +21,9 @@ export function useOrdersIdList() {
 
     ordersListAll()
       .then((response) => {
-        const orders =
-            response.data?.data?.orders?.map((order: any) => ({
-            id: order.id,
-            label: `#${order.code}`,
-            })) ?? [];
-
-        setOrders(orders);
-        })
+        const mapped = response.items.map((order) => ({ id: order.id, label: `#${order.orderNumber}` }));
+        setOrders(mapped);
+      })
       .catch((error: unknown) => {
         if (abortController.signal.aborted) return;
 
@@ -38,7 +31,7 @@ export function useOrdersIdList() {
           return;
         }
 
-        const message = getApiErrorMessage(error, 'خطا در دریافت لیست بخش‌ها.');
+        const message = getApiErrorMessage(error, 'خطا در دریافت لیست سفارشات.');
 
         toast.error(message);
       })

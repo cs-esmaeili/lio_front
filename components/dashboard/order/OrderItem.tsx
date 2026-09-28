@@ -2,13 +2,13 @@
 
 import Image from 'next/image';
 
-import type { OrderItem } from '@/components/dashboard/order/order.model';
+import type { OrderLine } from '@/typescript/schemas/order.schema';
 import Link from 'next/link';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 
 
 interface OrderItemProps {
-  item: OrderItem;
+  item: OrderLine;
 }
 
 

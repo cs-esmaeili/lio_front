@@ -2,20 +2,19 @@
 
 import OrderCard from "@/components/dashboard/order/OrderCard";
 
-import type { Order } from "@/components/dashboard/order/order.model";
+import type { OrderSummary } from "@/typescript/schemas/order.schema";
 
 
 interface OrderListProps {
-    orders: Order[];
+    orders: OrderSummary[];
 
-    onView: (order: Order) => void;
+    onView?: (order: OrderSummary) => void;
 }
 
 
 
 export default function OrderList({
     orders,
-    onView,
 }: OrderListProps) {
     return (
         <div className="flex w-full flex-col gap-4">
@@ -23,7 +22,6 @@ export default function OrderList({
                 <OrderCard
                     key={order.id}
                     order={order}
-                    onView={onView}
                 />
             ))}
         </div>
