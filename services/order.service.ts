@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import http from '@/services/core/clientService';
 import { ApiError } from '@/utils/api-error';
-import { MyOrdersListSchema, OrderSchema, type MyOrdersList, type Order, type OrderStatus } from '@/typescript/schemas/order.schema';
+import { MyOrderSummarySchema, MyOrdersListSchema, OrderSchema, type MyOrderSummary, type MyOrdersList, type Order, type OrderStatus } from '@/typescript/schemas/order.schema';
 
 const csrPrefixUrl = process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT!;
 
@@ -48,6 +48,10 @@ export const listMyOrdersCSR = (query: MyOrdersQuery = {}): Promise<MyOrdersList
 /** GET /profile/orders/{orderNumber} — one of the authenticated user's orders. */
 export const getMyOrderCSR = (orderNumber: string | number): Promise<Order> =>
   parseResponse(http.get(`${csrPrefixUrl}/profile/orders/${encodeURIComponent(String(orderNumber))}`), OrderSchema);
+
+/** GET /profile/orders/summary — order counts per status for the dashboard. */
+export const getMyOrderSummaryCSR = (): Promise<MyOrderSummary> =>
+  parseResponse(http.get(`${csrPrefixUrl}/profile/orders/summary`), MyOrderSummarySchema);
 
 /* -------------------------------------------------------------------------- */
 /*  Back-compat helpers                                                       */

@@ -253,6 +253,27 @@ export const AdminOrdersListSchema = AdminOrderListResponseSchema.transform((res
   totalPages: response.totalPages,
 }));
 
+const ApiOrderStatusCountSchema = z.object({
+  status: OrderStatusSchema.catch('PENDING_PAYMENT'),
+  count: z.number().catch(0),
+});
+
+/** `GET /profile/orders/summary` — order counts per status for the dashboard. */
+export const MyOrderSummarySchema = z
+  .object({
+    total: z.number().catch(0),
+    items: z.array(ApiOrderStatusCountSchema).catch([]),
+  })
+  .transform((summary) => ({
+    total: summary.total,
+    items: summary.items.map((item) => ({
+      status: item.status,
+      title: ORDER_STATUS_LABELS[item.status],
+      toneId: ORDER_STATUS_TONES[item.status],
+      count: item.count,
+    })),
+  }));
+
 export type OrderListItem = z.infer<typeof OrderListItemSchema>;
 export type OrderListResponse = z.infer<typeof OrderListResponseSchema>;
 export type AdminOrderListItem = z.infer<typeof AdminOrderListItemSchema>;
@@ -263,3 +284,5 @@ export type AdminOrderSummary = z.infer<typeof AdminOrderSummarySchema>;
 export type Order = z.infer<typeof OrderSchema>;
 export type MyOrdersList = z.infer<typeof MyOrdersListSchema>;
 export type AdminOrdersList = z.infer<typeof AdminOrdersListSchema>;
+export type MyOrderSummary = z.infer<typeof MyOrderSummarySchema>;
+export type MyOrderStatusCount = MyOrderSummary['items'][number];
