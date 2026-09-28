@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Icon from '@/components/global/Icon';
-import { ArrowLeft2, InfoCircle, ChartCircle, House, TickCircle, Danger, CloseCircle, MoneyRecive, MoneyChange } from 'iconsax-reactjs';
+import { ArrowLeft2, InfoCircle, ChartCircle, House, TickCircle, CloseCircle, MoneyRecive, MoneyChange } from 'iconsax-reactjs';
 
 import type { OrderSummary } from '@/typescript/schemas/order.schema';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
@@ -25,9 +25,6 @@ export default function OrderCard({ order }: OrderCardProps) {
 
       case 2:
         return 'bg-[#22C55E]/20 text-[#22C55E]';
-
-      case 3:
-        return 'bg-[#F97316]/20 text-[#F97316]';
 
       case 4:
         return 'bg-[#EF4444]/20 text-[#EF4444]';
@@ -57,9 +54,6 @@ export default function OrderCard({ order }: OrderCardProps) {
       case 2:
         return 'border-[#22C55E]/20';
 
-      case 3:
-        return 'border-[#F97316]/20';
-
       case 4:
         return 'border-[#EF4444]/20';
 
@@ -88,9 +82,6 @@ export default function OrderCard({ order }: OrderCardProps) {
       case 2:
         return 'text-[#22C55E]';
 
-      case 3:
-        return 'text-[#F97316]';
-
       case 4:
         return 'text-[#EF4444]';
 
@@ -118,9 +109,6 @@ export default function OrderCard({ order }: OrderCardProps) {
 
       case 2:
         return TickCircle;
-
-      case 3:
-        return Danger;
 
       case 4:
         return CloseCircle;

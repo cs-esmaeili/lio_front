@@ -4,7 +4,7 @@ import { z } from 'zod';
 /*  Orders contract — /profile/orders, /admin/orders                          */
 /* -------------------------------------------------------------------------- */
 
-export const ORDER_STATUSES = ['PENDING_PAYMENT', 'PAID', 'CANCELED', 'EXPIRED', 'FAILED'] as const;
+export const ORDER_STATUSES = ['PENDING_PAYMENT', 'PAID', 'CANCELED', 'EXPIRED'] as const;
 
 export const OrderStatusSchema = z.enum(ORDER_STATUSES);
 
@@ -16,7 +16,6 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   PAID: 'پرداخت شده',
   CANCELED: 'لغو شده',
   EXPIRED: 'منقضی شده',
-  FAILED: 'ناموفق',
 };
 
 /**
@@ -28,7 +27,6 @@ export const ORDER_STATUS_TONES: Record<OrderStatus, number> = {
   PAID: 2,
   CANCELED: 4,
   EXPIRED: 5,
-  FAILED: 3,
 };
 
 /** Brand-token badge classes for each status (admin tables). */
@@ -37,7 +35,6 @@ export const ORDER_STATUS_CLASSES: Record<OrderStatus, string> = {
   PAID: 'bg-primary-0/15 text-primary-0',
   CANCELED: 'bg-custom-red/10 text-custom-red',
   EXPIRED: 'bg-gray-1 text-secondary-2',
-  FAILED: 'bg-custom-red/10 text-custom-red',
 };
 
 const CURRENCY = process.env.NEXT_PUBLIC_CURRENCY ?? 'تومان';
