@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { AddressSchema } from '@/typescript/schemas/address.schema';
 import { CartItemSchema } from '@/typescript/schemas/cart.schema';
+import { PaymentEligibilitySchema, paymentEligibilityUnknown } from '@/typescript/schemas/payment-eligibility.schema';
 
 /* -------------------------------------------------------------------------- */
 /*  Checkout contract — GET /checkout                                          */
@@ -43,6 +44,8 @@ export const CheckoutSchema = z.object({
   addresses: z.array(AddressSchema).catch([]),
   defaultAddressId: z.number().nullable().catch(null),
   payment: CheckoutPaymentSchema.catch({ provider: '' }),
+  /** Server-owned gate for `POST /payments`. */
+  paymentEligibility: PaymentEligibilitySchema.catch(paymentEligibilityUnknown),
 });
 
 export type CheckoutShipping = z.infer<typeof CheckoutShippingSchema>;

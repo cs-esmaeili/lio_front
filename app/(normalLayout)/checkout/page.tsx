@@ -1,24 +1,35 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import AuthGuard from '@/components/global/AuthGuard';
 import AddressSection from '@/components/shop/checkout/AddressSection';
 import CheckoutList from '@/components/shop/checkout/CheckoutList';
 import CheckoutSummary from '@/components/shop/checkout/CheckoutSummary';
+import ProfileEditDialog from '@/components/shop/checkout/ProfileEditDialog';
 import { Spinner } from '@/components/shadcn/spinner';
 
 import { useCheckout } from '@/hooks/checkout/useCheckout';
 import { usePayment } from '@/hooks/payment/usePayment';
 
+import type { PaymentEligibilityReason } from '@/typescript/schemas/payment-eligibility.schema';
+
 export default function CheckoutPage() {
   const { checkout, loading, selectedAddressId, refetch, selectAddress } = useCheckout();
   const { startPayment, pending } = usePayment();
 
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [eligibilityReasons, setEligibilityReasons] = useState<PaymentEligibilityReason[]>([]);
+
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  const openProfileDialog = useCallback((reasons: PaymentEligibilityReason[]): void => {
+    setEligibilityReasons(reasons);
+    setProfileDialogOpen(true);
+  }, []);
 
   const handlePayment = useCallback((): void => {
     if (selectedAddressId == null) {
@@ -26,8 +37,26 @@ export default function CheckoutPage() {
       return;
     }
 
-    void startPayment(Number(selectedAddressId));
-  }, [selectedAddressId, startPayment]);
+    // The eligibility gate is server-owned: only the backend decides. When the
+    // last `GET /checkout` already says "not eligible", open the completion
+    // dialog instead of firing a request that is guaranteed to 409.
+    if (checkout && !checkout.paymentEligibility.eligible) {
+      openProfileDialog(checkout.paymentEligibility.reasons);
+      return;
+    }
+
+    void startPayment(Number(selectedAddressId)).then((result) => {
+      // Eligibility may have changed between load and click — the 409 reasons
+      // are authoritative and carry the same shape.
+      if (result.status === 'not-allowed') openProfileDialog(result.reasons);
+    });
+  }, [checkout, selectedAddressId, startPayment, openProfileDialog]);
+
+  const handleProfileSaved = useCallback((): void => {
+    setProfileDialogOpen(false);
+    // Re-read the server-owned eligibility so the next "pay" attempt goes through.
+    void refetch();
+  }, [refetch]);
 
   return (
     <AuthGuard>
@@ -74,6 +103,13 @@ export default function CheckoutPage() {
             </div>
           )}
         </div>
+
+        <ProfileEditDialog
+          open={profileDialogOpen}
+          onOpenChange={setProfileDialogOpen}
+          reasons={eligibilityReasons}
+          onSaved={handleProfileSaved}
+        />
       </div>
     </AuthGuard>
   );

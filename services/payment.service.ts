@@ -1,4 +1,4 @@
-import { ApiError } from '@/utils/api-error';
+import { ApiError, isApiError } from '@/utils/api-error';
 import {
   CreatePaymentEnvelopeSchema,
   CreatePaymentSchema,
@@ -7,6 +7,10 @@ import {
   type CreatePayment,
   type PaymentResult,
 } from '@/typescript/schemas/payment.schema';
+import {
+  PaymentNotAllowedBodySchema,
+  type PaymentEligibilityReason,
+} from '@/typescript/schemas/payment-eligibility.schema';
 
 const csrPrefixUrl = `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT}`;
 
@@ -51,6 +55,18 @@ export const createPaymentCSR = async (addressId: number, headers: Headers): Pro
   }
 
   return parsed.data;
+};
+
+/**
+ * Extracts the unmet requirements from the `409 PAYMENT_NOT_ALLOWED` error so
+ * the UI can open the profile-completion dialog. Returns `null` for any other
+ * error (including a `409` that carries a different shape).
+ */
+export const getPaymentNotAllowedReasons = (error: unknown): PaymentEligibilityReason[] | null => {
+  if (!isApiError(error) || error.status !== 409) return null;
+
+  const parsed = PaymentNotAllowedBodySchema.safeParse(error.data);
+  return parsed.success ? parsed.data.reasons : null;
 };
 
 /**
