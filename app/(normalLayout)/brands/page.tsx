@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import PageTitle from '@/components/global/PageTitle';
 import Gradient from '@/components/global/Gradient';
-import { brandsListSSR } from '@/services/brands.service';
+// import { brandsListSSR } from '@/services/brands.service';
 import { BrandsPagination } from './BrandsPagination';
 import useSeo from '@/hooks/seo/useSeo';
 import JsonLd from '@/components/seo/JsonLd';
@@ -10,7 +10,10 @@ import brandsSchema from '@/schema/seo/brands';
 export async function generateMetadata({ searchParams }: { searchParams: { page?: string } }) {
   const currentPage = Number(searchParams.page) || 1;
 
-  const { data } = await brandsListSSR(currentPage);
+  // TODO: re-enable once /brands SSR endpoint is available
+  // const { data } = await brandsListSSR(currentPage);
+  const data: any = undefined;
+  void currentPage;
 
   const seo = data?.seo;
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
@@ -28,7 +31,10 @@ export async function generateMetadata({ searchParams }: { searchParams: { page?
 
 export default async function Page({ searchParams }: { searchParams: { page?: string } }) {
   const currentPage = Number(searchParams.page) || 1;
-  const { data } = await brandsListSSR(currentPage);
+  // TODO: re-enable once /brands SSR endpoint is available
+  // const { data } = await brandsListSSR(currentPage);
+  const data: any = undefined;
+  void currentPage;
 
   const brands = data?.brands ?? [];
   const links = data?.links ?? { current_page: 1, last_page: 1 };

@@ -46,7 +46,9 @@ interface AboutData {
 }
 
 export async function generateMetadata() {
-  const result = await aboutData();
+  // TODO: re-enable once /about-items SSR endpoint is available
+  // const result = await aboutData();
+  const result: any = undefined;
 
   const seo = result?.seo;
   const image = result?.data?.find((item: AboutItem) => item.type === 4)?.image;

@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { MagClient } from '@/components/article/MagClient';
 import Gradient from '@/components/global/Gradient';
-import { postListSSR } from '@/services/blog.service';
+// import { postListSSR } from '@/services/blog.service';
 import useSeo from '@/hooks/seo/useSeo';
 import blogSchema from '@/schema/seo/blog';
 import JsonLd from '@/components/seo/JsonLd';
@@ -10,7 +10,9 @@ import breadcrumbSchema from '@/schema/seo/breadcrumb';
 import type { BreadcrumbItem } from '@/typescript/types/general/breadcrumb';
 
 export async function generateMetadata() {
-  const res = await postListSSR(1);
+  // TODO: re-enable once /v2/blog/posts SSR endpoint is available
+  // const res = await postListSSR(1);
+  const res: any = undefined;
 
   const seo = res?.data?.seo;
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
@@ -30,7 +32,9 @@ export async function generateMetadata() {
 // ─── Page (SSR) ────────────────────────────────────────────────────────────────
 
 export default async function DodiyMagPage() {
-  const res = await postListSSR(1);
+  // TODO: re-enable once /v2/blog/posts SSR endpoint is available
+  // const res = await postListSSR(1);
+  const res: any = undefined;
   const posts = res?.data?.posts ?? [];
   const links = res?.data?.links ?? { current_page: 1, last_page: 1 };
   const seo = res?.data?.seo;
@@ -38,7 +42,7 @@ export default async function DodiyMagPage() {
   const breadcrumbJsonLd = breadcrumbSchema(breadcrumbItems);
 
   const blogJsonLd = blogSchema({
-    name: seo.title,
+    name: seo?.title,
     description: seo?.description,
     url: `${process.env.NEXT_PUBLIC_SITE_ENDPOINT}/blog/`,
   });

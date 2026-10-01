@@ -15,6 +15,13 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['172.16.11.160'],
   crossOrigin: 'anonymous',
   trailingSlash: true,
+  experimental: {
+    // The build host runs inside a small memory cgroup (~3 GB) while the machine
+    // exposes many physical cores. Next defaults the page-data worker count to
+    // `os.cpus().length - 1` (58 on that host), and spawning that many Node
+    // workers OOM-kills the build. Pin it to a single worker.
+    cpus: 1,
+  },
   async rewrites() {
     return [
       {

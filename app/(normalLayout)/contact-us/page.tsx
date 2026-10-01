@@ -5,7 +5,7 @@ import ContactUsCta from '@/components/contact-us/ContactUsCta';
 import Gradient from '@/components/global/Gradient';
 import { BreadCrumpGenerator } from '@/components/global/BreadCrumpGenerator';
 import ContactUsMap from '@/components/contact-us/ContactUsMap';
-import { contactData } from '@/services/contactUs.service';
+// import { contactData } from '@/services/contactUs.service';
 import useSeo from '@/hooks/seo/useSeo';
 import contactSchema from '@/schema/seo/contact';
 import JsonLd from '@/components/seo/JsonLd';
@@ -13,9 +13,11 @@ import breadcrumbSchema from '@/schema/seo/breadcrumb';
 import type { BreadcrumbItem } from '@/typescript/types/general/breadcrumb';
 
 export async function generateMetadata() {
-  const result = await contactData();
+  // TODO: re-enable once /contact-detail SSR endpoint is available
+  // const result = await contactData();
+  const result: any = undefined;
 
-  const seo = result.data?.seo;
+  const seo = result?.data?.seo;
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_ENDPOINT;
   return useSeo({
@@ -30,8 +32,10 @@ export async function generateMetadata() {
 }
 
 export default async function page() {
-  const result = await contactData();
-  const contactDataResult = result.data || result || {};
+  // TODO: re-enable once /contact-detail SSR endpoint is available
+  // const result = await contactData();
+  const result: any = undefined;
+  const contactDataResult = result?.data || result || {};
   const breadcrumbItems: BreadcrumbItem[] = contactDataResult?.breadcrumb || [];
 
   const {
