@@ -28,6 +28,10 @@ const dastnevis = localFont({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+  },
   robots: isSeoEnabled() ? SEO_DEFAULT_ROBOTS : 'noindex, nofollow',
 };
 
