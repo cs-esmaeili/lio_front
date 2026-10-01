@@ -1,5 +1,7 @@
 import Image from 'next/image';
 
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
+
 interface AboutUsFounderProps {
   title?: string;
   subtitle?: string;
@@ -9,8 +11,8 @@ interface AboutUsFounderProps {
 }
 
 export default function AboutUsFounder({ 
-  title = 'با دودیگرام بیشتر آشنا شوید...', 
-  subtitle = 'با دودیگرام بیشتر آشنا شوید...', 
+  title = `با ${siteName} بیشتر آشنا شوید...`, 
+  subtitle = `با ${siteName} بیشتر آشنا شوید...`, 
   description = '', 
   image = '',
   signature = '' 

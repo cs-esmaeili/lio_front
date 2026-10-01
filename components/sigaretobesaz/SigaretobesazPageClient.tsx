@@ -8,6 +8,7 @@ import SigaretobesazProductList from '@/components/sigaretobesaz/SigaretobesazPr
 import { useSigaretobesazSearch } from '@/hooks/sigaretobesaz/useSigaretobesazSearch';
 
 export default function SigaretobesazPageClient() {
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   const {
     products,
     pagination,
@@ -26,11 +27,11 @@ export default function SigaretobesazPageClient() {
         <div className="flex flex-col items-center justify-center py-8 px-4">
           <Image src={sigaretobesaz} alt="sigaretobesaz" />
           <h1 className="text-center text-secondary-1">
-            انتخاب با تو، پیشنهاد سیگار با دودیگرام
+            انتخاب با تو، پیشنهاد سیگار با {siteName}
           </h1>
 
           <p className="text-secondary-1 max-w-2xl text-center text-body leading-relaxed mt-3">
-            ویژگی‌های موردنظرت رو انتخاب کن تا دودیگرام با یک پیشنهاد هوشمند،
+            ویژگی‌های موردنظرت رو انتخاب کن تا {siteName} با یک پیشنهاد هوشمند،
             مناسب‌ترین سیگارها رو بر اساس سلیقه‌ات نمایش بده.
           </p>
         </div>

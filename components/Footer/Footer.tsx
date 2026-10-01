@@ -27,7 +27,7 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
         <div className='grid sm:grid-cols-2 pt-10'>
           <div className='flex max-sm:hidden items-center'>
             <Icon IconComponent={Star} className='text-gray-1' size={24} aria-hidden='true' variant='TwoTone' toneTwoColor='--color-primary-1' />
-            <div className='relative text-regular text-gray-1 pr-1 font-normal'>دودیگرام بزرگترین پلتفرم آنلاین فروش دخانیات</div>
+            <div className='relative text-regular text-gray-1 pr-1 font-normal'>{siteName}</div>
           </div>
           <div className='flex items-center justify-center max-md:mt-6 md:justify-end text-regular text-gray-2'>
             <span className='pl-2'>تماس با پشتیبانی</span>

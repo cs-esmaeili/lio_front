@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
   return useSeo({
     title: seo?.meta_title || `برند ${brand?.title} | ${siteName}`,
 
-    description: seo?.meta_description || brand?.description || `خرید محصولات برند ${brand?.title} از فروشگاه دودیگرام.`,
+    description: seo?.meta_description || brand?.description || `خرید محصولات برند ${brand?.title} از فروشگاه ${siteName}.`,
     keywords: seo?.keywords,
     canonical: seo?.canonical ?? `${siteUrl}/brands/${slug}/`,
     robots: seo?.robot,

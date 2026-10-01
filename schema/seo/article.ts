@@ -36,7 +36,7 @@ export default function articleSchema({
 
     publisher: {
       '@type': 'Organization',
-      name: 'دودیگرام',
+      name: process.env.NEXT_PUBLIC_SITE_NAME,
     },
 
     datePublished: publishedTime,

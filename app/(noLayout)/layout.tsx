@@ -3,7 +3,7 @@ import { Toaster } from "@/components/shadcn/sonner";
 
 
 export const metadata: Metadata = {
-  title: "ورود | دودیگرام",
+  title: `ورود | ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   robots: "noindex, nofollow",
 };
 

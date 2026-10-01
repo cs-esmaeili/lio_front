@@ -1,6 +1,8 @@
 import styles from "@/styles/modules/borders/Astelam.module.css";
 import Image from "next/image";
 
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
+
 type Communication = {
   key: string;
   full_url: string;
@@ -32,7 +34,7 @@ const AstelamCard = ({ communications }: { communications: Communication[] }) =>
                 <div className="flex flex-col justify-center">
                   <h5 className="text-custom-purple">استعلام قیمت</h5>
                   <h6 className="text-secondary-2">
-                    به‌روزترین قیمت بازار در کانال روبیکا دودیگرام
+                    به‌روزترین قیمت بازار در کانال روبیکا {siteName}
                   </h6>
                 </div>
               </div>

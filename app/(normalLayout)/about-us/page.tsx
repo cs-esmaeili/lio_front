@@ -66,6 +66,7 @@ export async function generateMetadata() {
 }
 
 export default async function Page() {
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   let aboutDataResult: AboutData | null = null;
   let error: Error | null = null;
 
@@ -90,7 +91,7 @@ export default async function Page() {
       ?.trim();
   const image = data.find((item) => item.type === 4)?.image;
   const aboutJsonLd = aboutSchema({
-    name: aboutDataResult?.seo?.title || 'درباره دودیگرام',
+    name: aboutDataResult?.seo?.title || `درباره ${siteName}`,
     description,
     image,
     url: `${process.env.NEXT_PUBLIC_SITE_ENDPOINT}/about-us/`,

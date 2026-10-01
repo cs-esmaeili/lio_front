@@ -12,22 +12,23 @@ export async function generateMetadata() {
 
   return useSeo({
     title: `محصولات | ${siteName}`,
-    description: 'فروشگاه آنلاین دودی گرام',
+    description: `فروشگاه آنلاین ${siteName}`,
     canonical: `${siteUrl}/shop/`,
     robots: 'index,follow',
     image: `${siteUrl}/logo.webp`,
-    imageAlt: 'محصولات دودی گرام',
+    imageAlt: `محصولات ${siteName}`,
   });
 }
 
 const page = async ({ searchParams }: { searchParams: Promise<Record<string, string | string[]>> }) => {
   const sp = await searchParams;
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
 
   const [serverFilters, searchResult] = await Promise.all([productFiltersSSR(null), productListSSR(null, sp)]);
 
   const shopJsonLd = shopSchema({
-    name: 'فروشگاه آنلاین دودی گرام',
-    description: 'محصولات فروشگاه آنلاین دودی گرام',
+    name: `فروشگاه آنلاین ${siteName}`,
+    description: `محصولات فروشگاه آنلاین ${siteName}`,
     url: `${process.env.NEXT_PUBLIC_SITE_ENDPOINT}/shop/`,
   });
 

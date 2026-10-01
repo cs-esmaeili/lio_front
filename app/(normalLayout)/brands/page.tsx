@@ -19,18 +19,19 @@ export async function generateMetadata({ searchParams }: { searchParams: { page?
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_ENDPOINT;
   return useSeo({
-    title: `${seo?.title || 'برندهای دودیگرام'} | ${siteName}`,
+    title: `${seo?.title || `برندهای ${siteName}`} | ${siteName}`,
     description: seo?.description,
     keywords: seo?.keywords,
     canonical: seo?.canonical ?? `${siteUrl}/brands/`,
     robots: seo?.robot,
     image: `${siteUrl}/logo.webp`,
-    imageAlt: seo?.title || 'برندهای دودیگرام',
+    imageAlt: seo?.title || `برندهای ${siteName}`,
   });
 }
 
 export default async function Page({ searchParams }: { searchParams: { page?: string } }) {
   const currentPage = Number(searchParams.page) || 1;
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   // TODO: re-enable once /brands SSR endpoint is available
   // const { data } = await brandsListSSR(currentPage);
   const data: any = undefined;
@@ -41,10 +42,10 @@ export default async function Page({ searchParams }: { searchParams: { page?: st
 
   const seo = data?.seo;
 
-  const description = seo?.description || 'مشاهده تمامی برندهای موجود در فروشگاه دودیگرام.';
+  const description = seo?.description || `مشاهده تمامی برندهای موجود در فروشگاه ${siteName}.`;
 
   const brandsJsonLd = brandsSchema({
-    name: seo?.title || 'برندهای دودیگرام',
+    name: seo?.title || `برندهای ${siteName}`,
     description,
     url: `${process.env.NEXT_PUBLIC_SITE_ENDPOINT}/brands/`,
   });
@@ -54,7 +55,7 @@ export default async function Page({ searchParams }: { searchParams: { page?: st
       <JsonLd data={brandsJsonLd} />
       <Gradient />
       <div className='container max-sm:p-0 my-6'>
-        <PageTitle title='برندهای دودیگرام' />
+        <PageTitle title={`برندهای ${siteName}`} />
 
         <Suspense fallback={null}>
           <BrandsPagination

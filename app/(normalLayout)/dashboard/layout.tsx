@@ -5,7 +5,7 @@ import { isSeoEnabled, SEO_DEFAULT_ROBOTS } from "@/lib/seo";
 
 export const metadata: Metadata = isSeoEnabled()
   ? {
-      title: " داشبورد | دودیگرام",
+      title: ` داشبورد | ${process.env.NEXT_PUBLIC_SITE_NAME}`,
       robots: SEO_DEFAULT_ROBOTS,
     }
   : { robots: 'noindex, nofollow' };

@@ -1,10 +1,12 @@
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
+
 interface AboutUsHistoryProps {
   title?: string;
   description?: string;
   image?: string;
 }
 
-export default function AboutUsHistory({ title = 'با دودیگرام بیشتر آشنا شوید...', description = '', image = '' }: AboutUsHistoryProps) {
+export default function AboutUsHistory({ title = `با ${siteName} بیشتر آشنا شوید...`, description = '', image = '' }: AboutUsHistoryProps) {
   const cleanDescription = description?.replace(/<[^>]*>/g, '') || '';
 
   return (

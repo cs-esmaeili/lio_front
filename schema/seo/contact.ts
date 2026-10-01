@@ -21,7 +21,7 @@ export default function contactSchema({
     image,
     mainEntity: {
       '@type': 'Organization',
-      name: 'دودیگرام',
+      name: process.env.NEXT_PUBLIC_SITE_NAME,
       url: process.env.NEXT_PUBLIC_SITE_ENDPOINT,
       telephone,
     },

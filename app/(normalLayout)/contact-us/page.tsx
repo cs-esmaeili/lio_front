@@ -27,7 +27,7 @@ export async function generateMetadata() {
     canonical: seo?.canonical ?? `${siteUrl}/contact-us/`,
     robots: seo?.robot,
     image: `${siteUrl}/logo.webp`,
-    imageAlt: 'ارتباط با دودیگرام',
+    imageAlt: `ارتباط با ${siteName}`,
   });
 }
 
@@ -35,6 +35,7 @@ export default async function page() {
   // TODO: re-enable once /contact-detail SSR endpoint is available
   // const result = await contactData();
   const result: any = undefined;
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   const contactDataResult = result?.data || result || {};
   const breadcrumbItems: BreadcrumbItem[] = contactDataResult?.breadcrumb || [];
 
@@ -55,10 +56,10 @@ export default async function page() {
 
   const seo = contactDataResult.seo;
 
-  const description = seo?.description || `ارتباط با دودیگرام، آدرس، شماره تماس، ساعات پاسخگویی و راه‌های ارتباطی.`;
+  const description = seo?.description || `ارتباط با ${siteName}، آدرس، شماره تماس، ساعات پاسخگویی و راه‌های ارتباطی.`;
 
   const contactJsonLd = contactSchema({
-    name: seo?.title || 'ارتباط با دودیگرام',
+    name: seo?.title || `ارتباط با ${siteName}`,
     description,
     url: `${process.env.NEXT_PUBLIC_SITE_ENDPOINT}/contact-us/`,
     telephone,
@@ -74,7 +75,7 @@ export default async function page() {
       <div className='container '>
         <BreadCrumpGenerator items={breadcrumbItems} />
         <div className='page-title flex items-center justify-center w-full text-secondary-1'>
-          <h1>ارتباط با دودیگرام</h1>
+          <h1>ارتباط با {siteName}</h1>
         </div>
         <div className='main-content mt-8 lg:mt-17'>
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 w-full طم:h-106 '>

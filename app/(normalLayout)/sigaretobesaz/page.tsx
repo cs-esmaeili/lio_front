@@ -23,12 +23,13 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 export async function generateMetadata() {
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_ENDPOINT;
 
   return useSeo({
-    title: 'سیگارتو بساز | پیشنهاد هوشمند سیگار بر اساس سلیقه شما | دودیگرام',
+    title: `سیگارتو بساز | پیشنهاد هوشمند سیگار بر اساس سلیقه شما | ${siteName}`,
     description:
-      'با ابزار انتخاب هوشمند دودیگرام، سیگار مناسب خود را پیدا کنید. طعم، نیکوتین، قطران و سایر ویژگی‌ها را انتخاب کنید و پیشنهادهای شخصی‌سازی‌شده دریافت کنید.',
+      `با ابزار انتخاب هوشمند ${siteName}، سیگار مناسب خود را پیدا کنید. طعم، نیکوتین، قطران و سایر ویژگی‌ها را انتخاب کنید و پیشنهادهای شخصی‌سازی‌شده دریافت کنید.`,
     keywords: 'سیگارتو بساز',
     canonical: `${siteUrl}/sigaretobesaz/`,
     robots: 'index, follow',
