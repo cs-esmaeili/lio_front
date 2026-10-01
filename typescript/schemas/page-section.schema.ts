@@ -381,3 +381,65 @@ export interface ContactInput {
   mapLat?: number | null;
   mapLng?: number | null;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  ABOUT section (singleton)                                                 */
+/* -------------------------------------------------------------------------- */
+
+export const AboutStatisticSchema = z.object({
+  id: z.number(),
+  title: z.string().catch(''),
+  description: z.string().catch(''),
+  number: z.number().catch(0),
+});
+
+export const AboutSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    headerTitle: z.string().nullable().catch(null),
+    headerDescription: z.string().nullable().catch(null),
+    headerFileId: z.number().nullable().catch(null),
+    headerFileUrl: z.string().nullable().catch(null),
+    historyTitle: z.string().nullable().catch(null),
+    historyDescription: z.string().nullable().catch(null),
+    founderTitle: z.string().nullable().catch(null),
+    founderSubtitle: z.string().nullable().catch(null),
+    founderDescription: z.string().nullable().catch(null),
+    founderFileId: z.number().nullable().catch(null),
+    founderFileUrl: z.string().nullable().catch(null),
+    founderSignatureFileId: z.number().nullable().catch(null),
+    founderSignatureFileUrl: z.string().nullable().catch(null),
+    statistics: z.array(AboutStatisticSchema).catch([]),
+  }),
+});
+
+export type AboutStatistic = z.infer<typeof AboutStatisticSchema>;
+export type AboutSection = z.infer<typeof AboutSectionSchema>;
+
+export interface AboutStatisticInput {
+  title?: string | null;
+  description?: string | null;
+  number?: number | null;
+}
+
+/** Payload for creating/updating the about page (upsert). */
+export interface AboutInput {
+  headerTitle?: string | null;
+  headerDescription?: string | null;
+  headerFileId?: number | null;
+  historyTitle?: string | null;
+  historyDescription?: string | null;
+  founderTitle?: string | null;
+  founderSubtitle?: string | null;
+  founderDescription?: string | null;
+  founderFileId?: number | null;
+  founderSignatureFileId?: number | null;
+  statistics?: AboutStatisticInput[];
+}

@@ -1,17 +1,24 @@
-import type { AxiosResponse } from 'axios';
-import http from '@/services/core/clientService';
+import { cache } from 'react';
 import { fetcher } from '@/services/core/SSRService';
+import { ApiError } from '@/utils/api-error';
+import { AboutSectionSchema, type AboutData } from '@/typescript/schemas/about/about-section.schema';
 
-const csrPrefixUrl = `${process.env.NEXT_PUBLIC_BACKEND_ENDPOINT_CLIENT}`;
 const ssrPrefixUrl = `${process.env.BACKEND_ENDPOINT_SSR}`;
 
-// SSR — server-side requests (Next.js server components)
-export const aboutData = async (): Promise<any> => {
-  const url = `${ssrPrefixUrl}/about-items`;
-  
-  return fetcher(url, {
+// SSR — server-side request (Next.js server component)
+export const aboutData = cache(async (): Promise<AboutData> => {
+  const url = `${ssrPrefixUrl}/page-sections/section?location=ABOUT`;
+
+  const data = await fetcher<unknown>(url, {
     next: {
       revalidate: 60,
     },
   });
-};
+
+  const parsed = AboutSectionSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new ApiError(422, 'پاسخ صفحه درباره ما نامعتبر است', parsed.error);
+  }
+
+  return parsed.data;
+});
