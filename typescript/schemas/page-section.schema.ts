@@ -337,3 +337,47 @@ export interface ProductListItemInput {
   productId: number;
   sortOrder?: number;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  CONTACT section (singleton)                                               */
+/* -------------------------------------------------------------------------- */
+
+/** A social link shown on the contact page (stored in the `socials` site setting). */
+export const ContactSocialSchema = z.object({
+  key: z.string(),
+  title: z.string().catch(''),
+  image: z.string().catch(''),
+  fullUrl: z.string().catch(''),
+});
+
+export const ContactSectionSchema = z.object({
+  id: z.number(),
+  pageId: z.number().nullable().catch(null),
+  type: z.string(),
+  location: z.string(),
+  title: z.string().nullable().catch(null),
+  link: z.string().nullable().catch(null),
+  sortOrder: z.number().catch(0),
+  status: z.string().catch('ACTIVE'),
+  data: z.object({
+    address: z.string().nullable().catch(null),
+    email: z.string().nullable().catch(null),
+    supportHour: z.string().nullable().catch(null),
+    mapLat: z.number().nullable().catch(null),
+    mapLng: z.number().nullable().catch(null),
+    supportPhone: z.string().nullable().catch(null),
+    socials: z.array(ContactSocialSchema).catch([]),
+  }),
+});
+
+export type ContactSocial = z.infer<typeof ContactSocialSchema>;
+export type ContactSection = z.infer<typeof ContactSectionSchema>;
+
+/** Payload for creating/updating the contact (upsert). */
+export interface ContactInput {
+  address?: string | null;
+  email?: string | null;
+  supportHour?: string | null;
+  mapLat?: number | null;
+  mapLng?: number | null;
+}

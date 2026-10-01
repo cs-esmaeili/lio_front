@@ -3,21 +3,24 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { contactusForm } from '@/services/contactUs.service';
+import { useCsrf } from '@/hooks/useCsrf';
 import { isApiError, getApiErrorMessage } from '@/utils/api-error';
 
 export function useContactUsForm() {
+  const { ensureCsrfToken } = useCsrf();
 
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const sendContactUsForm = async (name : string, phone:number , subject: string , mobile:string, message:string) => {
+  const sendContactUsForm = async (name: string, phone: string, message: string) => {
     setLoading(true);
 
     try {
-      const response = await contactusForm({name , phone , subject , mobile, message});
+      await ensureCsrfToken();
+      await contactusForm({ name, phone, message });
       toast.success('پیام شما با موفقیت ارسال شد.');
       setSubmitted(true);
-      return response.data;
+      return true;
     } catch (error: unknown) {
       // Interceptor already handled global errors (401, 403, 5xx, network) —
       // skip showing a second toast unless we want to override

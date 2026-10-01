@@ -12,13 +12,13 @@ export const ContactUsFormSchema = z.object({
     .min(3, 'نام و نام خانوادگی باید حداقل ۳ کاراکتر باشد')
     .max(100, 'نام و نام خانوادگی نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد'),
 
-  mobile: z
+  phone: z
     .string()
     .trim()
     .min(1, 'شماره همراه الزامی است')
     .regex(/^09\d{9}$/, 'شماره موبایل وارد شده معتبر نیست'),
 
-  description: z
+  message: z
     .string()
     .trim()
     .min(1, 'توضیحات  الزامی است')

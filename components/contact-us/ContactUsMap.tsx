@@ -9,21 +9,9 @@ const Map = dynamic(() => import('@/components/global/NeshanMap'), {
 
 interface ContactUsMapProps {
   center: LngLatInput;
-  zoom: number;
-  traffic: boolean;
-  poi: boolean;
+  zoom?: number;
 }
 
-const testCoords = { lng: 51.396941658332565, lat: 35.76436591885894 };
-
-export default function ContactUsMap(props: ContactUsMapProps) {
-  return (
-    <Map
-      {...props}
-      center={testCoords}
-      initialMarker={testCoords}
-      marker
-      disableMarkerMove
-    />
-  );
+export default function ContactUsMap({ center, zoom = 14 }: ContactUsMapProps) {
+  return <Map center={center} zoom={zoom} initialMarker={center} marker disableMarkerMove />;
 }

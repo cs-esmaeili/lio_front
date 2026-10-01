@@ -1,11 +1,10 @@
 import Image from 'next/image';
 
 interface SocialMediaItem {
+  key: string;
   title: string;
   image: string;
-  key: string;
-  value: string;
-  full_url: string;
+  fullUrl: string;
 }
 
 interface ContactUsSocialMediaProps {
@@ -48,7 +47,7 @@ export default function ContactUsSocialMedia({
       {communications.map((social, index) => (
         <a
           key={index}
-          href={social.full_url || '#'}
+          href={social.fullUrl || '#'}
           target='_blank'
           rel='noopener noreferrer'
           className='social-box border border-primary-3 rounded-[15px] h-16 flex items-center justify-center gap-2 py-4 px-6 hover:bg-gray-50 transition'

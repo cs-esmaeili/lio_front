@@ -11,7 +11,6 @@ import { Spinner } from '@/components/shadcn/spinner';
 import { ContactUsFormSchema, type ContactUsFormValues } from '@/typescript/schemas/contactus-form.schema';
 
 import { useContactUsForm } from '@/hooks/useContactUsForm';
-import { int } from 'zod';
 
 export default function ContactUsForm() {
   const { loading, submitted, sendContactUsForm } = useContactUsForm();
@@ -27,13 +26,13 @@ export default function ContactUsForm() {
     resolver: standardSchemaResolver(ContactUsFormSchema),
     defaultValues: {
       name: '',
-      mobile: '',
-      description: '',
+      phone: '',
+      message: '',
     },
   });
 
   const onValid = async (data: ContactUsFormValues) => {
-    const result = await sendContactUsForm(data.name, 0, 'subject', data.mobile, data.description);
+    const result = await sendContactUsForm(data.name, data.phone, data.message);
     if (result) {
       reset();
     }
@@ -61,53 +60,53 @@ export default function ContactUsForm() {
         </div>
 
         <div className='relative'>
-          <label htmlFor='mobile' className='absolute -top-3 right-3 rounded-[8px] bg-secondary-black-3 px-1 text-[12px] font-medium text-gray-1'>
+          <label htmlFor='phone' className='absolute -top-3 right-3 rounded-[8px] bg-secondary-black-3 px-1 text-[12px] font-medium text-gray-1'>
             شماره همراه
           </label>
 
           <Input
-            id='mobile'
+            id='phone'
             type='tel'
             inputMode='numeric'
             dir='ltr'
-            className={['h-12 rounded-[8px] border bg-transparent text-center text-gray-1', errors.mobile ? 'border-red-500' : 'border-gray-1'].join(
+            className={['h-12 rounded-[8px] border bg-transparent text-center text-gray-1', errors.phone ? 'border-red-500' : 'border-gray-1'].join(
               ' '
             )}
-            {...register('mobile', {
+            {...register('phone', {
               onChange: (e) => {
                 const cleaned = e.target.value.replace(/\D/g, '').slice(0, 11);
 
-                setValue('mobile', cleaned, {
+                setValue('phone', cleaned, {
                   shouldValidate: false,
                 });
 
-                clearErrors('mobile');
+                clearErrors('phone');
               },
             })}
           />
 
-          {errors.mobile && <p className='mt-1 text-xs text-red-500'>{errors.mobile.message}</p>}
+          {errors.phone && <p className='mt-1 text-xs text-red-500'>{errors.phone.message}</p>}
         </div>
 
         <div className='relative'>
           <label
-            htmlFor='description'
+            htmlFor='message'
             className='absolute -top-3 right-3 rounded-[8px] bg-secondary-black-3 px-1 text-[12px] font-medium text-gray-1'>
             توضیحات مختصر 
           </label>
 
           <Textarea
-            id='description'
+            id='message'
             className={[
               'min-h-32 resize-y rounded-[8px] border bg-transparent text-gray-1',
-              errors.description ? 'border-red-500' : 'border-gray-1',
+              errors.message ? 'border-red-500' : 'border-gray-1',
             ].join(' ')}
-            {...register('description', {
-              onChange: () => clearErrors('description'),
+            {...register('message', {
+              onChange: () => clearErrors('message'),
             })}
           />
 
-          {errors.description && <p className='mt-1 text-xs text-red-500'>{errors.description.message}</p>}
+          {errors.message && <p className='mt-1 text-xs text-red-500'>{errors.message.message}</p>}
         </div>
 
         {!submitted && (
