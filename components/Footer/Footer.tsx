@@ -113,6 +113,23 @@ export default function Footer({ wideContainer, footerData }: { wideContainer: b
                 </a>
               ))}
             </div>
+
+            <div className='mt-4'>
+              <a
+                referrerPolicy='origin'
+                target='_blank'
+                rel='noopener noreferrer'
+                href='https://trustseal.enamad.ir/?id=423483&Code=3R8cTgFzHmUvNB7PLKbc8SlOn1ErwddF'
+                className='inline-block transition-transform duration-300 hover:scale-105'
+              >
+                <img
+                  referrerPolicy='origin'
+                  src='https://trustseal.enamad.ir/logo.aspx?id=423483&Code=3R8cTgFzHmUvNB7PLKbc8SlOn1ErwddF'
+                  alt='نماد اعتماد الکترونیکی'
+                  className='h-[60px] w-auto rounded-[10px]'
+                />
+              </a>
+            </div>
           </div>
 
           {/* About section */}
