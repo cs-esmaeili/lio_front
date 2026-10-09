@@ -77,16 +77,26 @@ export default function ThreeBannerSection({ section }: { section?: any }) {
 
   return (
     <section className='container'>
-      <div className='grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6'>
-        {banners.slice(0, 3).map((item, index) => (
-          <div
-            key={index}
-            className='group relative h-[190px] overflow-hidden rounded-3xl md:h-[260px] lg:h-[340px]'>
+      <div className='flex flex-col gap-3 md:gap-6'>
+        {banners?.[0] && (
+          <div className='group relative h-[200px] overflow-hidden rounded-3xl md:h-[320px] lg:h-[420px]'>
             <div className='h-full w-full transition-transform duration-700 ease-in-out group-hover:scale-105'>
-              <BannerImage item={item} {...dims[index]} />
+              <BannerImage item={banners[0]} {...dims[0]} />
             </div>
           </div>
-        ))}
+        )}
+
+        <div className='grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6'>
+          {banners.slice(1, 3).map((item, index) => (
+            <div
+              key={index}
+              className='group relative h-[190px] overflow-hidden rounded-3xl md:h-[260px] lg:h-[340px]'>
+              <div className='h-full w-full transition-transform duration-700 ease-in-out group-hover:scale-105'>
+                <BannerImage item={item} {...dims[index + 1]} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
