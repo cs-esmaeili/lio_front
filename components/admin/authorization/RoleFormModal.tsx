@@ -12,6 +12,7 @@ import { useCreateRole } from '@/hooks/authorization/useCreateRole';
 import { usePermissionsList } from '@/hooks/authorization/usePermissionsList';
 import { useUpdateRole } from '@/hooks/authorization/useUpdateRole';
 import { cn } from '@/lib/utils';
+import { DEFAULT_ROLE_NAME } from '@/typescript/constants/roles';
 import type { AdminRole } from '@/typescript/schemas/admin-authorization.schema';
 
 interface RoleFormModalProps {
@@ -34,6 +35,9 @@ export default function RoleFormModal({ open, onOpenChange, mode, initial, onSav
   const [selected, setSelected] = useState<Set<number>>(() => new Set(initial?.permissions.map((permission) => permission.id) ?? []));
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  // The default role is matched by name on the backend, so its name is locked.
+  const isDefault = mode === 'edit' && initial?.name === DEFAULT_ROLE_NAME;
 
   const visiblePermissions = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -88,7 +92,8 @@ export default function RoleFormModal({ open, onOpenChange, mode, initial, onSav
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <div className='flex flex-col gap-2'>
             <label className='text-sm text-secondary-1'>نام نقش</label>
-            <Input dir='ltr' value={name} placeholder='editor' className='h-11 font-medium' onChange={(event) => setName(event.target.value)} />
+            <Input dir='ltr' value={name} placeholder='editor' className='h-11 font-medium' disabled={isDefault} onChange={(event) => setName(event.target.value)} />
+            {isDefault && <span className='text-caption text-secondary-3'>نام نقش پیش‌فرض قابل تغییر نیست.</span>}
           </div>
 
           <div className='flex flex-col gap-2'>
