@@ -5,9 +5,9 @@ import { HamburgerMenu } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
 import MegaMenuContent from '@/components/Header/megaMenu/MegaMenuContent';
 import { useBackdropPortal } from '@/hooks/useBackdropPortal';
-import type { Communication, HeaderData } from '@/typescript/types/header/header.types';
+import type { HeaderData } from '@/typescript/types/header/header.types';
 
-export default function MegaMenu({ headerData, socialToAction }: { headerData: HeaderData; socialToAction: Communication[] }) {
+export default function MegaMenu({ headerData }: { headerData: HeaderData }) {
   const [open, setOpen] = useState(false);
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -52,7 +52,6 @@ export default function MegaMenu({ headerData, socialToAction }: { headerData: H
         onOpenMenu={handleOpenMenu}
         onCloseMenu={handleCloseMenu}
         onCloseImmediate={handleCloseImmediate}
-        socialToAction={socialToAction}
       />
 
       {Backdrop}

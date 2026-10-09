@@ -1,15 +1,11 @@
 import Link from 'next/link';
-import megaStyle from '@/styles/modules/borders/megaMenu.module.css';
-import CallSocial from '@/components/global/CallSocial';
 import type { MenuItem } from '@/typescript/schemas/header/menu.schema';
-import type { Communication } from '@/typescript/types/header/header.types';
 
 type Props = {
   activeMenu: MenuItem[] | null;
   onOpenMenu: () => void;
   onCloseMenu: () => void;
   onCloseImmediate: () => void;
-  socialToAction: Communication[];
 };
 
 function getHref(item: MenuItem): string {
@@ -20,13 +16,7 @@ function hasChildren(item: MenuItem): boolean {
   return Array.isArray(item.sub_menus) && item.sub_menus.length > 0;
 }
 
-export default function MegaMenuContent({
-  activeMenu,
-  onOpenMenu,
-  onCloseMenu,
-  onCloseImmediate,
-  socialToAction,
-}: Props) {
+export default function MegaMenuContent({ activeMenu, onOpenMenu, onCloseMenu, onCloseImmediate }: Props) {
   // Only real categories (items with sub menus) belong in the mega panel.
   const categories = (activeMenu ?? []).filter(hasChildren);
 
@@ -76,14 +66,6 @@ export default function MegaMenuContent({
             </ul>
           </div>
         ))}
-      </div>
-
-      {/* support box */}
-      <div className={`mx-6 mb-6 flex items-center justify-between rounded-lg px-4 py-5 ${megaStyle.cardWrapper}`}>
-        <div className='text-sm text-secondary-1'>پشتیبانی سفارش از طریق:</div>
-        <div className='flex items-center gap-4'>
-          <CallSocial communications={socialToAction} />
-        </div>
       </div>
     </div>
   );

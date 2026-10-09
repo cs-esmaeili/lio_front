@@ -19,16 +19,14 @@ import Icon from '@/components/global/Icon';
 
 import { useCart } from '@/hooks/cart/useCart';
 import { getHref } from '@/utils/path';
-import type { Communication, HeaderData } from '@/typescript/types/header/header.types';
+import type { HeaderData } from '@/typescript/types/header/header.types';
 
 export default function HeaderClient({
   wideContainer,
   headerData,
-  socialToAction,
 }: {
   wideContainer: boolean;
   headerData: HeaderData;
-  socialToAction: Communication[];
 }) {
   const [isSticky, setIsSticky] = useState(false);
   const { isOpen, openCart, closeCart, refetch } = useCart();
@@ -83,7 +81,7 @@ export default function HeaderClient({
 
             {/* Desktop search bar */}
             <div className='hidden flex-1 lg:block'>
-              <SearchPopover variant='bar' />
+              <SearchPopover />
             </div>
 
             {/* Desktop actions */}
@@ -102,12 +100,12 @@ export default function HeaderClient({
 
           {/* Mobile search bar */}
           <div className='lg:hidden'>
-            <SearchPopover variant='bar' />
+            <SearchPopover />
           </div>
 
           {/* Desktop navigation row */}
           <div className='mt-3 hidden lg:flex lg:items-center lg:gap-10'>
-            <MegaMenu headerData={headerData} socialToAction={socialToAction} />
+            <MegaMenu headerData={headerData} />
 
             <nav className='flex flex-1 items-center gap-8 overflow-x-auto whitespace-nowrap pb-2'>
               {navLinks.map((item) => (

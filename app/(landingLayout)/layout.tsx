@@ -1,5 +1,4 @@
 import Header from '@/components/Header/Header';
-import Footer from '@/components/Footer/Footer';
 import BottomNavigation from '@/components/Footer/BottomNavigation';
 import { Toaster } from '@/components/shadcn/sonner';
 import { getFooterData, getHeaderData } from '@/services/HeaderFooter.service';
@@ -11,7 +10,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 
   return (
     <>
-      <Header wideContainer={false} headerData={headerData} footerData={footerData} />
+      <Header wideContainer={false} headerData={headerData} />
       <main>{children}</main>
       <BottomNavigation supportPhone={footerData.support_phone || footerData.telephone} />
       <Toaster />

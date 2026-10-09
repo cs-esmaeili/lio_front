@@ -31,7 +31,7 @@ export default async function MainLayout({
   return (
     <>
       <JsonLd data={organizationJsonLd} />
-      <Header wideContainer={true} headerData={headerData} footerData={footerData} />
+      <Header wideContainer={true} headerData={headerData} />
       <main className="flex flex-col gap-3.5">{children}</main>
       <Footer wideContainer={true} footerData={footerData} />
       <BottomNavigation supportPhone={footerData.support_phone || footerData.telephone} />

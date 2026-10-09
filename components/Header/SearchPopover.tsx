@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { SearchStatus } from 'iconsax-reactjs';
 import Icon from '@/components/global/Icon';
@@ -11,72 +13,68 @@ import { useBackdropPortal } from '@/hooks/useBackdropPortal';
 import { buildProductsSearchUrl } from '@/utils/shop/urlHelpers';
 import SearchInputHeader from '../search/SearchInputHeader';
 
-type Props = {
-  variant?: 'icon' | 'bar';
-};
-
-export default function SearchPopover({ variant = 'bar' }: Props) {
+export default function SearchPopover() {
   const [open, setOpen] = useState(false);
+  const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const router = useRouter();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const closeTimeout = useRef<NodeJS.Timeout | null>(null);
-  const openTimeout = useRef<NodeJS.Timeout | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const { query, setQuery, results, loading, clearSearch } = useSearch();
 
-  // click outside = close + clear
-  useClickOutside(wrapperRef, () => {
-    setOpen(false);
-    clearSearch();
-  });
-
-  // -------------------------
-  // OPEN (hover delay)
-  // -------------------------
-  const handleOpenPopover = () => {
-    if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current);
-      closeTimeout.current = null;
-    }
-
-    if (openTimeout.current) {
-      clearTimeout(openTimeout.current);
-    }
-
-    openTimeout.current = setTimeout(() => {
-      setOpen(true);
-    }, 150);
-  };
-
-  // -------------------------
-  // CLOSE (hover delay)
-  // -------------------------
-  const handleClosePopover = () => {
-    if (query.trim()) return;
-
-    if (openTimeout.current) {
-      clearTimeout(openTimeout.current);
-      openTimeout.current = null;
-    }
-
-    closeTimeout.current = setTimeout(() => {
+  // click outside both the trigger and the portaled panel = close + clear
+  useClickOutside(
+    wrapperRef,
+    () => {
       setOpen(false);
-    }, 200);
-  };
+      clearSearch();
+    },
+    panelRef
+  );
 
-  const handlePanelMouseEnter = () => {
-    if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current);
-      closeTimeout.current = null;
-    }
-  };
+  // Position the portaled panel right under the search field.
+  const updatePanelPosition = useCallback(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
 
-  const handlePanelMouseLeave = () => {
-    if (!query.trim()) {
-      handleClosePopover();
-    }
-  };
+    const rect = el.getBoundingClientRect();
+    setPanelStyle({
+      position: 'fixed',
+      top: rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+      zIndex: 60,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    updatePanelPosition();
+    window.addEventListener('resize', updatePanelPosition);
+    window.addEventListener('scroll', updatePanelPosition, true);
+
+    return () => {
+      window.removeEventListener('resize', updatePanelPosition);
+      window.removeEventListener('scroll', updatePanelPosition, true);
+    };
+  }, [open, updatePanelPosition]);
+
+  // Escape closes the panel
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        clearSearch();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, clearSearch]);
 
   const handleItemClick = () => {
     setOpen(false);
@@ -91,62 +89,37 @@ export default function SearchPopover({ variant = 'bar' }: Props) {
     router.push(buildProductsSearchUrl(query));
   };
 
-  // cleanup timers
-  useEffect(() => {
-    return () => {
-      if (closeTimeout.current) clearTimeout(closeTimeout.current);
-      if (openTimeout.current) clearTimeout(openTimeout.current);
-    };
-  }, []);
-
-  const Backdrop = useBackdropPortal(open);
+  const Backdrop = useBackdropPortal(open, 'z-40');
 
   return (
     <div ref={wrapperRef} className='relative'>
       {/* trigger */}
-      {variant === 'bar' ? (
-        <button
-          type='button'
-          onClick={() => setOpen(true)}
-          aria-label='جستجو'
-          className='flex h-10 w-full cursor-pointer items-center gap-3 rounded-md border border-gray-2 bg-custom-white px-3 text-secondary-2 transition-colors'>
-          <Icon IconComponent={SearchStatus} className='text-secondary-2' size={18} aria-hidden='true' variant='Linear' />
-          <span className='text-sm'>جستجو کنید</span>
-        </button>
-      ) : (
-        <div
-          onMouseEnter={handleOpenPopover}
-          onMouseLeave={handleClosePopover}
-          className='flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg bg-primary-3 hover:rounded-full hover:bg-primary-3/80'>
-          <Icon
-            IconComponent={SearchStatus}
-            className='text-secondary-black-3'
-            size={24}
-            variant='TwoTone'
-            toneTwoColor='--color-primary-1'
-          />
-        </div>
-      )}
+      <button
+        type='button'
+        onClick={() => setOpen(true)}
+        aria-label='جستجو'
+        aria-expanded={open}
+        className='flex h-10 w-full cursor-pointer items-center gap-3 rounded-md border border-gray-2 bg-custom-white px-3 text-secondary-2 transition-colors'>
+        <Icon IconComponent={SearchStatus} className='text-secondary-2' size={18} aria-hidden='true' variant='Linear' />
+        <span className='text-sm'>جستجو کنید</span>
+      </button>
 
-      {/* panel */}
-      {open && (
-        <div
-          onMouseEnter={handlePanelMouseEnter}
-          onMouseLeave={variant === 'icon' ? handlePanelMouseLeave : undefined}
-          className='absolute left-0 right-0 top-full z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-lg border border-gray-2 bg-custom-white p-3 shadow-xl'>
-          <SearchInputHeader
-            value={query}
-            onChange={(val) => {
-              setQuery(val);
-              if (val.trim() && !open) setOpen(true);
-            }}
-            onClear={clearSearch}
-            onSubmit={handleSubmit}
-          />
+      {/* panel — portaled above the backdrop so the header can blur behind it */}
+      {open &&
+        panelStyle.position &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            ref={panelRef}
+            style={panelStyle}
+            className='max-h-[70vh] overflow-y-auto rounded-lg border border-gray-2 bg-custom-white p-3 shadow-xl'>
+            <SearchInputHeader value={query} onChange={setQuery} onClear={clearSearch} onSubmit={handleSubmit} />
 
-          <SearchResults items={results} query={query} loading={loading} onItemClick={handleItemClick} />
-        </div>
-      )}
+            <SearchResults items={results} query={query} loading={loading} onItemClick={handleItemClick} />
+          </div>,
+          document.body
+        )}
+
       {Backdrop}
     </div>
   );
