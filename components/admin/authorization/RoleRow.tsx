@@ -5,7 +5,6 @@ import { Pencil, ShieldCheck, Trash2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { Spinner } from '@/components/shadcn/spinner';
 import { cn } from '@/lib/utils';
-import { DEFAULT_ROLE_NAME } from '@/typescript/constants/roles';
 import type { AdminRole } from '@/typescript/schemas/admin-authorization.schema';
 
 interface RoleRowProps {
@@ -18,7 +17,7 @@ interface RoleRowProps {
 const MAX_CHIPS = 5;
 
 export default function RoleRow({ role, deleting = false, onEdit, onDelete }: RoleRowProps) {
-  const isDefault = role.name === DEFAULT_ROLE_NAME;
+  const isDefault = role.isDefault;
   const names = role.permissions.map((permission) => permission.name);
   const shown = names.slice(0, MAX_CHIPS);
   const rest = names.length - shown.length;

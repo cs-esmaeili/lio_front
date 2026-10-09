@@ -12,7 +12,6 @@ import { useRolesList } from '@/hooks/authorization/useRolesList';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import RoleFormModal from './RoleFormModal';
 import RoleRow from './RoleRow';
-import { DEFAULT_ROLE_NAME } from '@/typescript/constants/roles';
 import type { AdminRole } from '@/typescript/schemas/admin-authorization.schema';
 
 /** Manage roles and their permissions. */
@@ -129,8 +128,8 @@ export default function RolesManager() {
         name={deleteTarget?.name ?? ''}
         warning={
           deleteTarget?.name === 'admin'
-            ? `هشدار: این نقش مدیریتی است و کاربرانش به نقش پیش‌فرض «${DEFAULT_ROLE_NAME}» منتقل می‌شوند.`
-            : `کاربران این نقش به نقش پیش‌فرض «${DEFAULT_ROLE_NAME}» منتقل می‌شوند.`
+            ? 'هشدار: این نقش مدیریتی است و کاربرانش به نقش پیش‌فرض منتقل می‌شوند.'
+            : 'کاربران این نقش به نقش پیش‌فرض منتقل می‌شوند.'
         }
         loading={deleting}
         onConfirm={() => void handleConfirmDelete()}

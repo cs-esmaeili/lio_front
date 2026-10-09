@@ -14,6 +14,7 @@ export const AdminRoleSchema = z.object({
   id: z.number(),
   name: z.string(),
   description: z.string().nullable().catch(null),
+  isDefault: z.boolean().catch(false),
   permissions: z.array(AdminPermissionSchema).catch([]),
 });
 
