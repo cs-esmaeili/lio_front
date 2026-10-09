@@ -38,23 +38,24 @@ export default function ProductCard({ data, onBlackBackGround = false }: Product
 
   const isPriceRange = minPrice !== maxPrice;
 
+  const status = productStatus(default_variant);
+
+  const cardSurface = onBlackBackGround
+    ? 'border-secondary-black-1 bg-secondary-black-1 hover:border-primary-1'
+    : 'border-gray-2 bg-custom-white hover:-translate-y-0.5 hover:border-primary-3 hover:shadow-lg';
+
   const titleColor = onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-3';
   const priceColor = onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-3';
 
   return (
     <Link href={`/product/${slug}`} className='group block h-full'>
-      <div className={`flex h-full flex-col p-3 ${titleColor}`}>
-        <div
-          className={`relative mx-auto h-[250px] w-full max-w-[200px] overflow-hidden rounded-2xl transition-colors duration-300 ${
-            onBlackBackGround ? 'bg-secondary-black-1' : 'bg-gray-1 group-hover:bg-primary-4/70'
-          }`}>
+      <div className={`flex h-full flex-col overflow-hidden rounded-2xl border p-2.5 transition-all duration-300 ${cardSurface}`}>
+        <div className={`relative aspect-square w-full overflow-hidden rounded-xl ${onBlackBackGround ? 'bg-secondary-black-2' : 'bg-gray-1'}`}>
           <Image
             src={productImage}
             alt={`product-${id}`}
             onLoad={() => setLoaded(true)}
-            className={`object-contain p-3 transition-transform duration-500 ease-in-out group-hover:scale-105 ${
-              loaded ? fadeStyles.fadeIn : 'opacity-0'
-            }`}
+            className={`object-contain p-2 transition-transform duration-500 ease-in-out group-hover:scale-105 ${loaded ? fadeStyles.fadeIn : 'opacity-0'}`}
             fill
           />
 
@@ -65,11 +66,11 @@ export default function ProductCard({ data, onBlackBackGround = false }: Product
           )}
         </div>
 
-        <div className={`mb-4 mt-4 line-clamp-2 h-12 text-[15px] leading-6 ${titleColor}`}>{title}</div>
+        <div className={`mb-4 mt-3 line-clamp-2 h-11 text-[14px] leading-6 ${titleColor}`}>{title}</div>
 
-        {productStatus(default_variant) === 'available' && (
-          <div className='mt-auto flex items-end justify-between gap-2'>
-            <div className={`flex items-end gap-1 ${priceColor}`}>
+        {status === 'available' && (
+          <div className={`mt-auto flex items-end justify-between gap-2 ${priceColor}`}>
+            <div className='flex items-end gap-1'>
               <span className='text-[15px] font-bold'>
                 {isPriceRange ? `${separator(minPrice)} - ${separator(maxPrice)}` : separator(minPrice)}
               </span>
@@ -84,12 +85,12 @@ export default function ProductCard({ data, onBlackBackGround = false }: Product
           </div>
         )}
 
-        {default_variant && productStatus(default_variant) === 'call' && (
-          <div className={`mt-auto ${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>تماس بگیرید</div>
+        {default_variant && status === 'call' && (
+          <div className={`mt-auto text-[13px] ${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>تماس بگیرید</div>
         )}
 
-        {default_variant && productStatus(default_variant) === 'notify' && (
-          <div className={`mt-auto ${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>خبرم کن!</div>
+        {default_variant && status === 'notify' && (
+          <div className={`mt-auto text-[13px] ${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>خبرم کن!</div>
         )}
       </div>
     </Link>

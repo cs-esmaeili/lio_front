@@ -163,6 +163,7 @@ export default function FavoriteProductSection({ section }: { section?: any }) {
               }}
               modules={[FreeMode, Pagination, Navigation]}
               loop={true}
+              spaceBetween={16}
               breakpoints={{
                 0: { slidesPerView: 1.8 },
                 390: { slidesPerView: 2.1 },

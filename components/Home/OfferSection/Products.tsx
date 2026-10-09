@@ -25,6 +25,7 @@ const Products = ({ ref, products }: { ref: Ref<SwiperType>; products: any[] }) 
           }}
           modules={[FreeMode, Navigation]}
           className={styles.swiper}
+          spaceBetween={16}
           breakpoints={{
             0: { slidesPerView: 1.8 },
             390: { slidesPerView: 2.1 },

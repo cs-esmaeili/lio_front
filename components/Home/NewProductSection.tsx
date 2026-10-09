@@ -92,6 +92,7 @@ export default function NewProductSection({ section }: { section?: any }) {
           }}
           modules={[FreeMode, Pagination, Navigation]}
           loop={true}
+          spaceBetween={16}
           className={`${styles.swiper} ${bordersStyle.productListBorder}`}
           breakpoints={{
             0: { slidesPerView: 1.8 },
