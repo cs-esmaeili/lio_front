@@ -42,7 +42,7 @@ export default function CategoryAccordion({ items }: Props) {
                 px-4
                 py-4
                 text-sm
-                text-white
+                text-secondary-1
                 transition-colors
                 no-underline!
                 hover:text-primary-1
@@ -67,7 +67,7 @@ export default function CategoryAccordion({ items }: Props) {
                   px-4
                   py-4
                   text-sm
-                  text-white
+                  text-secondary-1
                   no-underline!
                   transition-colors
                   hover:text-primary-1
@@ -82,14 +82,14 @@ export default function CategoryAccordion({ items }: Props) {
                   shrink-0
                   justify-center
                   p-0
-                  text-white
+                  text-secondary-1
                   hover:text-primary-1
                   hover:no-underline
                 '
               />
             </div>
 
-            <AccordionContent className='pr-6 pb-2 text-white'>
+            <AccordionContent className='pr-6 pb-2 text-secondary-1'>
               <CategoryAccordion items={item.sub_menus} />
             </AccordionContent>
           </AccordionItem>

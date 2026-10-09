@@ -12,7 +12,7 @@ import { HamburgerMenu, CloseSquare } from 'iconsax-reactjs';
 import MobileMenuContent from '@/components/Header/mobile/MobileMenuContent';
 import Image from 'next/image';
 import Link from 'next/link';
-import logo from '@/public/logo-white.png';
+import logo from '@/public/logo.webp';
 import type { HeaderData } from '@/typescript/types/header/header.types';
 
 
@@ -49,18 +49,18 @@ export default function MobileMenu({ headerData }: { headerData: HeaderData }) {
         side='right'
         className='
           w-[min(100%,420px)]
-          bg-black
+          bg-gray-1
           border-none
           p-7
           h-screen
           overflow-y-auto
           rounded-l-3xl
-          text-white
+          text-secondary-1
         '
       >
         <SheetHeader className='p-0'>
             <Link href='/'>
-            <Image src={logo} alt='logo' priority width={138} height={72} />
+            <Image src={headerData?.logo || logo} alt='logo' priority width={138} height={72} />
           </Link>
         </SheetHeader>
 

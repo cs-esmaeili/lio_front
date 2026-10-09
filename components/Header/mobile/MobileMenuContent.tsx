@@ -19,7 +19,7 @@ export default function MobileMenuContent({ headerData }: { headerData: HeaderDa
   return (
     <div className='px-0'>
       {directLinks.length > 0 && (
-        <div className='overflow-hidden rounded-3xl bg-secondary-black-1'>
+        <div className='overflow-hidden rounded-3xl border border-gray-2 bg-custom-white'>
           {directLinks.map((item, index) => (
             <Link
               key={item.id}
@@ -30,10 +30,10 @@ export default function MobileMenuContent({ headerData }: { headerData: HeaderDa
                 px-6
                 text-sm
                 font-medium
-                text-white
+                text-secondary-1
                 transition-colors
                 hover:text-primary-1
-                ${index !== directLinks.length - 1 ? 'border-b border-black' : ''}
+                ${index !== directLinks.length - 1 ? 'border-b border-gray-2' : ''}
               `}>
               {item.title}
             </Link>
@@ -43,7 +43,7 @@ export default function MobileMenuContent({ headerData }: { headerData: HeaderDa
 
       {accordionItems.length > 0 && (
         <div className='mt-6'>
-          <h5 className='mb-3 px-2 text-sm font-semibold text-white'>دسته بندی های سایت</h5>
+          <h5 className='mb-3 px-2 text-sm font-semibold text-secondary-black-3'>دسته بندی های سایت</h5>
 
           <CategoryAccordion items={accordionItems} />
         </div>
