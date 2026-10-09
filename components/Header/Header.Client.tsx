@@ -134,18 +134,20 @@ export default function HeaderClient({
 
         {/* Mobile navigation row */}
         <div className={`${containerClass} lg:hidden`}>
-          <div className='flex items-center gap-2.5 pb-1 text-[13px] font-semibold text-secondary-black-3'>
-            {navLinks.slice(0, 5).map((item) => (
-              <Link key={item.id} href={getHref(item)} className='flex items-center py-2'>
-                {item.title}
-              </Link>
-            ))}
+          <div className='flex items-center gap-3 pb-1 text-[13px] font-semibold text-secondary-black-3'>
+            <div className='flex flex-1 items-center gap-2.5 overflow-x-auto whitespace-nowrap'>
+              {navLinks.map((item) => (
+                <Link key={item.id} href={getHref(item)} className='flex shrink-0 items-center py-2'>
+                  {item.title}
+                </Link>
+              ))}
+            </div>
 
             {supportPhone && (
               <a
                 href={`tel:${supportPhone}`}
                 aria-label='تماس با پشتیبانی'
-                className='mr-auto flex h-8 w-10 flex-none items-center justify-center rounded-lg bg-primary-1 text-custom-white'>
+                className='flex h-8 w-10 flex-none items-center justify-center rounded-lg bg-primary-1 text-custom-white'>
                 <Icon IconComponent={Call} size={18} className='text-custom-white' />
               </a>
             )}
