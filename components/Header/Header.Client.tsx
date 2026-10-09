@@ -36,7 +36,9 @@ export default function HeaderClient({
   const pathname = usePathname();
   const isDashboardRoute = pathname?.startsWith('/dashboard');
 
-  const navLinks = headerData?.header ?? [];
+  const headerItems = headerData?.header ?? [];
+  // The nav row only shows plain links — categories live in the mega panel.
+  const navLinks = headerItems.filter((item) => (item.sub_menus?.length ?? 0) === 0);
   const supportPhone = headerData?.supportPhone || '';
   const containerClass = wideContainer ? 'container-shop' : 'container';
 
