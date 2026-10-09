@@ -11,7 +11,11 @@ import { useBackdropPortal } from '@/hooks/useBackdropPortal';
 import { buildProductsSearchUrl } from '@/utils/shop/urlHelpers';
 import SearchInputHeader from '../search/SearchInputHeader';
 
-export default function SearchPopover() {
+type Props = {
+  variant?: 'icon' | 'bar';
+};
+
+export default function SearchPopover({ variant = 'bar' }: Props) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -98,21 +102,38 @@ export default function SearchPopover() {
   const Backdrop = useBackdropPortal(open);
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperRef} className='relative'>
       {/* trigger */}
-      <div
-        onMouseEnter={handleOpenPopover}
-        onMouseLeave={handleClosePopover}
-        className='flex items-center justify-center rounded-lg bg-primary-3 w-9 h-9 relative cursor-pointer hover:bg-primary-3/80  hover:rounded-full'>
-        <Icon IconComponent={SearchStatus} className='text-secondary-black-3' size={24} variant='TwoTone' toneTwoColor='--color-primary-1' />
-      </div>
+      {variant === 'bar' ? (
+        <button
+          type='button'
+          onClick={() => setOpen(true)}
+          aria-label='جستجو'
+          className='flex h-10 w-full cursor-pointer items-center gap-3 rounded-md border border-gray-2 bg-custom-white px-3 text-secondary-2 transition-colors'>
+          <Icon IconComponent={SearchStatus} className='text-secondary-2' size={18} aria-hidden='true' variant='Linear' />
+          <span className='text-sm'>جستجو کنید</span>
+        </button>
+      ) : (
+        <div
+          onMouseEnter={handleOpenPopover}
+          onMouseLeave={handleClosePopover}
+          className='flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg bg-primary-3 hover:rounded-full hover:bg-primary-3/80'>
+          <Icon
+            IconComponent={SearchStatus}
+            className='text-secondary-black-3'
+            size={24}
+            variant='TwoTone'
+            toneTwoColor='--color-primary-1'
+          />
+        </div>
+      )}
 
       {/* panel */}
       {open && (
         <div
           onMouseEnter={handlePanelMouseEnter}
-          onMouseLeave={handlePanelMouseLeave}
-          className='absolute top-full left-0 right-0  rounded-2xl bg-secondary-black-3 shadow-2xl z-51 h-30 w-full'>
+          onMouseLeave={variant === 'icon' ? handlePanelMouseLeave : undefined}
+          className='absolute left-0 right-0 top-full z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-lg border border-gray-2 bg-custom-white p-3 shadow-xl'>
           <SearchInputHeader
             value={query}
             onChange={(val) => {

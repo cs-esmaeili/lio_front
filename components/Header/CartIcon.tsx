@@ -19,27 +19,20 @@ export default function CartIcon({ onClick }: CartIconProps) {
   const { distinctItemCount } = useCart();
   const cartLength = mounted ? distinctItemCount : 0;
 
-  
   if (pathname === '/basket/' || pathname === '/checkout/') return null;
 
   return (
-    <div
-      className='hidden md:flex items-center justify-center rounded-lg bg-primary-3 w-9 h-9 relative cursor-pointer hover:rounded-full'
+    <button
+      type='button'
       onClick={onClick}
-    >
-      <Icon
-        IconComponent={ShoppingCart}
-        className='text-secondary-black-3'
-        size={24}
-        aria-hidden='true'
-        variant='TwoTone'
-        toneTwoColor='--color-primary-1'
-      />
+      aria-label='سبد خرید'
+      className='group relative flex size-6 cursor-pointer items-center justify-center'>
+      <Icon IconComponent={ShoppingCart} className='text-primary-black-1 transition-colors group-hover:text-primary-1' size={24} aria-hidden='true' variant='Linear' />
       {cartLength > 0 && (
-        <span className='absolute -top-2 -right-2 bg-primary-1 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
+        <span className='absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary-1 text-[10px] font-bold text-custom-white'>
           {cartLength}
         </span>
       )}
-    </div>
+    </button>
   );
 }

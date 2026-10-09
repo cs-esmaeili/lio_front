@@ -18,19 +18,12 @@ export default function CompareIcon() {
 
   return (
     <Link
-      href="/compare"
-      className="flex items-center justify-center rounded-lg bg-primary-3 w-9 h-9 relative cursor-pointer hover:bg-primary-3/80 transition-colors hover:rounded-full"
-    >
-      <Icon
-        IconComponent={Check}
-        className="text-secondary-black-3"
-        size={24}
-        aria-hidden="true"
-        variant="TwoTone"
-        toneTwoColor="--color-primary-1"
-      />
+      href='/compare'
+      aria-label='مقایسه محصولات'
+      className='group relative flex size-6 items-center justify-center transition-colors'>
+      <Icon IconComponent={Check} className='text-primary-black-1 transition-colors group-hover:text-primary-1' size={24} aria-hidden='true' variant='Linear' />
       {count > 0 && (
-        <span className="absolute -top-2 -right-2 bg-primary-1 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+        <span className='absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary-1 text-[10px] font-bold text-custom-white'>
           {count}
         </span>
       )}

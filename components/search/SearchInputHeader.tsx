@@ -20,22 +20,24 @@ const SearchInputHeader = ({ value, onChange, onClear, onSubmit }: Props) => {
   };
 
   return (
-    <div className='relative w-full h-full'>
+    <div className='relative w-full'>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder='جستجوی محصولات,دسته بندی ها و...'
+        placeholder='جستجوی محصولات، دسته بندی ها و...'
         dir='rtl'
         autoFocus={true}
-        className={`w-full h-full rounded-xl pr-12 pl-10 outline-none 
-          ${'h-12 bg-transparent text-white placeholder:text-white/40'}
-        `}
+        className='h-12 w-full rounded-lg border border-gray-2 bg-gray-1 px-4 pl-10 text-sm text-secondary-black-3 outline-none placeholder:text-secondary-2 focus:border-primary-1'
       />
 
       {value && (
-        <button onClick={onClear} className='absolute left-4 top-1/2 -translate-y-1/2 pl-7.5'>
-          <Icon IconComponent={CloseCircle} size={32} className={'text-white'} />
+        <button
+          type='button'
+          onClick={onClear}
+          aria-label='پاک کردن جستجو'
+          className='absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer'>
+          <Icon IconComponent={CloseCircle} size={24} className={'text-secondary-2'} variant='Linear' />
         </button>
       )}
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/shadcn/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader } from '@/components/shadcn/sheet';
 import Icon from '@/components/global/Icon';
 import { HamburgerMenu, CloseSquare } from 'iconsax-reactjs';
 import { SidebarNavList } from '@/components/dashboard/Sidebar';
@@ -19,25 +19,20 @@ export default function DashboardMobileMenu() {
           type='button'
           className='
             flex
+            size-6
+            cursor-pointer
             items-center
             justify-center
-            rounded-lg
-            bg-primary-3
-            w-9
-            h-9
-            relative
-            cursor-pointer
-            hover:bg-primary-3/80
-            hover:rounded-full
+            text-primary-black-1
+            transition-colors
           '
           aria-label={open ? 'بستن منو' : 'باز کردن منو'}>
           <Icon
               IconComponent={open ? CloseSquare : HamburgerMenu}
-              className='text-secondary-black-3'
+              className='text-primary-black-1'
               size={24}
               aria-hidden='true'
-              variant='TwoTone'
-              toneTwoColor='--color-primary-1'
+              variant='Linear'
             />
         </button>
       </SheetTrigger>

@@ -19,12 +19,11 @@ function ResultItem({ item, onItemClick }: { item: ProductSearchItem; onItemClic
     <Link
       href={`/product/${item.slug}`}
       onClick={onItemClick}
-      className='flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
-        bg-white/5 backdrop-blur-md hover:bg-white/10 text-custom-white'>
-      {image && <img src={image} alt={item.title} className='w-12 h-12 rounded-lg object-cover shrink-0' />}
+      className='flex cursor-pointer items-center gap-3 rounded-lg bg-gray-1 p-3 text-secondary-black-3 transition hover:bg-gray-2'>
+      {image && <img src={image} alt={item.title} className='h-12 w-12 shrink-0 rounded-lg object-cover' />}
       <div className='min-w-0'>
-        <div className='font-medium truncate'>{item.title}</div>
-        <div className='text-sm mt-1 text-secondary-2'>محصول</div>
+        <div className='truncate font-medium'>{item.title}</div>
+        <div className='mt-1 text-sm text-secondary-2'>محصول</div>
       </div>
     </Link>
   );
@@ -42,10 +41,10 @@ const SearchResults = ({ items, query, loading, onItemClick }: Props) => {
   }
 
   return (
-    <div className='p-2 space-y-3 bg-secondary-black-3 rounded-2xl mt-1 max-h-[calc(100vh-20rem)] overflow-y-auto overflow-x-hidden'>
+    <div className='mt-2 max-h-[calc(100vh-20rem)] space-y-3 overflow-y-auto overflow-x-hidden'>
       <div>
-        <div className='px-3 py-1.5 text-base font-semibold text-secondary-3'>محصولات</div>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1'>
+        <div className='px-3 py-1.5 text-base font-semibold text-secondary-2'>محصولات</div>
+        <div className='grid grid-cols-1 gap-1 sm:grid-cols-2 md:grid-cols-3'>
           {items.map((item) => (
             <ResultItem key={item.id} item={item} onItemClick={onItemClick} />
           ))}
@@ -53,16 +52,16 @@ const SearchResults = ({ items, query, loading, onItemClick }: Props) => {
         <Link
           href={buildProductsSearchUrl(query)}
           onClick={onItemClick}
-          className='my-3 flex w-32 items-center justify-center mr-auto cursor-pointer'>
-          <button className='flex group-hover:gap-2 gap-1 justify-end items-center text-sm text-primary-1 transition-all duration-300 cursor-pointer'>
+          className='mr-auto my-3 flex w-32 cursor-pointer items-center justify-center'>
+          <span className='group flex cursor-pointer items-center justify-end gap-1 text-sm text-primary-1 transition-all duration-300'>
             <span>مشاهده نتایج</span>
             <Icon
               IconComponent={ArrowLeft}
               size={20}
               variant='TwoTone'
-              className='group-hover:translate-x-1 transition-transform duration-300'
+              className='transition-transform duration-300 group-hover:translate-x-1'
             />
-          </button>
+          </span>
         </Link>
       </div>
     </div>

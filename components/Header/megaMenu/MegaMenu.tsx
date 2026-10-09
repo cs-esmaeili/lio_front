@@ -1,72 +1,60 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import TopMenu from '@/components/Header/megaMenu/TopMenu';
+import { HamburgerMenu } from 'iconsax-reactjs';
+import Icon from '@/components/global/Icon';
 import MegaMenuContent from '@/components/Header/megaMenu/MegaMenuContent';
 import { useBackdropPortal } from '@/hooks/useBackdropPortal';
+import type { Communication, HeaderData } from '@/typescript/types/header/header.types';
 
-export default function MegaMenu({ headerData, socialToAction }: { headerData: any; socialToAction: any }) {
-  const pathname = usePathname();
-
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
-  
+export default function MegaMenu({ headerData, socialToAction }: { headerData: HeaderData; socialToAction: Communication[] }) {
+  const [open, setOpen] = useState(false);
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
-  
+
   const menuItems = headerData?.header ?? [];
-  
-  // open menu
-  const handleOpenMenu = (key: string) => {
+
+  const handleOpenMenu = () => {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
     }
-
-    setOpenMenu(key);
+    setOpen(true);
   };
 
-  // close menu (debounced — for mouse leave)
   const handleCloseMenu = () => {
     closeTimeout.current = setTimeout(() => {
-      setOpenMenu(null);
+      setOpen(false);
     }, 200);
   };
 
-  // close immediately — for link clicks
   const handleCloseImmediate = () => {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
     }
-    setOpenMenu(null);
+    setOpen(false);
   };
 
-
-  const activeMenu = (() => {
-    if (!openMenu) return null;
-
-    const item = menuItems.find((item: any) => {
-      // match by link or by id string
-      return item.link === openMenu || String(item.id) === openMenu;
-    });
-
-    return item?.sub_menus?.length ? item.sub_menus : null;
-  })();
-
-  const Backdrop = useBackdropPortal(openMenu ? true : false);
+  const Backdrop = useBackdropPortal(open);
 
   return (
-    <div className='flex gap-5 z-50'>
-      <TopMenu categories={menuItems} pathname={pathname} openMenu={openMenu} onOpenMenu={handleOpenMenu} onCloseMenu={handleCloseMenu} onCloseImmediate={handleCloseImmediate} />
+    <div className='relative flex-none' onMouseLeave={handleCloseMenu}>
+      <button
+        type='button'
+        onMouseEnter={handleOpenMenu}
+        onFocus={handleOpenMenu}
+        aria-expanded={open}
+        className='flex h-8 items-center gap-3 rounded-lg bg-custom-white px-4 text-xs font-semibold text-primary-black-1 transition-colors hover:text-primary-1'>
+        <Icon IconComponent={HamburgerMenu} size={16} className='text-primary-1' aria-hidden='true' variant='Linear' />
+        <span>دسته بندی کالا ها</span>
+      </button>
+
       <MegaMenuContent
-        activeMenu={activeMenu}
-        onOpenMenu={() => {
-          if (closeTimeout.current) {
-            clearTimeout(closeTimeout.current);
-          }
-        }}
+        activeMenu={open ? menuItems : null}
+        onOpenMenu={handleOpenMenu}
         onCloseMenu={handleCloseMenu}
         onCloseImmediate={handleCloseImmediate}
         socialToAction={socialToAction}
       />
+
       {Backdrop}
     </div>
   );
