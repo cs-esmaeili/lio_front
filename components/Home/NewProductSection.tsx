@@ -5,34 +5,17 @@ import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
 import styles from '@/styles/modules/swipers/NewsProduct.module.css';
 
-import { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import type { Swiper as SwiperType } from 'swiper';
-import { FreeMode, Pagination, Navigation } from 'swiper/modules';
+import { FreeMode, Pagination } from 'swiper/modules';
 import ProductCard from '@/components/global/Cards/ProductCard';
 import Icon from '@/components/global/Icon';
 import bordersStyle from '@/styles/modules/borders/ProductListsHome.module.css';
-import { ArrowLeft3, ArrowRight3, TickSquare } from 'iconsax-reactjs';
+import { TickSquare } from 'iconsax-reactjs';
 import MoreButton from '@/components/Home/MoreButton';
-
-const navButton =
-  'flex size-10 items-center justify-center rounded-full border border-gray-2 bg-custom-white text-secondary-black-3 transition-all duration-300';
 
 export default function NewProductSection({ section }: { section?: any }) {
   const products = section?.data?.products ?? [];
   const link = section?.link ?? '/shop';
-
-  const swiperRef = useRef<SwiperType | null>(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  useEffect(() => {
-    const swiper = swiperRef.current;
-    if (swiper) {
-      setIsBeginning(swiper.isBeginning);
-      setIsEnd(swiper.isEnd);
-    }
-  }, []);
 
   if (products.length === 0) {
     return null;
@@ -49,48 +32,11 @@ export default function NewProductSection({ section }: { section?: any }) {
             <h2 className='text-base font-bold text-secondary-black-3 lg:text-[22px]'>{section?.title}</h2>
           </div>
 
-          <div className='flex items-center gap-3'>
-            <div className='hidden gap-2 md:flex'>
-              <button
-                type='button'
-                aria-label='قبلی'
-                className={`${navButton} ${isBeginning ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:border-primary-1 hover:text-primary-1'}`}
-                onClick={() => {
-                  if (!isBeginning) {
-                    swiperRef.current?.slidePrev();
-                  }
-                }}
-                disabled={isBeginning}>
-                <Icon IconComponent={ArrowRight3} size={20} variant='Outline' className='text-current' />
-              </button>
-
-              <button
-                type='button'
-                aria-label='بعدی'
-                className={`${navButton} ${isEnd ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:border-primary-1 hover:text-primary-1'}`}
-                onClick={() => {
-                  if (!isEnd) {
-                    swiperRef.current?.slideNext();
-                  }
-                }}
-                disabled={isEnd}>
-                <Icon IconComponent={ArrowLeft3} size={20} variant='Outline' className='text-current' />
-              </button>
-            </div>
-
-            <MoreButton link={link} />
-          </div>
+          <MoreButton link={link} />
         </div>
 
         <Swiper
-          onSwiper={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-          onSlideChange={(swiper) => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }}
-          modules={[FreeMode, Pagination, Navigation]}
+          modules={[FreeMode, Pagination]}
           loop={true}
           spaceBetween={16}
           className={`${styles.swiper} ${bordersStyle.productListBorder}`}
