@@ -10,8 +10,8 @@ export default function UserNavButton() {
 
   if (!isHydrated) {
     return (
-      <span className='hidden md:flex items-center justify-center rounded-lg bg-primary-3 w-9 h-9 relative opacity-50'>
-        <Icon IconComponent={User} className='text-primary-1' size={24} aria-hidden='true' variant='TwoTone' toneTwoColor='--color-secondary-black-3' />
+      <span className='flex size-6 items-center justify-center opacity-50'>
+        <Icon IconComponent={User} className='text-primary-black-1' size={24} aria-hidden='true' variant='Linear' />
       </span>
     );
   }
@@ -22,8 +22,9 @@ export default function UserNavButton() {
     <Link
       href={href}
       prefetch={false}
-      className='hidden md:flex items-center justify-center rounded-lg bg-primary-3 w-9 h-9 relative cursor-pointer hover:bg-primary-3/80 transition-colors hover:rounded-full'>
-      <Icon IconComponent={User} className='text-primary-1' size={24} aria-hidden='true' variant='TwoTone' toneTwoColor='--color-secondary-black-3' />
+      aria-label='حساب کاربری'
+      className='group flex size-6 items-center justify-center transition-colors'>
+      <Icon IconComponent={User} className='text-primary-black-1 transition-colors group-hover:text-primary-1' size={24} aria-hidden='true' variant='Linear' />
     </Link>
   );
 }

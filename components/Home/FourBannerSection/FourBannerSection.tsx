@@ -3,14 +3,11 @@
 import { useState, useEffect } from 'react';
 import BannerCard from '@/components/Home/FourBannerSection/BannerCard';
 
-
-
 export default function FourBannerSection({ section }: { section?: any }) {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
 
   const banners = section?.data?.banners ?? [];
-
 
   useEffect(() => {
     const checkMobile = () => {
@@ -31,7 +28,7 @@ export default function FourBannerSection({ section }: { section?: any }) {
 
   return (
     <section className='container-wide hidden md:block'>
-      <div className='grid grid-cols-2 md:grid-cols-4'>
+      <div className='flex gap-2 lg:gap-3'>
         {banners.map((item: any, index: number) => (
           <BannerCard
             key={item.id ?? index}
@@ -43,6 +40,7 @@ export default function FourBannerSection({ section }: { section?: any }) {
             buttonTitle={item.buttonTitle}
             link={item.buttonUrl}
             active={!isMobile && activeIndex === index}
+            expanded={!isMobile && activeIndex === index}
             onHover={() => handleHover(index)}
             isMobile={isMobile}
           />

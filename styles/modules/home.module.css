@@ -7,7 +7,7 @@
   }
   .bulletPoint::before {
     content: "";
-    @apply absolute w-1 h-1 bg-white rounded-full opacity-100;
+    @apply absolute w-1 h-1 bg-primary-1 rounded-full opacity-100;
     top: 44%;
     right: 0px;
   }

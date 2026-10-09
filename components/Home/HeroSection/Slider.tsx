@@ -9,8 +9,10 @@ import { FreeMode, Pagination, Navigation, Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
 import Icon from "@/components/global/Icon";
-import styles from "@/styles/modules/Carves.module.css";
 import { useRef } from "react";
+
+const arrowClass =
+  "absolute top-1/2 z-20 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-custom-white/90 text-secondary-black-3 shadow-md backdrop-blur transition-colors hover:bg-custom-white focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-primary-1";
 
 export default function Slider({ slides }: { slides?: any[] }) {
   const swiperRef = useRef<SwiperType | null>(null);
@@ -22,33 +24,13 @@ export default function Slider({ slides }: { slides?: any[] }) {
   const handleNext = () => swiperRef.current?.slideNext();
 
   return (
-    <div
-      className={`relative h-[447px] md:h-[300px] xl:h-[400px] ${styles.rightCarve} ${styles.leftCarve} ${styles.bottomCarve}`}
-    >
-      <button
-        aria-label="اسلاید قبلی"
-        className="absolute top-[49%] -translate-y-1/2 right-2 translate-x-1/2 z-20 cursor-pointer"
-        onClick={handlePrev}
-      >
-        <Icon
-          IconComponent={ArrowRight2}
-          size={24}
-          variant="Outline"
-          className="text-secondary-black-2"
-        />
+    <div className="relative h-[447px] overflow-hidden rounded-3xl shadow-lg ring-1 ring-gray-2 md:h-[300px] xl:h-[400px]">
+      <button aria-label="اسلاید قبلی" className={`${arrowClass} right-3`} onClick={handlePrev}>
+        <Icon IconComponent={ArrowRight2} size={22} variant="Linear" />
       </button>
 
-      <button
-        aria-label="اسلاید بعدی"
-        className="absolute top-[49%] -translate-y-1/2 -translate-x-1/2 left-2 p-3 z-20 cursor-pointer"
-        onClick={handleNext}
-      >
-        <Icon
-          IconComponent={ArrowLeft2}
-          size={24}
-          variant="Outline"
-          className="text-secondary-black-2"
-        />
+      <button aria-label="اسلاید بعدی" className={`${arrowClass} left-3`} onClick={handleNext}>
+        <Icon IconComponent={ArrowLeft2} size={22} variant="Linear" />
       </button>
 
       <Swiper
@@ -56,7 +38,7 @@ export default function Slider({ slides }: { slides?: any[] }) {
         modules={[FreeMode, Pagination, Navigation, Autoplay]}
         slidesPerView={1}
         loop={true}
-        className="w-full h-full relative rounded-xl"
+        className="w-full h-full"
         touchAngle={45}
         touchReleaseOnEdges={true}
         nested={true}
@@ -81,9 +63,7 @@ export default function Slider({ slides }: { slides?: any[] }) {
         ))}
       </Swiper>
 
-      <div
-        className={`large-pagination absolute! bottom-0! w-fit! left-1/2! -translate-x-1/2! md:left-[80%]! lg:left-[90%]! z-10! bg-transparent! flex! gap-1! ${styles.pagination}`}
-      />
+      <div className="large-pagination absolute! bottom-4! left-1/2! z-10! flex! w-fit! -translate-x-1/2! gap-1.5! rounded-full! bg-secondary-black-3/40! px-2.5! py-1.5! backdrop-blur-sm!" />
     </div>
   );
 }
