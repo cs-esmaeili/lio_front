@@ -16,12 +16,7 @@ const OfferSection = ({ section }: { section?: any }) => {
       <div className='rounded-3xl bg-primary-4 p-3 md:p-5 max-sm:w-[calc(100%-1rem)]'>
         <div className='grid grid-cols-1 gap-3 lg:grid-cols-12 lg:gap-4'>
           <div className='lg:col-span-3 lg:max-[1280px]:col-span-4'>
-            <OfferCard
-              onPrev={() => swiperRef.current?.slidePrev()}
-              onNext={() => swiperRef.current?.slideNext()}
-              link={section?.link ?? '/shop'}
-              expiryTime={7200}
-            />
+            <OfferCard link={section?.link ?? '/shop'} expiryTime={7200} />
           </div>
 
           <div className='lg:col-span-9 lg:max-[1280px]:col-span-8'>

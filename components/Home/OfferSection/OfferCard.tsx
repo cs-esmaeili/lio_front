@@ -3,27 +3,21 @@
 
 import Link from "next/link";
 import Icon from "@/components/global/Icon";
-import { ArrowLeft, ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
+import { ArrowLeft } from "iconsax-reactjs";
 import Timer from "@/components/Home/OfferSection/OfferTimer";
 
 type Props = {
-  onPrev: () => void;
-  onNext: () => void;
   link: string;
   expiryTime?: number;
 };
 
-const arrowClass =
-  "flex size-9 cursor-pointer items-center justify-center rounded-full bg-custom-white/15 text-custom-white transition-colors hover:bg-custom-white hover:text-primary-1";
-
-export default function OfferCard({ onPrev, onNext, link, expiryTime = 3600 }: Props) {
+export default function OfferCard({ link, expiryTime = 3600 }: Props) {
   return (
     <div className="relative flex h-full w-full flex-row items-center justify-between gap-4 overflow-hidden rounded-2xl bg-primary-1 p-4 lg:flex-col lg:justify-center lg:gap-7 lg:p-6">
       <span className="pointer-events-none absolute -left-10 -top-10 size-40 rounded-full bg-primary-2/40 blur-3xl" />
       <span className="pointer-events-none absolute -bottom-12 -right-10 size-40 rounded-full bg-primary-2/30 blur-3xl" />
 
       <div className="relative flex flex-col items-center gap-1.5 text-center">
-        <span className="rounded-full bg-custom-white/15 px-3 py-1 text-[11px] font-medium text-custom-white">فرصت محدود</span>
         <h3 className="text-lg font-extrabold leading-7 text-custom-white lg:text-3xl lg:leading-10">
           پیشنهاد <span className="text-primary-3">شگفت‌انگیز</span> روز
         </h3>
@@ -39,15 +33,6 @@ export default function OfferCard({ onPrev, onNext, link, expiryTime = 3600 }: P
         <span className="lg:hidden">همه</span>
         <Icon IconComponent={ArrowLeft} size={20} variant="TwoTone" className="text-primary-1" />
       </Link>
-
-      <div className="relative hidden items-center gap-2 lg:flex">
-        <button type="button" onClick={onPrev} aria-label="اسلاید قبلی" className={arrowClass}>
-          <Icon IconComponent={ArrowRight2} size={20} variant="Linear" className="text-current" />
-        </button>
-        <button type="button" onClick={onNext} aria-label="اسلاید بعدی" className={arrowClass}>
-          <Icon IconComponent={ArrowLeft2} size={20} variant="Linear" className="text-current" />
-        </button>
-      </div>
     </div>
   );
 }
