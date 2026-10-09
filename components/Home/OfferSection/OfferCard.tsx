@@ -1,9 +1,6 @@
 // OfferCard.tsx
 "use client";
 
-import styles from "@/styles/modules/Carves.module.css";
-import stylesHome from "@/styles/modules/home.module.css";
-
 import Link from "next/link";
 import Icon from "@/components/global/Icon";
 import { ArrowLeft, ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
@@ -19,65 +16,36 @@ type Props = {
   expiryTime?: number;
 };
 
-export default function OfferCard({
-  onPrev,
-  onNext,
-  link,
-  expiryTime = 3600,
-}: Props) {
+const arrowClass =
+  "flex size-9 cursor-pointer items-center justify-center rounded-full bg-custom-white/15 text-custom-white transition-colors hover:bg-custom-white hover:text-primary-1";
+
+export default function OfferCard({ onPrev, onNext, link, expiryTime = 3600 }: Props) {
   return (
-    <div
-      className={`${stylesHome.gradientOffer} relative rounded-xl overflow-hidden w-full h-full flex flex-row lg:flex-col items-center justify-between md:justify-evenly gap-4 lg:gap-8 p-4 lg:p-0"`}
-    >
-      <Image className="hidden lg:block" src={offer} alt="offer" />
-      <Image width={138} height={40} className="w-[138px] h-[40px] block lg:hidden" src={offerM} alt="offer" />
+    <div className="relative flex h-full w-full flex-row items-center justify-between gap-4 overflow-hidden rounded-2xl bg-primary-1 p-4 lg:flex-col lg:justify-center lg:gap-7 lg:p-6">
+      <span className="pointer-events-none absolute -left-10 -top-10 size-40 rounded-full bg-primary-2/40 blur-3xl" />
 
-      <button
-        className={`hidden lg:block absolute bottom-[30%] -translate-y-1/2 right-2 translate-x-1/2 z-10 cursor-pointer ${styles.rightCarve}`}
-        onClick={onPrev}
-      >
-        <Icon
-          IconComponent={ArrowRight2}
-          size={24}
-          variant="Outline"
-          className="text-secondary-black-2 relative z-20 mt-[-35%]"
-        />
-      </button>
-
-      <button
-        className={`hidden lg:block absolute bottom-[30%] -translate-y-1/2 -translate-x-1/2 left-2 z-10 cursor-pointer ${styles.leftCarve}`}
-        onClick={onNext}
-      >
-        <Icon
-          IconComponent={ArrowLeft2}
-          size={24}
-          variant="Outline"
-          className="text-secondary-black-2 relative z-20 mt-[-35%]"
-        />
-      </button>
+      <Image className="relative hidden lg:block" src={offer} alt="offer" />
+      <Image width={138} height={40} className="relative block h-10 w-[138px] lg:hidden" src={offerM} alt="offer" />
 
       <Timer expiryTime={expiryTime} />
 
-      <Link href={link}>
-        <button
-          className="hidden lg:flex h-12.5 group gap-2 justify-center items-center py-2 px-4 rounded-[8px] select-none bg-primary-4 text-primary-1
-          hover:rounded-[50px] hover:text-secondary-black-3 transition-all duration-1000 ease-in-out cursor-pointer "
-        >
-          <span>مشاهده بیشتر</span>
-          <Icon
-            IconComponent={ArrowLeft}
-            size={24}
-            variant="TwoTone"
-            className="group-hover:text-secondary-black-3 transition-all duration-1000 ease-in-out cursor-pointer"
-          />
-        </button>
-        <button
-          className="flex lg:hidden h-10 group gap-2 justify-center items-center py-2 px-4 rounded-[8px] select-none bg-primary-4 text-primary-1
-          hover:rounded-[50px] hover:text-secondary-black-3 transition-all duration-1000 ease-in-out cursor-pointer text-[12px]"
-        >
-          <span>همه</span>
-        </button>
+      <Link
+        href={link}
+        className="relative h-10.5 flex items-center justify-center gap-2 rounded-xl bg-custom-white px-5 text-sm font-semibold text-primary-1 transition-colors hover:bg-primary-4 lg:h-12.5"
+      >
+        <span className="hidden lg:inline">مشاهده بیشتر</span>
+        <span className="lg:hidden">همه</span>
+        <Icon IconComponent={ArrowLeft} size={20} variant="TwoTone" className="text-primary-1" />
       </Link>
+
+      <div className="relative hidden items-center gap-2 lg:flex">
+        <button type="button" onClick={onPrev} aria-label="اسلاید قبلی" className={arrowClass}>
+          <Icon IconComponent={ArrowRight2} size={20} variant="Linear" className="text-current" />
+        </button>
+        <button type="button" onClick={onNext} aria-label="اسلاید بعدی" className={arrowClass}>
+          <Icon IconComponent={ArrowLeft2} size={20} variant="Linear" className="text-current" />
+        </button>
+      </div>
     </div>
   );
 }

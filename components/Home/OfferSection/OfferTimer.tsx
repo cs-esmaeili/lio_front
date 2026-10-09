@@ -15,7 +15,7 @@ export default function Timer({ expiryTime = 3600, onExpire }: TimerProps) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -35,11 +35,9 @@ export default function Timer({ expiryTime = 3600, onExpire }: TimerProps) {
   }, [timeLeft, onExpire]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2">
-      <span className="text-sm hidden lg:block mb-1">فــــرصت بــــاقی‌مــــانده خــــرید</span>
-      <span className="text-md md:text-xl tracking-[2px] md:tracking-[10px]">
-        {formatTime(timeLeft)}
-      </span>
+    <div className="relative flex flex-col items-center justify-center gap-2 text-custom-white">
+      <span className="mb-1 hidden text-sm text-custom-white/80 lg:block">فــــرصت بــــاقی‌مــــانده خــــرید</span>
+      <span className="text-lg tracking-[2px] md:text-2xl md:tracking-[8px]">{formatTime(timeLeft)}</span>
     </div>
   );
 }
