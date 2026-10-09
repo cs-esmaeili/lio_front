@@ -74,7 +74,3 @@ export const deleteRoleCSR = (id: number): Promise<{ ok: boolean }> =>
 /** GET /admin/permissions — every permission (requires `permission:read`). */
 export const listPermissionsCSR = (): Promise<AdminPermission[]> =>
   parseResponse(http.get(`${csrPrefixUrl}/admin/permissions`), AdminPermissionListSchema);
-
-/** DELETE /admin/permissions/{id} — delete a permission. */
-export const deletePermissionCSR = (id: number): Promise<{ ok: boolean }> =>
-  parseResponse(http.delete(`${csrPrefixUrl}/admin/permissions/${id}`), AuthorizationOkSchema);

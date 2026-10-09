@@ -2,40 +2,24 @@
 
 import { useMemo, useState } from 'react';
 import { CircleAlert, KeyRound, RefreshCw, Search } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { Spinner } from '@/components/shadcn/spinner';
-import { useDeletePermission } from '@/hooks/authorization/useDeletePermission';
 import { usePermissionsList } from '@/hooks/authorization/usePermissionsList';
-import ConfirmDeleteModal from './ConfirmDeleteModal';
 import PermissionRow from './PermissionRow';
-import type { AdminPermission } from '@/typescript/schemas/admin-authorization.schema';
 
 /** Manage permissions. */
 export default function PermissionsManager() {
   const { permissions, loading, error, refetch } = usePermissionsList();
-  const { deletePermission, loading: deleting } = useDeletePermission();
 
   const [search, setSearch] = useState('');
-  const [deleteTarget, setDeleteTarget] = useState<AdminPermission | null>(null);
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return permissions;
     return permissions.filter((permission) => permission.name.toLowerCase().includes(term) || (permission.description ?? '').toLowerCase().includes(term));
   }, [permissions, search]);
-
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget) return;
-    const removed = await deletePermission(deleteTarget.id);
-    if (!removed) return;
-
-    toast.success('دسترسی حذف شد.');
-    setDeleteTarget(null);
-    void refetch();
-  };
 
   return (
     <div className='flex flex-col gap-6'>
@@ -87,25 +71,10 @@ export default function PermissionsManager() {
       ) : (
         <div className='flex flex-col gap-2'>
           {visible.map((permission) => (
-            <PermissionRow
-              key={permission.id}
-              permission={permission}
-              deleting={deleting && deleteTarget?.id === permission.id}
-              onDelete={setDeleteTarget}
-            />
+            <PermissionRow key={permission.id} permission={permission} />
           ))}
         </div>
       )}
-
-      <ConfirmDeleteModal
-        open={deleteTarget !== null}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
-        name={deleteTarget?.name ?? ''}
-        loading={deleting}
-        onConfirm={() => void handleConfirmDelete()}
-      />
     </div>
   );
 }
