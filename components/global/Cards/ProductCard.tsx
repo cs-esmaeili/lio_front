@@ -3,9 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Icon from '@/components/global/Icon';
-import { Add } from 'iconsax-reactjs';
-import styles from '@/styles/modules/Product.module.css';
 import fadeStyles from '@/styles/modules/imageFade.module.css';
 import CurrencyLabel from '@/components/global/Cards/CurrencyLabel';
 import { productStatus } from '@/utils/product/Product';
@@ -41,97 +38,58 @@ export default function ProductCard({ data, onBlackBackGround = false }: Product
 
   const isPriceRange = minPrice !== maxPrice;
 
+  const titleColor = onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-3';
+  const priceColor = onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-3';
+
   return (
-    <Link href={`/product/${slug}`} className='hover:text-primary-1'>
-      <div
-        className='p-3 h-full select-none group border-l'
-        style={{
-          borderImage: 'linear-gradient(to bottom, transparent, var(--primary-1), transparent) 1',
-        }}>
-        <div className='flex justify-center items-center shadow-[0_6px_10px_-8px_rgba(0,0,0,0.25)] mb-7 rounded-xl group-hover:shadow-none transition-all duration-500 ease-in-out'>
-          <div
-            className={`${styles.productCardImage} relative shrink-0 rounded-xl bg-white transition-all duration-500 ease-in-out w-full max-w-[200px] h-[250px]`}>
-            <Image
-              src={productImage}
-              alt={`product-${id}`}
-              onLoad={() => setLoaded(true)}
-              className={`rounded-xl object-cover relative z-10 transition-transform duration-500 ease-in-out group-hover:-translate-y-2 mx-auto ${
-                loaded ? fadeStyles.fadeIn : 'opacity-0'
-              }`}
-              fill
-            />
-          </div>
+    <Link href={`/product/${slug}`} className='group block h-full'>
+      <div className={`flex h-full flex-col p-3 ${titleColor}`}>
+        <div
+          className={`relative mx-auto h-[250px] w-full max-w-[200px] overflow-hidden rounded-2xl transition-colors duration-300 ${
+            onBlackBackGround ? 'bg-secondary-black-1' : 'bg-gray-1 group-hover:bg-primary-4/70'
+          }`}>
+          <Image
+            src={productImage}
+            alt={`product-${id}`}
+            onLoad={() => setLoaded(true)}
+            className={`object-contain p-3 transition-transform duration-500 ease-in-out group-hover:scale-105 ${
+              loaded ? fadeStyles.fadeIn : 'opacity-0'
+            }`}
+            fill
+          />
+
+          {roundedDiscount > 0 && (
+            <span className='absolute right-2 top-2 z-10 flex h-7 min-w-7 items-center justify-center rounded-lg bg-primary-1 px-1.5 text-[11px] font-bold text-custom-white'>
+              {roundedDiscount}%
+            </span>
+          )}
         </div>
 
-        <div className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'} mb-5 line-clamp-2 h-12 text-[15px]!`}>{title}</div>
+        <div className={`mb-4 mt-4 line-clamp-2 h-12 text-[15px] leading-6 ${titleColor}`}>{title}</div>
 
         {productStatus(default_variant) === 'available' && (
-          <div className='flex flex-row-reverse justify-between items-center gap-1 sm:gap-2'>
-
-            <div className="flex flex-col min-w-0 items-end w-full">
-              <div className="flex items-start gap-1 w-full">
-                <div
-                  className={`${
-                    onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'
-                  } text-[14px] sm:text-[14px] md:text-[15px] w-full flex flex-flex-wrap`}
-                >
-                  {/* {isPriceRange
-                    ? `${separator(minPrice)} - ${separator(maxPrice)}`
-                    : separator(minPrice)} */}
-                    {isPriceRange ? (
-                      <div className="flex flex-row-reverse flex-wrap items-end gap-0 w-full text-left justify-start">
-                        <div className='mr-4'>{separator(minPrice)}</div>
-                        <div>{separator(maxPrice)}</div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-row flex-wrap items-end gap-0 w-full text-left justify-end">
-                        {separator(minPrice)}
-                      </div>
-                    )}
-                </div>
-
-                <div className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-2'} text-[11px] sm:text-[11px] md:text-[12px]`}>
-                  <CurrencyLabel />
-                </div>
-              </div>
-
-
-              {!isPriceRange && roundedDiscount > 0 && (
-                <div className='text-secondary-3 line-through text-[11px] sm:text-xs md:text-sm'>{separator(default_variant.amount)}</div>
-              )}
+          <div className='mt-auto flex items-end justify-between gap-2'>
+            <div className={`flex items-end gap-1 ${priceColor}`}>
+              <span className='text-[15px] font-bold'>
+                {isPriceRange ? `${separator(minPrice)} - ${separator(maxPrice)}` : separator(minPrice)}
+              </span>
+              <span className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-2'} text-[11px]`}>
+                <CurrencyLabel />
+              </span>
             </div>
 
-
-            {/* <div
-                className="bg-primary-2 w-7 h-7 sm:w-8 md:w-9 sm:h-8 md:h-9 rounded-[9px]
-                hover:rounded-[50px] transition-all duration-500 ease-in-out cursor-pointer
-                flex justify-center items-center">
-                <Icon IconComponent={Add} className="text-gray-1" size={18} />
-              </div> */}
-
-              {/* {!isPriceRange &&} */}
-              { roundedDiscount > 0 && (
-                <div className='flex gap-1 shrink-0'>
-                  <div
-                    className="bg-gray-3 text-secondary-black-3 w-7 h-7 sm:w-8 md:w-9 sm:h-8 md:h-9
-                    text-[10px] sm:text-xs md:text-[14px] flex justify-center items-center rounded-[9px]
-                    hover:rounded-[50px] transition-all duration-500 ease-in-out cursor-pointer"
-                  >
-                    {roundedDiscount}%
-                  </div>
-                </div>
-              )}
-
-
+            {!isPriceRange && roundedDiscount > 0 && (
+              <span className='text-[11px] text-secondary-3 line-through'>{separator(default_variant.amount)}</span>
+            )}
           </div>
         )}
 
         {default_variant && productStatus(default_variant) === 'call' && (
-          <div className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>تماس بگیرید</div>
+          <div className={`mt-auto ${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>تماس بگیرید</div>
         )}
 
         {default_variant && productStatus(default_variant) === 'notify' && (
-          <div className={`${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>خبرم کن!</div>
+          <div className={`mt-auto ${onBlackBackGround ? 'text-gray-1' : 'text-secondary-black-1'}`}>خبرم کن!</div>
         )}
       </div>
     </Link>
