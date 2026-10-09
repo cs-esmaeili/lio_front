@@ -68,29 +68,25 @@ function BannerImage({
 export default function ThreeBannerSection({ section }: { section?: any }) {
   const banners: BannerItem[] = section?.data?.banners ?? [];
 
-  // img1: 50vw desktop (~960px), 100vw mobile (~360px), height 280/180
-  // img2: 30vw desktop (~576px), 60vw mobile (~216px), height 280/183
-  // img3: 20vw desktop (~384px), 40vw mobile (~144px), height 280/183
+  // Equal three-up columns; dims only shape the generated srcset.
   const dims = [
-    { desktopW: 960, desktopH: 280, tabletW: 512, tabletH: 280, mobileW: 360, mobileH: 180 },
-    { desktopW: 576, desktopH: 280, tabletW: 384, tabletH: 280, mobileW: 216, mobileH: 183 },
-    { desktopW: 384, desktopH: 280, tabletW: 256, tabletH: 280, mobileW: 144, mobileH: 183 },
+    { desktopW: 640, desktopH: 420, tabletW: 512, tabletH: 420, mobileW: 360, mobileH: 220 },
+    { desktopW: 640, desktopH: 420, tabletW: 512, tabletH: 420, mobileW: 360, mobileH: 220 },
+    { desktopW: 640, desktopH: 420, tabletW: 512, tabletH: 420, mobileW: 360, mobileH: 220 },
   ];
 
   return (
     <section className='container'>
-      <div className='grid grid-cols-1 md:grid-cols-12 gap-[8px] md:gap-[24px]'>
-        <div className='relative h-[180px] sm:h-[300px] md:h-[140px] lg:h-[200px] xl:h-[280px] rounded-xl overflow-hidden col-span-1 md:col-span-7'>
-          {banners?.[0] && <BannerImage item={banners[0]} {...dims[0]} />}
-        </div>
-        <div className='grid grid-cols-2 md:grid-cols-5 gap-[8px] md:gap-[24px] col-span-1 md:col-span-5'>
-          <div className='relative h-[180px] sm:h-[300px] md:h-[140px] lg:h-[200px] xl:h-[280px] rounded-xl overflow-hidden col-span-1 md:col-span-3'>
-            {banners?.[1] && <BannerImage item={banners[1]} {...dims[1]} />}
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6'>
+        {banners.slice(0, 3).map((item, index) => (
+          <div
+            key={index}
+            className='group relative h-[190px] overflow-hidden rounded-3xl md:h-[260px] lg:h-[340px]'>
+            <div className='h-full w-full transition-transform duration-700 ease-in-out group-hover:scale-105'>
+              <BannerImage item={item} {...dims[index]} />
+            </div>
           </div>
-          <div className='relative h-[180px] sm:h-[300px] md:h-[140px] lg:h-[200px] xl:h-[280px] rounded-xl overflow-hidden col-span-1 md:col-span-2'>
-            {banners?.[2] && <BannerImage item={banners[2]} {...dims[2]} />}
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );
