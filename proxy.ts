@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { lookupRedirect } from '@/services/redirect.service';
+import { safeReturnUrl } from '@/utils/path';
 
 const protectedPaths = ['/dashboard', '/checkout'];
 const authPaths = ['/login'];
@@ -85,7 +86,7 @@ export default async function proxy(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (isUnder(pathname, authPaths) && session) {
-    const returnUrl = request.nextUrl.searchParams.get('returnUrl') || '/dashboard';
+    const returnUrl = safeReturnUrl(request.nextUrl.searchParams.get('returnUrl'));
     return NextResponse.redirect(new URL(returnUrl, request.url));
   }
 

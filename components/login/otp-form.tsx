@@ -9,6 +9,7 @@ import { Timer } from '@/components/login/timer';
 import { useCheckOtp } from '@/hooks/login/useCheckOtp';
 import { useSendOtp } from '@/hooks/login/useSendOtp';
 import { useCart } from '@/hooks/cart/useCart';
+import { safeReturnUrl } from '@/utils/path';
 
 type Props = {
   phone: string;
@@ -35,7 +36,7 @@ export function OtpForm({ phone, formattedPhone, onBack, returnUrl }: Props) {
 
     await mergeAfterLogin();
 
-    window.location.href = returnUrl || '/dashboard';
+    window.location.href = safeReturnUrl(returnUrl);
   };
 
   const handleResend = async () => {

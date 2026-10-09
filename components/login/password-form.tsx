@@ -8,6 +8,7 @@ import { Spinner } from '@/components/login/spinner';
 import { PasswordLoginFormSchema, type PasswordLoginFormValues } from '@/typescript/schemas/password-login-form.schema';
 import { usePasswordLogin } from '@/hooks/login/usePasswordLogin';
 import { useCart } from '@/hooks/cart/useCart';
+import { safeReturnUrl } from '@/utils/path';
 
 type Props = {
   returnUrl?: string;
@@ -36,7 +37,7 @@ export function PasswordForm({ returnUrl }: Props) {
     }
 
     await mergeAfterLogin();
-    window.location.assign(returnUrl || '/dashboard');
+    window.location.assign(safeReturnUrl(returnUrl));
   };
 
   const inputClass = (hasError: boolean) =>
